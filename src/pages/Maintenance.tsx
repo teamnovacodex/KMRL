@@ -9,13 +9,13 @@ import {
   Filter,
   Download
 } from 'lucide-react';
-import { enterpriseTrains } from '../data/enterpriseMockData';
+import { metroTrains } from '../data/metroMockData';
 
 const Maintenance: React.FC = () => {
   const [filterStatus, setFilterStatus] = useState('all');
   const [selectedTrain, setSelectedTrain] = useState<string>('');
 
-  const maintenanceData = enterpriseTrains.map(train => ({
+  const maintenanceData = metroTrains.map(train => ({
     ...train,
     maintenanceType: train.recommendation === 'Maintenance' ? 'Scheduled' : 
                     train.criticalJobCards > 0 ? 'Critical' : 'Preventive',

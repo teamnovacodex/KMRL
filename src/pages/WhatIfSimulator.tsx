@@ -1,10 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import { Settings, RotateCcw, Eye, EyeOff, AlertTriangle, CheckCircle } from 'lucide-react';
-import { mockTrains } from '../data/trains';
-import { Train as TrainType } from '../types/train';
+import { metroTrains } from '../data/metroMockData';
+import { Train as TrainType } from '../types/metro';
 
 const WhatIfSimulator: React.FC = () => {
-  const [trains, setTrains] = useState<TrainType[]>(mockTrains);
+  const [trains, setTrains] = useState<TrainType[]>(metroTrains);
   const [excludedTrains, setExcludedTrains] = useState<Set<string>>(new Set());
   const [forcedInclusions, setForcedInclusions] = useState<Map<string, string>>(new Map());
   const [isSimulating, setIsSimulating] = useState(false);
@@ -45,7 +45,7 @@ const WhatIfSimulator: React.FC = () => {
     setIsSimulating(true);
     
     setTimeout(() => {
-      const simulatedTrains = mockTrains.map(train => {
+      const simulatedTrains = metroTrains.map(train => {
         if (excludedTrains.has(train.id)) {
           return { ...train, recommendation: 'Maintenance' as const }; // Excluded trains go to maintenance
         }
@@ -76,7 +76,7 @@ const WhatIfSimulator: React.FC = () => {
   };
 
   const resetSimulation = () => {
-    setTrains(mockTrains);
+    setTrains(metroTrains);
     setExcludedTrains(new Set());
     setForcedInclusions(new Map());
   };

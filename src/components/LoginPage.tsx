@@ -42,7 +42,7 @@ const LoginPage: React.FC = () => {
                 <Train className="h-12 w-12 text-white" />
               </div>
               <div>
-                <h1 className="text-4xl font-bold">KMRL Enterprise</h1>
+                <h1 className="text-4xl font-bold">KMRL Metro</h1>
                 <p className="text-xl text-blue-200">Kochi Metro Rail Limited</p>
               </div>
             </div>
@@ -51,13 +51,13 @@ const LoginPage: React.FC = () => {
               <h2 className="text-2xl font-semibold">AI-Driven Train Induction Planning</h2>
               <p className="text-lg text-blue-100 leading-relaxed">
                 Advanced decision-support system for optimizing daily train operations, 
-                maintenance scheduling, and fleet management across 25 trains.
+                maintenance scheduling, and fleet management across 23 trains.
               </p>
             </div>
 
             <div className="grid grid-cols-2 gap-4 pt-4">
               <div className="bg-white/10 p-4 rounded-lg backdrop-blur-sm">
-                <div className="text-2xl font-bold">25</div>
+                <div className="text-2xl font-bold">23</div>
                 <div className="text-sm text-blue-200">Active Trains</div>
               </div>
               <div className="bg-white/10 p-4 rounded-lg backdrop-blur-sm">

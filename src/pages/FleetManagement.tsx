@@ -9,22 +9,22 @@ import {
   Clock,
   AlertCircle
 } from 'lucide-react';
-import { enterpriseTrains } from '../data/enterpriseMockData';
+import { metroTrains } from '../data/metroMockData';
 
 const FleetManagement: React.FC = () => {
   const [selectedTrain, setSelectedTrain] = useState<string>('');
   const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid');
 
   const selectedTrainData = selectedTrain ? 
-    enterpriseTrains.find(t => t.trainNumber === selectedTrain) : null;
+    metroTrains.find(t => t.trainNumber === selectedTrain) : null;
 
   const fleetStats = {
-    totalTrains: enterpriseTrains.length,
-    activeTrains: enterpriseTrains.filter(t => t.recommendation === 'Service').length,
-    standbyTrains: enterpriseTrains.filter(t => t.recommendation === 'Standby').length,
-    maintenanceTrains: enterpriseTrains.filter(t => t.recommendation === 'Maintenance').length,
-    avgHealthScore: Math.round(enterpriseTrains.reduce((sum, t) => sum + t.healthScore, 0) / enterpriseTrains.length),
-    totalMileage: enterpriseTrains.reduce((sum, t) => sum + t.totalMileage, 0)
+    totalTrains: metroTrains.length,
+    activeTrains: metroTrains.filter(t => t.recommendation === 'Service').length,
+    standbyTrains: metroTrains.filter(t => t.recommendation === 'Standby').length,
+    maintenanceTrains: metroTrains.filter(t => t.recommendation === 'Maintenance').length,
+    avgHealthScore: Math.round(metroTrains.reduce((sum, t) => sum + t.healthScore, 0) / metroTrains.length),
+    totalMileage: metroTrains.reduce((sum, t) => sum + t.totalMileage, 0)
   };
 
   const getStatusColor = (recommendation: string) => {
@@ -123,7 +123,7 @@ const FleetManagement: React.FC = () => {
             
             {viewMode === 'grid' ? (
               <div className="grid grid-cols-5 gap-4">
-                {enterpriseTrains.map((train) => (
+                {metroTrains.map((train) => (
                   <motion.div
                     key={train.id}
                     whileHover={{ scale: 1.05 }}
@@ -150,7 +150,7 @@ const FleetManagement: React.FC = () => {
               </div>
             ) : (
               <div className="space-y-2">
-                {enterpriseTrains.map((train) => (
+                {metroTrains.map((train) => (
                   <div
                     key={train.id}
                     onClick={() => setSelectedTrain(train.trainNumber)}

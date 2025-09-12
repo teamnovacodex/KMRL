@@ -30,7 +30,7 @@ const Header: React.FC = () => {
                 <Train className="h-6 w-6 text-white" />
               </div>
               <div>
-                <h1 className="text-xl font-bold text-gray-900">KMRL Enterprise</h1>
+                <h1 className="text-xl font-bold text-gray-900">KMRL Metro</h1>
                 <p className="text-sm text-gray-600">AI-Driven Fleet Management</p>
               </div>
             </div>
