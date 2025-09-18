@@ -1,11 +1,9 @@
 import React from 'react';
-import { Train, MapPin, Settings, BarChart3, Wrench, FileText, Users, LogOut, User } from 'lucide-react';
+import { Train, MapPin, Settings, BarChart3, Wrench, FileText, Users } from 'lucide-react';
 import { Link, useLocation } from 'react-router-dom';
-import { useAuth } from '../contexts/AuthContext';
 
 const Header: React.FC = () => {
   const location = useLocation();
-  const { user, logout } = useAuth();
 
   const navItems = [
     { path: '/', label: 'Command Center', icon: Train },
@@ -15,10 +13,6 @@ const Header: React.FC = () => {
     { path: '/fleet', label: 'Fleet', icon: Users },
     { path: '/reports', label: 'Reports', icon: FileText }
   ];
-
-  const handleLogout = async () => {
-    await logout();
-  };
 
   return (
     <header className="bg-white border-b border-gray-200 shadow-sm">
@@ -36,7 +30,7 @@ const Header: React.FC = () => {
             </div>
           </div>
 
-          <nav className="flex space-x-1 overflow-x-auto">
+          <nav className="hidden md:flex space-x-1">
             {navItems.map((item) => {
               const IconComponent = item.icon;
               const isActive = location.pathname === item.path;
@@ -45,7 +39,7 @@ const Header: React.FC = () => {
                 <Link
                   key={item.path}
                   to={item.path}
-                  className={`flex items-center space-x-2 px-3 py-2 rounded-md text-sm font-medium transition-colors duration-200 whitespace-nowrap ${
+                  className={`flex items-center space-x-2 px-3 py-2 rounded-md text-sm font-medium transition-colors duration-200 ${
                     isActive
                       ? 'bg-blue-100 text-blue-700 border border-blue-200'
                       : 'text-gray-600 hover:text-gray-900 hover:bg-gray-100'
@@ -63,36 +57,31 @@ const Header: React.FC = () => {
               <MapPin className="h-4 w-4" />
               <span className="hidden sm:inline">Kochi Metro</span>
             </div>
-            
-            {user && (
-              <div className="flex items-center space-x-3">
-                <div className="flex items-center space-x-2">
-                  {user.avatar ? (
-                    <img 
-                      src={user.avatar} 
-                      alt={user.username}
-                      className="w-8 h-8 rounded-full object-cover"
-                    />
-                  ) : (
-                    <div className="w-8 h-8 bg-blue-100 rounded-full flex items-center justify-center">
-                      <User className="h-4 w-4 text-blue-600" />
-                    </div>
-                  )}
-                  <div className="hidden md:block">
-                    <div className="text-sm font-medium text-gray-900">{user.username}</div>
-                    <div className="text-xs text-gray-500">{user.role}</div>
-                  </div>
-                </div>
-                
-                <button
-                  onClick={handleLogout}
-                  className="p-2 text-gray-400 hover:text-gray-600 hover:bg-gray-100 rounded-lg transition-colors duration-200"
-                  title="Logout"
+          </div>
+        </div>
+
+        {/* Mobile Navigation */}
+        <div className="md:hidden border-t border-gray-200 py-2">
+          <div className="flex space-x-1 overflow-x-auto">
+            {navItems.map((item) => {
+              const IconComponent = item.icon;
+              const isActive = location.pathname === item.path;
+              
+              return (
+                <Link
+                  key={item.path}
+                  to={item.path}
+                  className={`flex items-center space-x-1 px-3 py-2 rounded-md text-xs font-medium transition-colors duration-200 whitespace-nowrap ${
+                    isActive
+                      ? 'bg-blue-100 text-blue-700'
+                      : 'text-gray-600 hover:text-gray-900 hover:bg-gray-100'
+                  }`}
                 >
-                  <LogOut className="h-4 w-4" />
-                </button>
-              </div>
-            )}
+                  <IconComponent className="h-4 w-4" />
+                  <span>{item.label}</span>
+                </Link>
+              );
+            })}
           </div>
         </div>
       </div>

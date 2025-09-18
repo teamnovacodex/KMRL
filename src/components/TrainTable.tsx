@@ -34,6 +34,8 @@ const TrainTable: React.FC<TrainTableProps> = ({ trains }) => {
         return 'bg-yellow-100 text-yellow-800 border-yellow-200';
       case 'Maintenance':
         return 'bg-red-100 text-red-800 border-red-200';
+      case 'Deep Clean':
+        return 'bg-purple-100 text-purple-800 border-purple-200';
       default:
         return 'bg-gray-100 text-gray-800 border-gray-200';
     }
@@ -43,7 +45,7 @@ const TrainTable: React.FC<TrainTableProps> = ({ trains }) => {
     <div className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
       <div className="px-6 py-4 border-b border-gray-200">
         <h3 className="text-lg font-semibold text-gray-900">Train Fleet Status</h3>
-        <p className="text-sm text-gray-600 mt-1">Real-time train condition and recommendations</p>
+        <p className="text-sm text-gray-600 mt-1">Real-time train condition and AI recommendations</p>
       </div>
       
       <div className="overflow-x-auto">
@@ -51,13 +53,16 @@ const TrainTable: React.FC<TrainTableProps> = ({ trains }) => {
           <thead className="bg-gray-50">
             <tr>
               <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                Train ID
+                Train Name
               </th>
               <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                Fitness Certificate
+                Train Number
               </th>
               <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                Job Card Status
+                Fitness Status
+              </th>
+              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                Job Cards
               </th>
               <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                 Branding
@@ -66,10 +71,7 @@ const TrainTable: React.FC<TrainTableProps> = ({ trains }) => {
                 Mileage (km)
               </th>
               <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                Cleaning Status
-              </th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                Depot Bay
+                Health Score
               </th>
               <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                 AI Recommendation
@@ -80,7 +82,10 @@ const TrainTable: React.FC<TrainTableProps> = ({ trains }) => {
             {trains.map((train) => (
               <tr key={train.id} className="hover:bg-gray-50 transition-colors duration-150">
                 <td className="px-6 py-4 whitespace-nowrap">
-                  <div className="font-medium text-gray-900">{train.trainNumber}</div>
+                  <div className="font-medium text-gray-900">{train.trainName}</div>
+                </td>
+                <td className="px-6 py-4 whitespace-nowrap">
+                  <div className="text-sm text-gray-900">{train.trainNumber}</div>
                 </td>
                 <td className="px-6 py-4 whitespace-nowrap">
                   <div className="flex items-center space-x-2">
@@ -96,6 +101,11 @@ const TrainTable: React.FC<TrainTableProps> = ({ trains }) => {
                     <span className={`text-sm ${train.jobCardStatus === 'Closed' ? 'text-green-700' : 'text-orange-700'}`}>
                       {train.jobCardStatus}
                     </span>
+                    {train.criticalJobCards > 0 && (
+                      <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-red-100 text-red-800">
+                        {train.criticalJobCards} Critical
+                      </span>
+                    )}
                   </div>
                 </td>
                 <td className="px-6 py-4 whitespace-nowrap">
@@ -106,20 +116,21 @@ const TrainTable: React.FC<TrainTableProps> = ({ trains }) => {
                   </span>
                 </td>
                 <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900 font-mono">
-                  {train.mileage.toLocaleString()}
+                  {train.totalMileage.toLocaleString()}
                 </td>
                 <td className="px-6 py-4 whitespace-nowrap">
-                  <div className="flex items-center space-x-2">
-                    {getStatusIcon(train.cleaningStatus, 'cleaning')}
-                    <span className={`text-sm ${train.cleaningStatus === 'Done' ? 'text-green-700' : 'text-yellow-700'}`}>
-                      {train.cleaningStatus}
-                    </span>
+                  <div className="flex items-center">
+                    <div className="w-16 bg-gray-200 rounded-full h-2 mr-3">
+                      <div 
+                        className={`h-2 rounded-full ${
+                          train.healthScore >= 80 ? 'bg-green-600' :
+                          train.healthScore >= 60 ? 'bg-yellow-600' : 'bg-red-600'
+                        }`}
+                        style={{ width: `${train.healthScore}%` }}
+                      ></div>
+                    </div>
+                    <span className="text-sm text-gray-900">{train.healthScore}%</span>
                   </div>
-                </td>
-                <td className="px-6 py-4 whitespace-nowrap">
-                  <span className="inline-flex items-center justify-center w-8 h-8 rounded-full bg-blue-100 text-blue-800 text-sm font-semibold">
-                    {train.depotBay}
-                  </span>
                 </td>
                 <td className="px-6 py-4 whitespace-nowrap">
                   <span className={`inline-flex items-center px-3 py-1 rounded-full text-sm font-medium border ${getRecommendationColor(train.recommendation)}`}>

@@ -1,13 +1,13 @@
 import React from 'react';
-import { DivideIcon as LucideIcon } from 'lucide-react';
+import { LucideIcon } from 'lucide-react';
 
 interface SummaryCardProps {
   title: string;
   value: number;
   icon: LucideIcon;
   color: string;
-  bgColor: string;
-  borderColor: string;
+  bgColor?: string;
+  borderColor?: string;
 }
 
 const SummaryCard: React.FC<SummaryCardProps> = ({ 
@@ -15,8 +15,8 @@ const SummaryCard: React.FC<SummaryCardProps> = ({
   value, 
   icon: Icon, 
   color, 
-  bgColor, 
-  borderColor 
+  bgColor = 'bg-white', 
+  borderColor = 'border-gray-200' 
 }) => {
   return (
     <div className={`${bgColor} border ${borderColor} rounded-xl p-6 shadow-sm hover:shadow-md transition-shadow duration-200`}>
@@ -25,7 +25,7 @@ const SummaryCard: React.FC<SummaryCardProps> = ({
           <p className="text-sm font-medium text-gray-600 mb-1">{title}</p>
           <p className={`text-3xl font-bold ${color}`}>{value}</p>
         </div>
-        <div className={`p-3 rounded-lg ${bgColor === 'bg-white' ? 'bg-gray-50' : 'bg-white/20'}`}>
+        <div className="p-3 rounded-lg bg-gray-50">
           <Icon className={`h-8 w-8 ${color}`} />
         </div>
       </div>
