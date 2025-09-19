@@ -506,24 +506,22 @@ const LiveTrackingDisplay: React.FC<LiveTrackingDisplayProps> = ({ height = 600 
             </div>
           </motion.div>
         ))}
-        </div>
-
-        {/* Selected Train Details */}
-        {selectedTrain && (
-            <>
-              <div>
-                <div className="text-kmrl-lime-400">RUNNING</div>
-                <div className="text-2xl font-bold">{trains.filter(t => t.status === 'RUNNING').length}</div>
-              </div>
-              <div>
-                <div className="text-red-400">STOPPED</div>
-                <div className="text-2xl font-bold">{trains.filter(t => t.status === 'STOPPED').length}</div>
-              </div>
-              <div>
-                <div className="text-kmrl-yellow-400">DELAYED</div>
-                <div className="text-2xl font-bold">{trains.filter(t => t.delay > 0).length}</div>
-              </div>
-            </>
+        
+        {/* Train Status Summary */}
+        <div className="absolute bottom-4 left-4 bg-kmrl-grey-800/90 rounded-lg p-3 text-white text-xs">
+          <div className="grid grid-cols-3 gap-4">
+            <div>
+              <div className="text-kmrl-lime-400">RUNNING</div>
+              <div className="text-2xl font-bold">{trains.filter(t => t.status === 'RUNNING').length}</div>
+            </div>
+            <div>
+              <div className="text-red-400">STOPPED</div>
+              <div className="text-2xl font-bold">{trains.filter(t => t.status === 'STOPPED').length}</div>
+            </div>
+            <div>
+              <div className="text-kmrl-yellow-400">DELAYED</div>
+              <div className="text-2xl font-bold">{trains.filter(t => t.delay > 0).length}</div>
+            </div>
           </div>
         </div>
         
@@ -546,9 +544,8 @@ const LiveTrackingDisplay: React.FC<LiveTrackingDisplayProps> = ({ height = 600 
         </div>
       </div>
 
-      <>
-        {/* Selected Train Details */}
-        {selectedTrain && (
+      {/* Selected Train Details */}
+      {selectedTrain && (
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
@@ -604,7 +601,7 @@ const LiveTrackingDisplay: React.FC<LiveTrackingDisplayProps> = ({ height = 600 
             );
           })()}
         </motion.div>
-        )}
+      )}
     </div>
   );
 };
