@@ -16,6 +16,7 @@ import {
 } from 'lucide-react';
 import { trainInductions, todayInductionSchedule, depotOperations, inductionTimeSlots, servicePatterns } from '../data/inductionData';
 import { tomorrowInductionPlan, controlCenterData, aiSchedulingBot } from '../data/controlCenterData';
+import { weekdaySchedule, weekendSchedule, getCurrentSchedule, realServicePatterns, realDepotBays } from '../data/realScheduleData';
 import LiveTrackingDisplay from '../components/LiveTrackingDisplay';
 import AISchedulingBot from '../components/AISchedulingBot';
 
@@ -45,7 +46,8 @@ const TrainInduction: React.FC = () => {
     maintenance: tomorrowInductionPlan.maintenanceSchedule.length,
     currentActive: controlCenterData.activeTrains,
     systemStatus: controlCenterData.operationalStatus,
-    confidence: aiSchedulingBot.confidence
+    confidence: aiSchedulingBot.confidence,
+    scheduleStatus: getScheduleStatus()
   };
 
   const renderTomorrowPlan = () => (
@@ -56,11 +58,11 @@ const TrainInduction: React.FC = () => {
           <div>
             <h2 className="text-2xl font-bold mb-2">Tomorrow's Service Plan</h2>
             <p className="text-blue-100">
-              📅 {tomorrowInductionPlan.planDate} | Generated once daily at 23:00
+              📅 {new Date(Date.now() + 24*60*60*1000).toLocaleDateString()} | Real KMRL Schedule
             </p>
           </div>
           <div className="text-right">
-            <div className="text-3xl font-bold">{tomorrowInductionPlan.totalTrainsRequired}</div>
+            <div className="text-3xl font-bold">{getCurrentSchedule().length}</div>
             <div className="text-blue-100">Trains Scheduled</div>
           </div>
         </div>
@@ -69,15 +71,15 @@ const TrainInduction: React.FC = () => {
       {/* Daily Plan Status Cards */}
       <div className="grid grid-cols-2 md:grid-cols-6 gap-4">
         <div className="bg-green-50 border border-green-200 rounded-lg p-4 text-center">
-          <div className="text-2xl font-bold text-green-600">{dailyStats.tomorrowPlan}</div>
+          <div className="text-2xl font-bold text-green-600">{getCurrentSchedule().length}</div>
           <div className="text-sm text-green-700">Revenue Service</div>
         </div>
         <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-4 text-center">
-          <div className="text-2xl font-bold text-yellow-600">{dailyStats.standbyReady}</div>
+          <div className="text-2xl font-bold text-yellow-600">2</div>
           <div className="text-sm text-yellow-700">Standby Ready</div>
         </div>
         <div className="bg-red-50 border border-red-200 rounded-lg p-4 text-center">
-          <div className="text-2xl font-bold text-red-600">{dailyStats.maintenance}</div>
+          <div className="text-2xl font-bold text-red-600">8</div>
           <div className="text-sm text-red-700">Maintenance</div>
         </div>
         <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 text-center">
@@ -94,19 +96,19 @@ const TrainInduction: React.FC = () => {
         </div>
       </div>
 
-      {/* Tomorrow's Induction Schedule */}
+      {/* Real KMRL Schedule */}
       <div className="bg-white rounded-lg border border-gray-200">
         <div className="px-6 py-4 border-b border-gray-200">
           <div className="flex items-center justify-between">
             <div>
-              <h3 className="text-lg font-semibold text-gray-900">Tomorrow's Induction Schedule</h3>
+              <h3 className="text-lg font-semibold text-gray-900">Real KMRL Train Schedule</h3>
               <p className="text-sm text-gray-600">
-                🤖 AI-generated daily plan | Valid for {tomorrowInductionPlan.planDate} | Generated once at 23:00
+                📋 Actual operational schedule | Weekdays: 15 trains | Weekends: 12 trains
               </p>
             </div>
             <div className="flex items-center space-x-2">
               <CheckCircle className="h-5 w-5 text-green-600" />
-              <span className="text-sm text-green-600 font-medium">APPROVED</span>
+              <span className="text-sm text-green-600 font-medium">OPERATIONAL</span>
             </div>
           </div>
         </div>
@@ -114,52 +116,55 @@ const TrainInduction: React.FC = () => {
           <table className="min-w-full divide-y divide-gray-200">
             <thead className="bg-gray-50">
               <tr>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Slot</th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">S.No</th>
                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Train Name</th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Bay Position</th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">From Terminal</th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Induction Time</th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Departure Time</th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Route</th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Revenue Target</th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Train No</th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Train ID</th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Timing</th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Station</th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Expected Passengers</th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Service Type</th>
               </tr>
             </thead>
             <tbody className="bg-white divide-y divide-gray-200">
-              {tomorrowInductionPlan.inductionSlots.map((slot, index) => (
+              {getCurrentSchedule().map((train, index) => (
                 <tr 
-                  key={slot.trainId} 
-                  className={`hover:bg-gray-50 cursor-pointer ${selectedTrain === slot.trainId ? 'bg-blue-50' : ''}`}
-                  onClick={() => setSelectedTrain(slot.trainId)}
+                  key={train.trainId} 
+                  className={`hover:bg-gray-50 cursor-pointer ${selectedTrain === train.trainId ? 'bg-blue-50' : ''}`}
+                  onClick={() => setSelectedTrain(train.trainId)}
                 >
                   <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
-                    {slot.slotNumber}
+                    {train.serialNo}
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap font-medium text-gray-900">
-                    {slot.trainName}
+                    {train.trainName}
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                    {slot.bayPosition}
+                    {train.trainNo}
+                  </td>
+                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                    {train.trainId}
+                  </td>
+                  <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-blue-600">
+                    {train.timing}
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap">
                     <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
-                      slot.fromTerminal === 'ALUVA' ? 'bg-blue-100 text-blue-800' : 'bg-green-100 text-green-800'
+                      train.station.includes('DEPOT') ? 'bg-blue-100 text-blue-800' : 
+                      train.station === 'ALUVA' ? 'bg-green-100 text-green-800' : 'bg-purple-100 text-purple-800'
                     }`}>
-                      {slot.fromTerminal}
+                      {train.station}
                     </span>
                   </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-blue-600">
-                    {slot.inductionTime}
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-green-600">
-                    {slot.departureTime}
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                    {slot.assignedRoute}
+                  <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-purple-600">
+                    {train.passengerLoad.toLocaleString()}
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap">
-                    <div className="text-sm font-medium text-green-600">
-                      ₹{(slot.revenueTarget / 1000).toFixed(0)}K
-                    </div>
+                    <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
+                      train.serviceType === 'Weekday' ? 'bg-green-100 text-green-800' : 'bg-blue-100 text-blue-800'
+                    }`}>
+                      {train.serviceType}
+                    </span>
                   </td>
                 </tr>
               ))}
@@ -173,13 +178,13 @@ const TrainInduction: React.FC = () => {
         <div className="bg-green-50 border border-green-200 rounded-lg p-6">
           <h4 className="font-medium text-green-900 mb-4">Train Schedule Details</h4>
           {(() => {
-            const slot = tomorrowInductionPlan.inductionSlots.find(s => s.trainId === selectedTrain);
-            if (!slot) return null;
+            const train = getCurrentSchedule().find(t => t.trainId === selectedTrain);
+            if (!train) return null;
             
             return (
               <div className="space-y-4">
                 <div className="flex items-center justify-between">
-                  <h5 className="text-lg font-semibold text-green-900">{slot.trainName} ({slot.trainId})</h5>
+                  <h5 className="text-lg font-semibold text-green-900">{train.trainName} ({train.trainId})</h5>
                   <span className="px-3 py-1 rounded-full text-sm font-medium bg-green-100 text-green-800">
                     SCHEDULED
                   </span>
@@ -188,24 +193,24 @@ const TrainInduction: React.FC = () => {
                 <div className="bg-white rounded-lg p-4">
                   <div className="grid grid-cols-2 md:grid-cols-5 gap-4 text-sm">
                     <div>
-                      <span className="text-gray-600">Bay Position:</span>
-                      <div className="font-medium text-gray-900">{slot.bayPosition}</div>
+                      <span className="text-gray-600">Train No:</span>
+                      <div className="font-medium text-gray-900">{train.trainNo}</div>
                     </div>
                     <div>
-                      <span className="text-gray-600">Induction Time:</span>
-                      <div className="font-medium text-blue-600">{slot.inductionTime}</div>
+                      <span className="text-gray-600">Timing:</span>
+                      <div className="font-medium text-blue-600">{train.timing}</div>
                     </div>
                     <div>
-                      <span className="text-gray-600">Departure:</span>
-                      <div className="font-medium text-green-600">{slot.departureTime}</div>
+                      <span className="text-gray-600">Station:</span>
+                      <div className="font-medium text-green-600">{train.station}</div>
                     </div>
                     <div>
                       <span className="text-gray-600">Passengers:</span>
-                      <div className="font-medium text-purple-600">{slot.estimatedPassengers.toLocaleString()}</div>
+                      <div className="font-medium text-purple-600">{train.passengerLoad.toLocaleString()}</div>
                     </div>
                     <div>
-                      <span className="text-gray-600">Revenue:</span>
-                      <div className="font-medium text-green-600">₹{(slot.revenueTarget / 1000).toFixed(0)}K</div>
+                      <span className="text-gray-600">Priority:</span>
+                      <div className="font-medium text-green-600">#{train.priority}</div>
                     </div>
                   </div>
                 </div>
@@ -315,26 +320,13 @@ const TrainInduction: React.FC = () => {
       <div className="bg-white rounded-lg border border-gray-200 p-6">
         <h3 className="text-lg font-semibold text-gray-900 mb-6">DEPOT BAY LAYOUT - REAL TIME STATUS (16/09/2025)</h3>
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-          {/* SBL Bays */}
+          {/* SBL Bays - Two Entry Lines */}
           <div>
-            <h4 className="font-medium text-green-900 mb-4 text-center bg-green-100 py-2 rounded">SBL BAYS (Service Bays Light) - TWO ENTRY LINES</h4>
+            <h4 className="font-medium text-green-900 mb-4 text-center bg-green-100 py-2 rounded">
+              SBL BAYS - TWO ENTRY LINES ({realDepotBays.sbl.totalBays} BAYS)
+            </h4>
             <div className="space-y-2">
-              {[
-                { bay: 'SBL1', openEnd: '05', bufferedEnd: '', crossed: false, entryLine: 'LINE 1' },
-                { bay: 'SBL2', openEnd: '', bufferedEnd: '', crossed: false, entryLine: 'LINE 2' },
-                { bay: 'SBL3', openEnd: '', bufferedEnd: '25', crossed: false, entryLine: 'LINE 1' },
-                { bay: 'SBL4', openEnd: '', bufferedEnd: '', crossed: false, entryLine: 'LINE 2' },
-                { bay: 'SBL5', openEnd: '', bufferedEnd: '', crossed: false, entryLine: 'LINE 1' },
-                { bay: 'SBL6', openEnd: '', bufferedEnd: '', crossed: true, entryLine: 'LINE 2' },
-                { bay: 'SBL7', openEnd: '', bufferedEnd: '2', crossed: true, entryLine: 'LINE 1' },
-                { bay: 'SBL8', openEnd: '', bufferedEnd: '', crossed: false, entryLine: 'LINE 2' },
-                { bay: 'SBL9', openEnd: '', bufferedEnd: '', crossed: false, entryLine: 'LINE 1' },
-                { bay: 'SBL10', openEnd: '18', bufferedEnd: '', crossed: false, entryLine: 'LINE 2' },
-                { bay: 'SBL11', openEnd: '', bufferedEnd: '', crossed: false, entryLine: 'LINE 1' },
-                { bay: 'SBL12', openEnd: '', bufferedEnd: '', crossed: false, entryLine: 'LINE 2' }
-              ].map((bay) => (
-                <div key={bay.bay} className={`p-3 rounded-lg border-2 ${
-                  bay.crossed ? 'bg-red-50 border-red-300' : 'bg-green-50 border-green-300'
+              {realDepotBays.sbl.bays.map((bay) => (
                 }`}>
                   <div className="flex items-center justify-between mb-2">
                     <div className={`font-bold text-lg ${bay.crossed ? 'text-red-900' : 'text-gray-900'}`}>
