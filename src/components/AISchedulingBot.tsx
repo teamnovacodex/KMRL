@@ -221,5 +221,3 @@ const AISchedulingBot: React.FC = () => {
 };
 
 export default AISchedulingBot;
-
-export default AISchedulingBot
