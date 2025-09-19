@@ -12,7 +12,7 @@ import {
   BarChart3,
   Train
 } from 'lucide-react';
-import { mockTrains } from '../data/mockData';
+import { consistentTrains, fleetStats } from '../data/consistentTrainData';
 import { aiOptimizationService } from '../services/aiOptimizationService';
 
 const AIOptimization: React.FC = () => {
@@ -54,11 +54,11 @@ const AIOptimization: React.FC = () => {
   };
 
   const stats = {
-    totalTrains: mockTrains.length,
-    serviceReady: mockTrains.filter(t => t.canGoToService && t.currentBay.type === 'SBL').length,
-    maintenance: mockTrains.filter(t => t.currentBay.type === 'HIBL' || t.currentBay.type === 'IBL').length,
-    criticalIssues: mockTrains.filter(t => t.criticalJobCards > 0).length,
-    avgHealthScore: Math.round(mockTrains.reduce((sum, t) => sum + t.healthScore, 0) / mockTrains.length)
+    totalTrains: fleetStats.total,
+    serviceReady: fleetStats.service,
+    maintenance: fleetStats.maintenance,
+    criticalIssues: 2, // Fixed number for consistency
+    avgHealthScore: fleetStats.avgHealthScore
   };
 
   return (
@@ -287,7 +287,7 @@ const AIOptimization: React.FC = () => {
             
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
               {optimizationResult.reasoning.slice(0, 12).map((reasoning: any) => {
-                const train = mockTrains.find(t => t.id === reasoning.trainId);
+                const train = consistentTrains.find(t => t.id === reasoning.trainId);
                 const decisionColor = reasoning.decision === 'Service' ? 'green' :
                                     reasoning.decision === 'Standby' ? 'yellow' : 'red';
                 
