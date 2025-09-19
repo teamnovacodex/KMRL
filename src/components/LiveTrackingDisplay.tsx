@@ -182,7 +182,7 @@ const LiveTrackingDisplay: React.FC<LiveTrackingDisplayProps> = ({ height = 600 
               const nextStation = stations[nextStationIndex];
               
               // Calculate new progress
-              let newProgress = train.progress + (train.speed * 0.0008);
+              let newProgress = train.progress + (train.speed * 0.001);
               
               // Interpolate position along track
               const newX = currentStation.x + (nextStation.x - currentStation.x) * newProgress;
@@ -219,18 +219,40 @@ const LiveTrackingDisplay: React.FC<LiveTrackingDisplayProps> = ({ height = 600 
                   trackLine: newTrackLine,
                   currentStation: stations[newCurrentStationIndex].code,
                   nextStation: stations[newNextStationIndex].code,
-                  progress: 0.0
+                  progress: 0.0,
+                  speed: Math.random() > 0.3 ? Math.floor(Math.random() * 20) + 35 : 0 // Vary speed or stop
                 };
               } else {
                 return {
                   ...train,
                   x: newX,
                   y: newY,
-                  progress: newProgress
+                  progress: newProgress,
+                  speed: train.status === 'STOPPED' ? 0 : Math.floor(Math.random() * 20) + 35
                 };
               }
             }
           }
+          
+          // Handle stopped trains - randomly resume movement
+          if (train.status === 'STOPPED' && Math.random() > 0.7) {
+            return {
+              ...train,
+              status: 'RUNNING',
+              speed: Math.floor(Math.random() * 20) + 35
+            };
+          }
+          
+          // Handle running trains - randomly stop at stations
+          if (train.status === 'RUNNING' && Math.random() > 0.95) {
+            return {
+              ...train,
+              status: 'STOPPED',
+              speed: 0,
+              delay: Math.random() > 0.5 ? Math.floor(Math.random() * 3) + 1 : 0
+            };
+          }
+          
           return train;
         });
         
@@ -263,7 +285,7 @@ const LiveTrackingDisplay: React.FC<LiveTrackingDisplayProps> = ({ height = 600 
         
         return newTrains;
       });
-    }, 200);
+    }, 500);
 
     return () => clearInterval(timer);
   }, []);

@@ -308,7 +308,7 @@ export const realDepotBays = {
     bays: [
       { number: 1, entryLine: 'SINGLE ENTRY', purpose: 'Major Overhaul' },
       { number: 2, entryLine: 'SINGLE ENTRY', purpose: 'System Replacement' },
-      { number: 3, entryLine: 'SINGLE ENTRY', purpose: 'Heavy Maintenance' }
+      { number: 3, entryLine: 'SINGLE ENTRY', purpose: 'Heavy Maintenance', currentTrain: 'VAAYU' }
     ]
   },
   hicl: {
@@ -316,16 +316,16 @@ export const realDepotBays = {
     totalBays: 1,
     entryLines: 1,
     bays: [
-      { number: 1, entryLine: 'RACK OPTION', purpose: 'Heavy Inspection & Cleaning' }
+      { number: 1, entryLine: 'RACK OPTION', purpose: 'Heavy Inspection & Cleaning', currentTrain: 'INDUS' }
     ]
   },
   terminal: {
     description: 'Terminal & Utility Bays',
     totalBays: 3,
     bays: [
-      { code: 'ETU', purpose: 'Empty Train Unit' },
-      { code: 'ERL', purpose: 'Emergency Relief' },
-      { code: 'UBL', purpose: 'Utility Bay' }
+      { code: 'ETU', purpose: 'Empty Train Unit', currentTrain: 'MAARUT' },
+      { code: 'ERL', purpose: 'Emergency Relief', currentTrain: 'SABARMATHI' },
+      { code: 'UBL', purpose: 'Utility Bay', currentTrain: 'GODHAVARI' }
     ]
   }
 };

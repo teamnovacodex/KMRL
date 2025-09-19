@@ -326,7 +326,7 @@ const TrainInduction: React.FC = () => {
       {/* Real Bay Layout */}
       <div className="bg-white rounded-lg border border-gray-200 p-6">
         <h3 className="text-lg font-semibold text-gray-900 mb-6">DEPOT BAY LAYOUT - REAL TIME STATUS (16/09/2025)</h3>
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
           {/* SBL Bays - Two Entry Lines */}
           <div>
             <h4 className="font-medium text-green-900 mb-4 text-center bg-green-100 py-2 rounded">
@@ -365,9 +365,11 @@ const TrainInduction: React.FC = () => {
             </div>
           </div>
 
-          {/* IBL & HIBL Bays - ONE ENTRY LINE */}
+          {/* IBL Bays - ONE ENTRY LINE */}
           <div>
-            <h4 className="font-medium text-yellow-900 mb-4 text-center bg-yellow-100 py-2 rounded">IBL & HIBL BAYS - ONE ENTRY LINE</h4>
+            <h4 className="font-medium text-yellow-900 mb-4 text-center bg-yellow-100 py-2 rounded">
+              IBL BAYS - ONE ENTRY LINE ({realDepotBays.ibl.totalBays} BAYS)
+            </h4>
             <div className="space-y-2">
               {realDepotBays.ibl.bays.map((bay) => (
                 <div key={bay.number} className="p-3 bg-yellow-50 rounded-lg border-2 border-yellow-300">
@@ -389,6 +391,15 @@ const TrainInduction: React.FC = () => {
                   </div>
                 </div>
               ))}
+            </div>
+          </div>
+
+          {/* HIBL Bays - ONE ENTRY LINE */}
+          <div>
+            <h4 className="font-medium text-red-900 mb-4 text-center bg-red-100 py-2 rounded">
+              HIBL BAYS - ONE ENTRY LINE ({realDepotBays.hibl.totalBays} BAYS)
+            </h4>
+            <div className="space-y-2">
               
               {realDepotBays.hibl.bays.map((bay) => (
                 <div key={bay.number} className="p-3 bg-red-50 rounded-lg border-2 border-red-300">
@@ -436,7 +447,7 @@ const TrainInduction: React.FC = () => {
               
               {/* Special Terminal Bays */}
               {realDepotBays.terminal.bays.map((bay) => (
-                <div key={bay.bay} className="p-3 bg-gray-50 rounded-lg border-2 border-gray-300">
+                <div key={bay.code} className="p-3 bg-gray-50 rounded-lg border-2 border-gray-300">
                   <div className="flex items-center justify-between mb-2">
                     <div className="font-bold text-lg text-gray-900">{bay.code}</div>
                     <div className="text-xs text-gray-700 font-medium">{bay.purpose}</div>
