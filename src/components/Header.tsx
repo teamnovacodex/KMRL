@@ -8,13 +8,12 @@ const Header: React.FC = () => {
   const { user, logout } = useAuth();
 
   const navItems = [
-    { path: '/', label: 'Command Center', icon: Train },
+    { path: '/', label: 'Train Induction', icon: Train },
     { path: '/analytics', label: 'Analytics', icon: BarChart3 },
     { path: '/ai-optimization', label: 'AI Engine', icon: Brain },
     { path: '/maintenance', label: 'Maintenance', icon: Wrench },
     { path: '/fleet', label: 'Fleet', icon: Users },
     { path: '/reports', label: 'Reports', icon: FileText },
-    { path: '/kmrl-operations', label: 'KMRL Operations', icon: Calendar }
   ];
 
   return (
