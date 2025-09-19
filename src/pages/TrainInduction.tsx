@@ -303,35 +303,6 @@ const TrainInduction: React.FC = () => {
     </div>
   );
 
-  const renderScheduleManagement = () => (
-    <div className="space-y-6">
-      {/* Time Slot Management */}
-      <div className="bg-white rounded-lg border border-gray-200 p-6">
-        <h3 className="text-lg font-semibold text-gray-900 mb-6">Induction Time Slots</h3>
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-          {inductionTimeSlots.slice(0, 15).map((slot) => (
-            <div key={slot.slot} className="border border-gray-200 rounded-lg p-4">
-              <div className="flex items-center justify-between mb-2">
-                <div className="text-lg font-bold text-blue-600">{slot.time}</div>
-                <div className="text-sm text-gray-500">Slot {slot.slot}</div>
-              </div>
-              <div className="text-sm text-gray-700">{slot.description}</div>
-              <div className="mt-2">
-                {todayInductionSchedule.inductionSlots.find(s => s.inductionTime === slot.time) ? (
-                  <div className="text-xs text-green-600 font-medium">
-                    ✓ {todayInductionSchedule.inductionSlots.find(s => s.inductionTime === slot.time)?.trainName}
-                  </div>
-                ) : (
-                  <div className="text-xs text-gray-400">Available</div>
-                )}
-              </div>
-            </div>
-          ))}
-        </div>
-      </div>
-    </div>
-  );
-
   const renderDepotStatus = () => (
     <div className="space-y-6">
       {/* Depot Bay Status */}
