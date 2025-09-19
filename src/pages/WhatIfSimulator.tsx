@@ -206,7 +206,7 @@ const WhatIfSimulator: React.FC = () => {
                     </div>
                     <div className="flex items-center justify-between text-sm">
                       <span className="text-gray-600">Mileage:</span>
-                      <span className="font-mono">{train.mileage.toLocaleString()} km</span>
+                      <span className="font-mono">{train.totalMileage.toLocaleString()} km</span>
                     </div>
                     <div className="flex items-center justify-between text-sm">
                       <span className="text-gray-600">Depot Bay:</span>
