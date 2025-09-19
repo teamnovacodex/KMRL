@@ -931,6 +931,7 @@ const LiveTrackingDisplay: React.FC<LiveTrackingDisplayProps> = ({ height = 600 
               </div>
             );
           })()}
+          </div>
         </motion.div>
       )}
 
