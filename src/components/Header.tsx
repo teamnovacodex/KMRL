@@ -1,9 +1,11 @@
 import React from 'react';
-import { Train, MapPin, Brain, BarChart3, Wrench, FileText, Users } from 'lucide-react';
+import { Train, MapPin, Brain, BarChart3, Wrench, FileText, Users, Calendar } from 'lucide-react';
 import { Link, useLocation } from 'react-router-dom';
+import { useAuth } from '../contexts/AuthContext';
 
 const Header: React.FC = () => {
   const location = useLocation();
+  const { user, logout } = useAuth();
 
   const navItems = [
     { path: '/', label: 'Command Center', icon: Train },
@@ -11,7 +13,8 @@ const Header: React.FC = () => {
     { path: '/ai-optimization', label: 'AI Engine', icon: Brain },
     { path: '/maintenance', label: 'Maintenance', icon: Wrench },
     { path: '/fleet', label: 'Fleet', icon: Users },
-    { path: '/reports', label: 'Reports', icon: FileText }
+    { path: '/reports', label: 'Reports', icon: FileText },
+    { path: '/kmrl-operations', label: 'KMRL Operations', icon: Calendar }
   ];
 
   return (
@@ -57,6 +60,19 @@ const Header: React.FC = () => {
               <MapPin className="h-4 w-4" />
               <span className="hidden sm:inline">Kochi Metro</span>
             </div>
+            {user && (
+              <div className="flex items-center space-x-4">
+                <div className="text-sm text-gray-700">
+                  Welcome, <span className="font-medium">{user.username}</span>
+                </div>
+                <button
+                  onClick={logout}
+                  className="text-sm text-gray-600 hover:text-gray-900"
+                >
+                  Logout
+                </button>
+              </div>
+            )}
           </div>
         </div>
 
