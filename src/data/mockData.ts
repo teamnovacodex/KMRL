@@ -22,87 +22,9 @@ const getRandomDate = (daysFromNow: number, variance: number = 0) => {
   return date.toISOString();
 };
 
-const getRandomTime = () => {
-  const hours = Math.floor(Math.random() * 24);
-  const minutes = Math.floor(Math.random() * 60);
-  return `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}`;
-};
-
-// AI Optimization Engine - Automatic Scheduling Logic
-const calculateAIRecommendation = (train: any, index: number): any => {
-  const now = new Date();
-  const tomorrow = new Date(now);
-  tomorrow.setDate(tomorrow.getDate() + 1);
-  
-  let decision: 'Service' | 'Standby' | 'Maintenance' | 'Deep Clean' = 'Service';
-  let confidence = 85;
-  let reasoning: string[] = [];
-  let riskFactors: string[] = [];
-  let estimatedServiceHours = 16;
-  
-  // AI Decision Logic
-  if (train.rollingStockCert.status === 'Expired' || 
-      train.signallingCert.status === 'Expired' || 
-      train.telecomCert.status === 'Expired') {
-    decision = 'Maintenance';
-    confidence = 95;
-    reasoning.push('Expired fitness certificates require immediate attention');
-    riskFactors.push('Safety compliance violation');
-    estimatedServiceHours = 0;
-  } else if (train.criticalJobCards > 0) {
-    decision = 'Maintenance';
-    confidence = 90;
-    reasoning.push('Critical job cards must be resolved before service');
-    riskFactors.push('Potential service disruption');
-    estimatedServiceHours = 0;
-  } else if (train.currentBay.type !== 'SBL') {
-    decision = 'Maintenance';
-    confidence = 88;
-    reasoning.push('Train not in Service Bay Light - cannot go to revenue service');
-    riskFactors.push('Depot positioning constraint');
-    estimatedServiceHours = 0;
-  } else if (train.cleaningStatus === 'Deep Clean Required') {
-    decision = 'Deep Clean';
-    confidence = 82;
-    reasoning.push('Deep cleaning required before passenger service');
-    riskFactors.push('Passenger experience impact');
-    estimatedServiceHours = 8;
-  } else if (train.brandingRequired && train.exteriorWrapContract?.status === 'Active') {
-    decision = 'Service';
-    confidence = 92;
-    reasoning.push('Active branding contract requires maximum exposure hours');
-    reasoning.push('High revenue potential from advertising');
-    estimatedServiceHours = 18;
-  } else if (train.healthScore < 70) {
-    decision = 'Standby';
-    confidence = 75;
-    reasoning.push('Low health score requires monitoring');
-    riskFactors.push('Potential reliability issues');
-    estimatedServiceHours = 12;
-  } else {
-    decision = 'Service';
-    confidence = 85 + Math.floor(Math.random() * 10);
-    reasoning.push('All systems operational and ready for service');
-    reasoning.push('Optimal mileage and wear patterns');
-    estimatedServiceHours = 16 + Math.floor(Math.random() * 4);
-  }
-  
-  return {
-    decision,
-    confidence,
-    reasoning,
-    scheduledFor: tomorrow.toISOString().split('T')[0],
-    estimatedServiceHours,
-    riskFactors,
-    alternativeOptions: decision === 'Service' ? ['Standby if needed'] : ['Service after resolution'],
-    lastUpdated: now.toISOString()
-  };
-};
-
-// Generate 23 comprehensive train records with AI scheduling
+// Generate 23 comprehensive train records
 export const mockTrains: Train[] = trainNames.map((name, index) => {
   const id = (index + 1).toString();
-  const now = new Date();
   
   // Determine bay type and service eligibility
   let bayType: 'IBL' | 'HIBL' | 'SBL';
@@ -136,7 +58,7 @@ export const mockTrains: Train[] = trainNames.map((name, index) => {
   const needsBranding = Math.random() > 0.6;
   const needsCleaning = Math.random() > 0.7;
   
-  const baseData = {
+  return {
     id,
     trainNumber: `KMRL-${(index + 1).toString().padStart(3, '0')}`,
     trainName: name,
@@ -144,7 +66,7 @@ export const mockTrains: Train[] = trainNames.map((name, index) => {
     manufacturingYear: index < 10 ? 2017 : index < 20 ? 2018 : 2019,
     status: hasMaintenanceIssue ? 'Maintenance' : 'Active',
     
-    // Fitness Certificates with proper scheduling
+    // Fitness Certificates
     fitnessStatus: Math.random() > 0.9 ? 'Expired' : Math.random() > 0.8 ? 'Expiring Soon' : 'Valid',
     rollingStockCert: {
       status: Math.random() > 0.95 ? 'Expired' : 'Valid',
@@ -174,7 +96,7 @@ export const mockTrains: Train[] = trainNames.map((name, index) => {
       certificateNumber: `TC-${index + 1}-2024`
     },
     
-    // Job Cards with scheduling
+    // Job Cards
     jobCardStatus: hasMaintenanceIssue ? 'Open' : 'Closed',
     maximoWorkOrders: hasMaintenanceIssue ? [{
       workOrderNumber: `WO-2024-${1200 + index}`,
@@ -194,13 +116,13 @@ export const mockTrains: Train[] = trainNames.map((name, index) => {
     lastMaintenance: getRandomDate(-15, 10),
     nextScheduledMaintenance: getRandomDate(30, 15),
     maintenanceWindow: {
-      startTime: `${Math.floor(Math.random() * 6) + 22}:00`, // 22:00 to 04:00
+      startTime: `${Math.floor(Math.random() * 6) + 22}:00`,
       endTime: `${Math.floor(Math.random() * 6) + 4}:00`,
       estimatedDuration: bayType === 'HIBL' ? 8 : bayType === 'IBL' ? 4 : 2,
       priority: hasMaintenanceIssue ? 'High' : 'Medium'
     },
     
-    // Branding with scheduling
+    // Branding
     brandingRequired: needsBranding,
     exteriorWrapContract: needsBranding ? {
       advertiser: ['Coca-Cola India', 'Samsung Electronics', 'Flipkart', 'Amazon India', 'Reliance Jio'][Math.floor(Math.random() * 5)],
@@ -226,13 +148,13 @@ export const mockTrains: Train[] = trainNames.map((name, index) => {
       }
     ],
     
-    // Mileage & Third Rail with time tracking
+    // Mileage & Third Rail
     totalMileage: isHighMileage ? Math.floor(Math.random() * 50000) + 150000 : Math.floor(Math.random() * 80000) + 50000,
     dailyMileage: Math.floor(Math.random() * 100) + 200,
     weeklyMileage: Math.floor(Math.random() * 700) + 1400,
     monthlyMileage: Math.floor(Math.random() * 3000) + 6000,
     lastMileageUpdate: getRandomDate(-1, 0),
-    thirdRailConsumption: Math.random() * 2 + 3.5, // kWh per km
+    thirdRailConsumption: Math.random() * 2 + 3.5,
     dailyPowerConsumption: Math.floor(Math.random() * 2000) + 1000,
     bogieWear: {
       currentWear: Math.floor(Math.random() * 40) + 30,
@@ -254,7 +176,7 @@ export const mockTrains: Train[] = trainNames.map((name, index) => {
     },
     utilizationRate: Math.floor(Math.random() * 30) + 70,
     
-    // Depot Bay with scheduling
+    // Depot Bay
     currentBay: {
       type: bayType,
       bayNumber: bayNumber,
@@ -265,21 +187,21 @@ export const mockTrains: Train[] = trainNames.map((name, index) => {
       occupancyDuration: Math.floor(Math.random() * 12) + 8
     },
     
-    // Cleaning with scheduling
+    // Cleaning
     cleaningStatus: needsCleaning ? 'Pending' : Math.random() > 0.8 ? 'In Progress' : 'Done',
     cleaningSchedule: {
       scheduledDate: getRandomDate(1, 1),
-      scheduledTime: `${Math.floor(Math.random() * 4) + 1}:00`, // 01:00 to 05:00
+      scheduledTime: `${Math.floor(Math.random() * 4) + 1}:00`,
       estimatedDuration: needsCleaning ? 6 : 3,
       cleaningType: needsCleaning ? 'Deep' : 'Basic',
       assignedCrew: `Crew-${Math.floor(Math.random() * 5) + 1}`,
-      bayRequired: Math.floor(Math.random() * 3) + 21, // Cleaning bays 21-23
+      bayRequired: Math.floor(Math.random() * 3) + 21,
       manpowerRequired: needsCleaning ? 4 : 2
     },
     lastCleaning: getRandomDate(-2, 1),
     nextCleaningDue: getRandomDate(7, 3),
     
-    // Health Monitoring with timestamps
+    // Health Monitoring
     healthScore: Math.floor(Math.random() * 40) + 60,
     lastHealthCheck: getRandomDate(-1, 0),
     nextHealthCheck: getRandomDate(1, 0),
@@ -308,24 +230,28 @@ export const mockTrains: Train[] = trainNames.map((name, index) => {
       issues: Math.random() > 0.8 ? ['Filter replacement due'] : []
     },
     
+    // AI Recommendation
+    aiRecommendation: {
+      decision: canGoToService && !hasMaintenanceIssue ? 'Service' : hasMaintenanceIssue ? 'Maintenance' : 'Standby',
+      confidence: Math.floor(Math.random() * 30) + 70,
+      reasoning: canGoToService ? ['All systems operational', 'In SBL bay'] : ['Maintenance required', `In ${bayType} bay`],
+      scheduledFor: getRandomDate(1, 0).split('T')[0],
+      estimatedServiceHours: canGoToService ? 16 : 0,
+      riskFactors: hasMaintenanceIssue ? ['Maintenance pending'] : [],
+      alternativeOptions: ['Standby if needed'],
+      lastUpdated: new Date().toISOString()
+    },
+    
     canGoToService,
     serviceEligibilityReasons: canGoToService ? 
-      ['In SBL bay', 'All certificates valid', 'No critical issues'] : 
-      [`In ${bayType} bay - not service ready`, 'Maintenance required'],
+      ['In SBL bay', 'All certificates valid'] : 
+      [`In ${bayType} bay - not service ready`],
     nextServiceDate: canGoToService ? getRandomDate(1, 0) : getRandomDate(7, 5),
     estimatedRevenue: canGoToService ? Math.floor(Math.random() * 50000) + 30000 : 0
   };
-  
-  // Calculate AI recommendation
-  const aiRecommendation = calculateAIRecommendation(baseData, index);
-  
-  return {
-    ...baseData,
-    aiRecommendation
-  };
 });
 
-// Generate historical data for AI training
+// Generate historical data
 export const historicalData: HistoricalData[] = Array.from({ length: 90 }, (_, i) => {
   const date = new Date();
   date.setDate(date.getDate() - i);
@@ -401,46 +327,3 @@ export const depotBays: DepotBay[] = [
     nextAvailable: getRandomDate(1, 1)
   }))
 ];
-
-// AI Optimization Result Generator
-export const generateAIOptimization = (): AIOptimizationResult => {
-  const now = new Date();
-  const tomorrow = new Date(now);
-  tomorrow.setDate(tomorrow.getDate() + 1);
-  
-  const serviceTrains = mockTrains.filter(t => t.aiRecommendation.decision === 'Service').map(t => t.id);
-  const standbyTrains = mockTrains.filter(t => t.aiRecommendation.decision === 'Standby').map(t => t.id);
-  const maintenanceTrains = mockTrains.filter(t => t.aiRecommendation.decision === 'Maintenance').map(t => t.id);
-  const cleaningTrains = mockTrains.filter(t => t.aiRecommendation.decision === 'Deep Clean').map(t => t.id);
-  
-  return {
-    optimizationId: `OPT-${Date.now()}`,
-    timestamp: now.toISOString(),
-    targetDate: tomorrow.toISOString().split('T')[0],
-    totalScore: 0.94,
-    selectedForService: serviceTrains,
-    standbyTrains,
-    maintenanceTrains,
-    cleaningTrains,
-    reasoning: mockTrains.map(train => ({
-      trainId: train.id,
-      decision: train.aiRecommendation.decision,
-      score: train.aiRecommendation.confidence,
-      factors: train.aiRecommendation.reasoning,
-      scheduledTime: `${Math.floor(Math.random() * 4) + 5}:00` // 05:00 to 09:00
-    })),
-    constraints: {
-      maxServiceTrains: 18,
-      minStandbyTrains: 3,
-      availableManpower: 25,
-      depotCapacity: 23
-    },
-    expectedPerformance: {
-      onTimePerformance: 96.5,
-      passengerCapacity: 180000,
-      estimatedRevenue: 2800000,
-      operationalCost: 1200000,
-      riskLevel: 'Low'
-    }
-  };
-};

@@ -64,10 +64,10 @@ export const PerformanceTrendChart: React.FC<ChartProps> = ({ height = 300 }) =>
 
 export const FleetStatusChart: React.FC<ChartProps> = ({ height = 300 }) => {
   const statusData = [
-    { name: 'Service Ready', value: mockTrains.filter(t => t.recommendation === 'Service').length, color: '#10b981' },
-    { name: 'Standby', value: mockTrains.filter(t => t.recommendation === 'Standby').length, color: '#f59e0b' },
-    { name: 'Maintenance', value: mockTrains.filter(t => t.recommendation === 'Maintenance').length, color: '#ef4444' },
-    { name: 'Deep Clean', value: mockTrains.filter(t => t.recommendation === 'Deep Clean').length, color: '#8b5cf6' }
+    { name: 'Service Ready', value: mockTrains.filter(t => t.canGoToService).length, color: '#10b981' },
+    { name: 'Minor Issues', value: mockTrains.filter(t => t.currentBay.type === 'IBL').length, color: '#f59e0b' },
+    { name: 'Major Maintenance', value: mockTrains.filter(t => t.currentBay.type === 'HIBL').length, color: '#ef4444' },
+    { name: 'Terminal Stabling', value: mockTrains.filter(t => t.currentBay.bayNumber >= 20).length, color: '#8b5cf6' }
   ];
 
   return (
@@ -133,10 +133,10 @@ export const HealthScoreChart: React.FC<ChartProps> = ({ height = 300 }) => {
   const healthData = mockTrains.slice(0, 10).map(train => ({
     trainName: train.trainName,
     healthScore: train.healthScore,
-    engineHealth: train.engineHealth,
-    brakeHealth: train.brakeHealth,
-    doorHealth: train.doorSystemHealth,
-    acHealth: train.acSystemHealth
+    engineHealth: train.engineHealth.score,
+    brakeHealth: train.brakeHealth.score,
+    doorHealth: train.doorSystemHealth.score,
+    acHealth: train.acSystemHealth.score
   }));
 
   return (

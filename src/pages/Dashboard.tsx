@@ -41,7 +41,7 @@ const Dashboard: React.FC = () => {
     const interval = setInterval(() => {
       const latest = historicalData[0];
       setRealTimeData({
-        activeTrains: mockTrains.filter(t => t.recommendation === 'Service').length,
+        activeTrains: mockTrains.filter(t => t.canGoToService).length,
         onTimePerformance: latest.onTimePerformance + (Math.random() - 0.5) * 2,
         totalPassengers: latest.passengerCount + Math.floor((Math.random() - 0.5) * 10000),
         efficiency: latest.efficiency + (Math.random() - 0.5) * 3
@@ -223,18 +223,6 @@ const Dashboard: React.FC = () => {
               <div className="text-sm text-yellow-700 font-medium mb-2">IBL Bays - Minor Issues</div>
               <div className="text-3xl font-bold text-yellow-800">{stats.standby}</div>
               <div className="text-sm text-yellow-600">Minor maintenance needed</div>
-            </div>
-            
-            <div className="bg-gradient-to-br from-red-50 to-red-100 rounded-lg p-4 text-center">
-              <div className="text-sm text-red-700 font-medium mb-2">HIBL Bays - Major Maintenance</div>
-              <div className="text-3xl font-bold text-red-800">{stats.maintenance}</div>
-              <div className="text-sm text-red-600">Major repairs needed</div>
-            </div>
-            
-            <div className="bg-gradient-to-br from-blue-50 to-blue-100 rounded-lg p-4">
-              <div className="text-sm text-blue-700 font-medium mb-2">Total SBL Bays</div>
-              <div className="text-3xl font-bold text-blue-800">{stats.sblBays}</div>
-              <div className="text-sm text-blue-600">All service bays</div>
             </div>
           </div>
 
