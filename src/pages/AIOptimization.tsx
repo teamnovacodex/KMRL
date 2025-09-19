@@ -9,7 +9,8 @@ import {
   Clock,
   Zap,
   Target,
-  BarChart3
+  BarChart3,
+  Train
 } from 'lucide-react';
 import { mockTrains } from '../data/mockData';
 import { aiOptimizationService } from '../services/aiOptimizationService';
