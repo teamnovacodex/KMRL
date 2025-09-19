@@ -2,251 +2,92 @@ export interface Train {
   id: string;
   trainNumber: string;
   trainName: string;
-  model: string;
-  manufacturingYear: number;
+  trainId: string; // 001, 002, etc.
+  positionId: string; // SBL1, SBL2, IBL1, HIBL1, etc.
+  fromStation: string;
   status: 'Active' | 'Maintenance' | 'Standby' | 'Out of Service';
+  fitnessExpiry: string;
+  nextDayStart: string;
   
-  // Fitness Certificates - 3 departments with timestamps
-  fitnessStatus: 'Valid' | 'Expired' | 'Expiring Soon';
-  rollingStockCert: {
-    status: 'Valid' | 'Expired';
-    issueDate: string;
-    expiryDate: string;
-    lastInspection: string;
-    nextInspection: string;
-    issuedBy: string;
-    certificateNumber: string;
-  };
-  signallingCert: {
-    status: 'Valid' | 'Expired';
-    issueDate: string;
-    expiryDate: string;
-    lastInspection: string;
-    nextInspection: string;
-    issuedBy: string;
-    certificateNumber: string;
-  };
-  telecomCert: {
-    status: 'Valid' | 'Expired';
-    issueDate: string;
-    expiryDate: string;
-    lastInspection: string;
-    nextInspection: string;
-    issuedBy: string;
-    certificateNumber: string;
+  // Fitness Certificates with exact validation
+  fitnessValidation: {
+    mechanical: boolean;
+    electrical: boolean;
+    brakeSystem: boolean;
+    doorSystem: boolean;
+    communication: boolean;
+    safety: boolean;
+    cleanliness: boolean;
+    documentation: boolean;
   };
   
-  // Job Cards - IBM Maximo with scheduling
-  jobCardStatus: 'Open' | 'Closed' | 'In Progress';
-  maximoWorkOrders: MaximoJobCard[];
-  criticalJobCards: number;
-  lastMaintenance: string;
-  nextScheduledMaintenance: string;
-  maintenanceWindow: {
-    startTime: string;
-    endTime: string;
-    estimatedDuration: number; // hours
-    priority: 'Low' | 'Medium' | 'High' | 'Critical';
-  };
+  // Induction scheduling
+  inductionTime: string; // 04:30, 04:45, 05:00, etc.
+  scheduledDeparture: string; // 05:00, 05:15, 05:30, etc.
   
-  // Branding - Sticker wrapping + interior posters with scheduling
-  brandingRequired: boolean;
-  exteriorWrapContract?: {
-    advertiser: string;
-    campaignName: string;
-    contractStartDate: string;
-    contractEndDate: string;
-    requiredExposureHours: number;
-    currentExposureHours: number;
-    dailyTargetHours: number;
-    contractValue: number;
-    penaltyPerHour: number;
-    status: 'Active' | 'Expired' | 'Pending';
-    lastExposureUpdate: string;
-  };
-  interiorPosterAds: {
-    advertiser: string;
-    positionCount: number;
-    installationDate: string;
-    expiryDate: string;
-    revenue: number;
-    status: 'Active' | 'Expired';
-  }[];
-  
-  // Mileage & Third Rail System with time tracking
-  totalMileage: number;
-  dailyMileage: number;
-  weeklyMileage: number;
-  monthlyMileage: number;
-  lastMileageUpdate: string;
-  thirdRailConsumption: number; // kWh per km
-  dailyPowerConsumption: number; // kWh
-  bogieWear: {
-    currentWear: number; // 0-100%
-    lastInspection: string;
-    nextInspection: string;
-    replacementDue: string;
-  };
-  brakePadWear: {
-    currentWear: number; // 0-100%
-    lastInspection: string;
-    nextInspection: string;
-    replacementDue: string;
-  };
-  hvacWear: {
-    currentWear: number; // 0-100%
-    lastInspection: string;
-    nextInspection: string;
-    replacementDue: string;
-  };
-  utilizationRate: number; // 0-100
-  
-  // Depot Bay System with scheduling
+  // Current operational status
   currentBay: {
-    type: 'IBL' | 'HIBL' | 'SBL';
-    bayNumber: number;
-    position?: 'OPEN_END' | 'BUFFERED_END';
+    type: 'SBL' | 'IBL' | 'HIBL';
+    number: number;
     location: 'Muttom_Depot' | 'Aluva_Terminal' | 'Tripunithura_Terminal';
-    entryTime: string;
-    expectedExitTime: string;
-    occupancyDuration: number; // hours
   };
   
-  // Cleaning & Detailing with scheduling
-  cleaningStatus: 'Pending' | 'In Progress' | 'Done' | 'Deep Clean Required';
-  cleaningSchedule: {
-    scheduledDate: string;
-    scheduledTime: string;
-    estimatedDuration: number; // hours
-    cleaningType: 'Basic' | 'Deep' | 'Interior_Detail' | 'Exterior_Wash';
-    assignedCrew: string;
-    bayRequired: number;
-    manpowerRequired: number;
-  };
-  lastCleaning: string;
-  nextCleaningDue: string;
+  // AI Decision factors
+  aiDecision: 'Service' | 'Standby' | 'Maintenance' | 'Induction';
+  confidenceScore: number;
+  validationStatus: 'Valid' | 'Invalid' | 'Expiring Soon';
   
-  // Health Monitoring with timestamps
-  healthScore: number; // 0-100
-  lastHealthCheck: string;
-  nextHealthCheck: string;
-  engineHealth: {
-    score: number;
-    lastCheck: string;
-    nextCheck: string;
-    issues: string[];
-  };
-  brakeHealth: {
-    score: number;
-    lastCheck: string;
-    nextCheck: string;
-    issues: string[];
-  };
-  doorSystemHealth: {
-    score: number;
-    lastCheck: string;
-    nextCheck: string;
-    issues: string[];
-  };
-  acSystemHealth: {
-    score: number;
-    lastCheck: string;
-    nextCheck: string;
-    issues: string[];
-  };
-  
-  // AI Scheduling & Recommendations
-  aiRecommendation: {
-    decision: 'Service' | 'Standby' | 'Maintenance' | 'Deep Clean';
-    confidence: number; // 0-100
-    reasoning: string[];
-    scheduledFor: string; // tomorrow's date
-    estimatedServiceHours: number;
-    riskFactors: string[];
-    alternativeOptions: string[];
-    lastUpdated: string;
-  };
-  
-  // Service Eligibility
-  canGoToService: boolean;
-  serviceEligibilityReasons: string[];
-  nextServiceDate: string;
-  estimatedRevenue: number; // for tomorrow
+  // Operational metrics
+  totalMileage: number;
+  healthScore: number;
+  lastMaintenance: string;
+  nextMaintenance: string;
 }
 
-export interface MaximoJobCard {
-  workOrderNumber: string;
-  type: 'Preventive' | 'Corrective' | 'Emergency' | 'Inspection';
-  priority: 'Low' | 'Medium' | 'High' | 'Critical';
-  status: 'Open' | 'Closed' | 'In Progress';
-  description: string;
-  createdDate: string;
-  scheduledDate: string;
-  dueDate: string;
-  completedDate?: string;
-  estimatedHours: number;
-  actualHours?: number;
-  assignedTechnician: string;
-  partsRequired: string[];
-  estimatedCost: number;
-}
-
-export interface DepotBay {
-  bayNumber: number;
-  type: 'IBL' | 'HIBL' | 'SBL';
-  description: string;
-  capacity: number;
-  currentOccupant?: string;
-  location: 'Muttom_Depot' | 'Aluva_Terminal' | 'Tripunithura_Terminal';
-  position?: 'OPEN_END' | 'BUFFERED_END';
-  canServiceRevenue: boolean;
-  maintenanceCapabilities: string[];
-  availableFrom: string;
-  nextAvailable: string;
-}
-
-export interface AIOptimizationResult {
-  optimizationId: string;
-  timestamp: string;
-  targetDate: string; // tomorrow's date
-  totalScore: number;
-  selectedForService: string[];
-  standbyTrains: string[];
-  maintenanceTrains: string[];
-  cleaningTrains: string[];
-  reasoning: {
-    trainId: string;
-    decision: string;
-    score: number;
-    factors: string[];
-    scheduledTime: string;
-  }[];
-  constraints: {
-    maxServiceTrains: number;
-    minStandbyTrains: number;
-    availableManpower: number;
-    depotCapacity: number;
-  };
-  expectedPerformance: {
-    onTimePerformance: number;
-    passengerCapacity: number;
-    estimatedRevenue: number;
-    operationalCost: number;
-    riskLevel: 'Low' | 'Medium' | 'High';
-  };
-}
-
-export interface HistoricalData {
-  date: string;
-  selectedTrains: number;
+export interface FleetOperations {
+  totalFleet: number;
+  runningToday: number;
   standbyTrains: number;
-  maintenanceTrains: number;
-  onTimePerformance: number;
-  passengerCount: number;
-  revenue: number;
-  efficiency: number;
-  thirdRailConsumption: number;
-  averageHealthScore: number;
-  criticalIssues: number;
-  completedMaintenance: number;
+  maintenance: number;
+  serviceStatus: 'Active' | 'Holiday' | 'Weekend';
+  serviceHours: string;
+  
+  // Fleet distribution
+  weekdayOperations: number;
+  weekendOperations: number;
+  standbyLocations: string[];
+  depotLocation: string;
+  
+  // Revenue service hours
+  weekdayService: string;
+  holidayService: string;
+  currentStatus: string;
+  serviceType: string;
+}
+
+export interface InductionSchedule {
+  trainName: string;
+  trainId: string;
+  positionId: string;
+  fromStation: string;
+  inductionTime: string;
+  scheduledDeparture: string;
+  status: 'Active' | 'Scheduled' | 'Maintenance';
+}
+
+export interface AutomatedSystem {
+  fitnessValidation: {
+    validCertificates: number;
+    invalidCertificates: number;
+    expiringSoon: number;
+    totalTrains: number;
+  };
+  inductionScheduling: {
+    scheduledTrains: Train[];
+    firstTrain: string;
+    lastTrain: string;
+    serviceStart: string;
+    serviceEnd: string;
+    holidayStart: string;
+  };
 }
