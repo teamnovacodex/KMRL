@@ -17,6 +17,7 @@ import {
 import { trainInductions, todayInductionSchedule, depotOperations, inductionTimeSlots, servicePatterns } from '../data/inductionData';
 import { tomorrowInductionPlan, controlCenterData, aiSchedulingBot } from '../data/controlCenterData';
 import { weekdaySchedule, weekendSchedule, getCurrentSchedule, realServicePatterns, realDepotBays } from '../data/realScheduleData';
+import { consistentTrains, fleetStats, liveTrackingTrains, depotBayAssignments } from '../data/consistentTrainData';
 import LiveTrackingDisplay from '../components/LiveTrackingDisplay';
 import AISchedulingBot from '../components/AISchedulingBot';
 
@@ -50,9 +51,9 @@ const TrainInduction: React.FC = () => {
   ];
 
   const dailyStats = {
-    tomorrowPlan: tomorrowInductionPlan.totalTrainsRequired,
-    standbyReady: tomorrowInductionPlan.standbyTrains.length,
-    maintenance: tomorrowInductionPlan.maintenanceSchedule.length,
+    tomorrowPlan: fleetStats.service,
+    standbyReady: fleetStats.standby,
+    maintenance: fleetStats.maintenance,
     currentActive: controlCenterData.activeTrains,
     systemStatus: controlCenterData.operationalStatus,
     confidence: aiSchedulingBot.confidence,
@@ -80,15 +81,15 @@ const TrainInduction: React.FC = () => {
       {/* Daily Plan Status Cards */}
       <div className="grid grid-cols-2 md:grid-cols-6 gap-4">
         <div className="bg-green-50 border border-green-200 rounded-lg p-4 text-center">
-          <div className="text-2xl font-bold text-green-600">{getCurrentSchedule().length}</div>
+          <div className="text-2xl font-bold text-green-600">{fleetStats.service}</div>
           <div className="text-sm text-green-700">Revenue Service</div>
         </div>
         <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-4 text-center">
-          <div className="text-2xl font-bold text-yellow-600">2</div>
+          <div className="text-2xl font-bold text-yellow-600">{fleetStats.standby}</div>
           <div className="text-sm text-yellow-700">Standby Ready</div>
         </div>
         <div className="bg-red-50 border border-red-200 rounded-lg p-4 text-center">
-          <div className="text-2xl font-bold text-red-600">8</div>
+          <div className="text-2xl font-bold text-red-600">{fleetStats.maintenance}</div>
           <div className="text-sm text-red-700">Maintenance</div>
         </div>
         <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 text-center">
@@ -102,6 +103,10 @@ const TrainInduction: React.FC = () => {
         <div className="bg-emerald-50 border border-emerald-200 rounded-lg p-4 text-center">
           <div className="text-2xl font-bold text-emerald-600">{dailyStats.confidence}%</div>
           <div className="text-sm text-emerald-700">AI Confidence</div>
+        </div>
+        <div className="bg-gray-50 border border-gray-200 rounded-lg p-4 text-center">
+          <div className="text-2xl font-bold text-gray-600">{fleetStats.total}</div>
+          <div className="text-sm text-gray-700">Total Trains</div>
         </div>
       </div>
 
@@ -333,29 +338,26 @@ const TrainInduction: React.FC = () => {
               SBL BAYS - TWO ENTRY LINES ({realDepotBays.sbl.totalBays} BAYS)
             </h4>
             <div className="space-y-2">
-              {realDepotBays.sbl.bays.map((bay) => (
-                <div key={bay.number} className={`p-3 rounded-lg border-2 ${
-                  !bay.canStable ? 'bg-red-50 border-red-300' : 'bg-green-50 border-green-300'
-                }`}>
+              {depotBayAssignments.sbl.map((train) => (
+                <div key={train.currentBay.number} className="p-3 bg-green-50 rounded-lg border-2 border-green-300">
                   <div className="flex items-center justify-between mb-2">
-                    <div className={`font-bold text-lg ${!bay.canStable ? 'text-red-900' : 'text-gray-900'}`}>
-                      SBL{bay.number}
+                    <div className="font-bold text-lg text-gray-900">
+                      SBL{train.currentBay.number}
                     </div>
                     <div className="text-xs bg-blue-100 text-blue-800 px-2 py-1 rounded font-bold">
-                      {bay.entryLine}
+                      {train.currentBay.number % 2 === 0 ? 'LINE 2' : 'LINE 1'}
                     </div>
-                    {!bay.canStable && <span className="text-red-600 font-bold">❌ NO STABLING</span>}
                   </div>
                   <div className="grid grid-cols-2 gap-4">
                     <div className="text-center">
                       <div className="text-xs text-gray-600 font-bold bg-blue-100 py-1 rounded">OPEN END</div>
-                      <div className={`font-bold text-3xl mt-1 ${bay.currentTrain ? 'text-blue-600' : 'text-gray-400'}`}>
-                        {bay.currentTrain || '-'}
+                      <div className="font-bold text-2xl mt-1 text-blue-600">
+                        {train.trainNumber}
                       </div>
                     </div>
                     <div className="text-center">
                       <div className="text-xs text-gray-600 font-bold bg-purple-100 py-1 rounded">BUFFERED END</div>
-                      <div className="font-bold text-3xl mt-1 text-gray-400">
+                      <div className="font-bold text-2xl mt-1 text-gray-400">
                         -
                       </div>
                     </div>
@@ -371,12 +373,12 @@ const TrainInduction: React.FC = () => {
               IBL BAYS - ONE ENTRY LINE ({realDepotBays.ibl.totalBays} BAYS)
             </h4>
             <div className="space-y-2">
-              {realDepotBays.ibl.bays.map((bay) => (
-                <div key={bay.number} className="p-3 bg-yellow-50 rounded-lg border-2 border-yellow-300">
+              {depotBayAssignments.ibl.map((train) => (
+                <div key={train.currentBay.number} className="p-3 bg-yellow-50 rounded-lg border-2 border-yellow-300">
                   <div className="flex items-center justify-between mb-2">
-                    <div className="font-bold text-lg text-gray-900">IBL{bay.number}</div>
+                    <div className="font-bold text-lg text-gray-900">IBL{train.currentBay.number}</div>
                     <div className="text-xs bg-orange-100 text-orange-800 px-2 py-1 rounded font-bold">
-                      {bay.entryLine}
+                      SINGLE ENTRY
                     </div>
                     <div className="px-2 py-1 rounded text-xs font-bold bg-yellow-200 text-yellow-800">
                       IBL
@@ -384,10 +386,10 @@ const TrainInduction: React.FC = () => {
                   </div>
                   <div className="text-center">
                     <div className="text-xs text-gray-600 font-bold bg-blue-100 py-1 rounded">CURRENT TRAIN</div>
-                    <div className={`font-bold text-2xl mt-1 ${bay.currentTrain ? 'text-blue-600' : 'text-gray-400'}`}>
-                      {bay.currentTrain || '-'}
+                    <div className="font-bold text-2xl mt-1 text-blue-600">
+                      {train.trainNumber}
                     </div>
-                    <div className="text-xs text-gray-600 mt-1">{bay.purpose}</div>
+                    <div className="text-xs text-gray-600 mt-1">Minor Maintenance</div>
                   </div>
                 </div>
               ))}
@@ -400,13 +402,12 @@ const TrainInduction: React.FC = () => {
               HIBL BAYS - ONE ENTRY LINE ({realDepotBays.hibl.totalBays} BAYS)
             </h4>
             <div className="space-y-2">
-              
-              {realDepotBays.hibl.bays.map((bay) => (
-                <div key={bay.number} className="p-3 bg-red-50 rounded-lg border-2 border-red-300">
+              {depotBayAssignments.hibl.map((train) => (
+                <div key={train.currentBay.number} className="p-3 bg-red-50 rounded-lg border-2 border-red-300">
                   <div className="flex items-center justify-between mb-2">
-                    <div className="font-bold text-lg text-gray-900">HIBL{bay.number}</div>
+                    <div className="font-bold text-lg text-gray-900">HIBL{train.currentBay.number}</div>
                     <div className="text-xs bg-orange-100 text-orange-800 px-2 py-1 rounded font-bold">
-                      {bay.entryLine}
+                      SINGLE ENTRY
                     </div>
                     <div className="px-2 py-1 rounded text-xs font-bold bg-red-200 text-red-800">
                       HIBL
@@ -414,10 +415,10 @@ const TrainInduction: React.FC = () => {
                   </div>
                   <div className="text-center">
                     <div className="text-xs text-gray-600 font-bold bg-blue-100 py-1 rounded">CURRENT TRAIN</div>
-                    <div className={`font-bold text-2xl mt-1 ${bay.currentTrain ? 'text-blue-600' : 'text-gray-400'}`}>
-                      {bay.currentTrain || '-'}
+                    <div className="font-bold text-2xl mt-1 text-blue-600">
+                      {train.trainNumber}
                     </div>
-                    <div className="text-xs text-gray-600 mt-1">{bay.purpose}</div>
+                    <div className="text-xs text-gray-600 mt-1">Major Maintenance</div>
                   </div>
                 </div>
               ))}
@@ -429,37 +430,50 @@ const TrainInduction: React.FC = () => {
             <h4 className="font-medium text-purple-900 mb-4 text-center bg-purple-100 py-2 rounded">HICL - RACK OPTION (ONE BAY)</h4>
             <div className="space-y-2">
               {/* HICL - Rack Option Bay */}
-              <div className="p-4 bg-orange-50 rounded-lg border-2 border-orange-300">
-                <div className="flex items-center justify-between mb-3">
-                  <div className="font-bold text-xl text-gray-900">HICL</div>
-                  <div className="text-xs bg-orange-200 text-orange-800 px-3 py-1 rounded-full font-bold">
-                    RACK OPTION
+              {depotBayAssignments.hicl.length > 0 ? (
+                <div className="p-4 bg-orange-50 rounded-lg border-2 border-orange-300">
+                  <div className="flex items-center justify-between mb-3">
+                    <div className="font-bold text-xl text-gray-900">HICL</div>
+                    <div className="text-xs bg-orange-200 text-orange-800 px-3 py-1 rounded-full font-bold">
+                      RACK OPTION
+                    </div>
+                  </div>
+                  <div className="text-center">
+                    <div className="text-xs text-gray-600 font-bold bg-orange-100 py-1 rounded mb-2">RACK BAY</div>
+                    <div className="font-bold text-4xl text-orange-600">
+                      {depotBayAssignments.hicl[0].trainNumber}
+                    </div>
+                    <div className="text-sm text-orange-700 mt-2">Heavy Inspection & Cleaning</div>
                   </div>
                 </div>
-                <div className="text-center">
-                  <div className="text-xs text-gray-600 font-bold bg-orange-100 py-1 rounded mb-2">RACK BAY</div>
-                  <div className="font-bold text-4xl text-orange-600">
-                    {realDepotBays.hicl.bays[0].currentTrain || '-'}
+              ) : (
+                <div className="p-4 bg-gray-50 rounded-lg border-2 border-gray-300">
+                  <div className="text-center">
+                    <div className="font-bold text-xl text-gray-900">HICL</div>
+                    <div className="text-sm text-gray-600">RACK OPTION - EMPTY</div>
                   </div>
-                  <div className="text-sm text-orange-700 mt-2">Heavy Inspection & Cleaning</div>
                 </div>
-              </div>
+              )}
               
               {/* Special Terminal Bays */}
-              {realDepotBays.terminal.bays.map((bay) => (
-                <div key={bay.code} className="p-3 bg-gray-50 rounded-lg border-2 border-gray-300">
+              {depotBayAssignments.terminal.map((train, index) => {
+                const bayCodes = ['ETU', 'ERL', 'UBL'];
+                const bayPurposes = ['Empty Train Unit', 'Emergency Relief', 'Utility Bay'];
+                return (
+                <div key={train.id} className="p-3 bg-gray-50 rounded-lg border-2 border-gray-300">
                   <div className="flex items-center justify-between mb-2">
-                    <div className="font-bold text-lg text-gray-900">{bay.code}</div>
-                    <div className="text-xs text-gray-700 font-medium">{bay.purpose}</div>
+                    <div className="font-bold text-lg text-gray-900">{bayCodes[index]}</div>
+                    <div className="text-xs text-gray-700 font-medium">{bayPurposes[index]}</div>
                   </div>
                   <div className="text-center">
                     <div className="text-xs text-gray-600 font-bold bg-gray-100 py-1 rounded">CURRENT TRAIN</div>
-                    <div className={`font-bold text-2xl mt-1 ${bay.currentTrain ? 'text-gray-600' : 'text-gray-400'}`}>
-                      {bay.currentTrain || '-'}
+                    <div className="font-bold text-2xl mt-1 text-gray-600">
+                      {train.trainNumber}
                     </div>
                   </div>
                 </div>
-              ))}
+              );
+              })}
             </div>
           </div>
         </div>

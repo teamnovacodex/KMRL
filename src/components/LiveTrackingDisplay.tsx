@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { Train, MapPin, Activity, Zap, AlertTriangle, CheckCircle, Clock } from 'lucide-react';
+import { liveTrackingTrains } from '../data/consistentTrainData';
 
 interface LiveTrackingDisplayProps {
   height?: number;
@@ -88,83 +89,23 @@ const LiveTrackingDisplay: React.FC<LiveTrackingDisplayProps> = ({ height = 600 
   });
 
   // Live trains - Based on your diagram with train numbers
-  const [trains, setTrains] = useState<TrainPosition[]>([
-    {
-      id: '009',
-      name: 'SARAW',
-      x: 180,
-      y: 220,
-      speed: 48,
-      direction: 'DOWN',
-      status: 'RUNNING',
-      currentStation: 'PUL',
-      nextStation: 'COM',
-      delay: 0,
-      passengerLoad: 65,
-      trackLine: 2,
-      progress: 0.3
-    },
-    {
-      id: '019',
-      name: 'TAPTI',
-      x: 500,
-      y: 220,
-      speed: 45,
-      direction: 'DOWN',
-      status: 'RUNNING',
-      currentStation: 'KAL',
-      nextStation: 'COC',
-      delay: 0,
-      passengerLoad: 72,
-      trackLine: 2,
-      progress: 0.5
-    },
-    {
-      id: '024',
-      name: 'GANGA',
-      x: 900,
-      y: 220,
-      speed: 52,
-      direction: 'DOWN',
-      status: 'RUNNING',
-      currentStation: 'PAL',
-      nextStation: 'JLN',
-      delay: 0,
-      passengerLoad: 78,
-      trackLine: 2,
-      progress: 0.2
-    },
-    {
-      id: '007',
-      name: 'KAVRI',
-      x: 1300,
-      y: 180,
-      speed: 0,
-      direction: 'UP',
-      status: 'STOPPED',
-      currentStation: 'MAH',
-      nextStation: 'MGR',
-      delay: 2,
-      passengerLoad: 85,
-      trackLine: 1,
-      progress: 0.0
-    },
-    {
-      id: '025',
-      name: 'KRISHNA',
-      x: 1620,
-      y: 180,
-      speed: 50,
-      direction: 'UP',
-      status: 'RUNNING',
-      currentStation: 'VYT',
-      nextStation: 'ELA',
-      delay: 0,
-      passengerLoad: 92,
-      trackLine: 1,
-      progress: 0.7
-    }
-  ]);
+  const [trains, setTrains] = useState<TrainPosition[]>(() => 
+    liveTrackingTrains.map(train => ({
+      id: train.id,
+      name: train.name,
+      x: train.x,
+      y: train.y,
+      speed: train.speed,
+      direction: train.direction as 'UP' | 'DOWN',
+      status: train.status as 'RUNNING' | 'STOPPED' | 'APPROACHING' | 'DEPARTING',
+      currentStation: train.currentStation,
+      nextStation: train.nextStation,
+      delay: train.delay,
+      passengerLoad: train.passengerLoad,
+      trackLine: train.trackLine,
+      progress: train.progress
+    }))
+  );
 
   useEffect(() => {
     const timer = setInterval(() => {
@@ -182,7 +123,7 @@ const LiveTrackingDisplay: React.FC<LiveTrackingDisplayProps> = ({ height = 600 
               const nextStation = stations[nextStationIndex];
               
               // Calculate new progress
-              let newProgress = train.progress + (train.speed * 0.001);
+              let newProgress = train.progress + (train.speed * 0.003); // 3x faster movement
               
               // Interpolate position along track
               const newX = currentStation.x + (nextStation.x - currentStation.x) * newProgress;
@@ -235,7 +176,7 @@ const LiveTrackingDisplay: React.FC<LiveTrackingDisplayProps> = ({ height = 600 
           }
           
           // Handle stopped trains - randomly resume movement
-          if (train.status === 'STOPPED' && Math.random() > 0.7) {
+          if (train.status === 'STOPPED' && Math.random() > 0.5) { // Resume faster
             return {
               ...train,
               status: 'RUNNING',
@@ -244,7 +185,7 @@ const LiveTrackingDisplay: React.FC<LiveTrackingDisplayProps> = ({ height = 600 
           }
           
           // Handle running trains - randomly stop at stations
-          if (train.status === 'RUNNING' && Math.random() > 0.95) {
+          if (train.status === 'RUNNING' && Math.random() > 0.98) { // Stop less frequently
             return {
               ...train,
               status: 'STOPPED',
@@ -285,7 +226,7 @@ const LiveTrackingDisplay: React.FC<LiveTrackingDisplayProps> = ({ height = 600 
         
         return newTrains;
       });
-    }, 500);
+    }, 200); // Faster updates for smoother animation
 
     return () => clearInterval(timer);
   }, []);
