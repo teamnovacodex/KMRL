@@ -545,8 +545,9 @@ const LiveTrackingDisplay: React.FC<LiveTrackingDisplayProps> = ({ height = 600 
         </div>
       </div>
 
-      {/* Selected Train Details */}
-      {selectedTrain && (
+      <>
+        {/* Selected Train Details */}
+        {selectedTrain && (
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
@@ -602,7 +603,8 @@ const LiveTrackingDisplay: React.FC<LiveTrackingDisplayProps> = ({ height = 600 
             );
           })()}
         </motion.div>
-      )}
+        )}
+      </>
     </div>
   );
 };
