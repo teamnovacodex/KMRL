@@ -27,7 +27,7 @@ const LoginPage: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-900 via-blue-800 to-green-800 flex items-center justify-center p-4">
+    <div className="min-h-screen bg-gradient-to-br from-kmrl-aquamarine-900 via-kmrl-aquamarine-800 to-kmrl-lime-800 flex items-center justify-center p-4">
       <div className="max-w-6xl w-full grid grid-cols-1 lg:grid-cols-2 gap-8">
         {/* Left Side - Branding */}
         <motion.div
@@ -38,39 +38,39 @@ const LoginPage: React.FC = () => {
         >
           <div className="space-y-6">
             <div className="flex items-center space-x-4">
-              <div className="bg-white/20 p-4 rounded-2xl backdrop-blur-sm">
+              <div className="bg-kmrl-lime-500/30 p-4 rounded-2xl backdrop-blur-sm border border-kmrl-lime-400/30">
                 <Train className="h-12 w-12 text-white" />
               </div>
               <div>
                 <h1 className="text-4xl font-bold">KMRL Metro</h1>
-                <p className="text-xl text-blue-200">Kochi Metro Rail Limited</p>
+                <p className="text-xl text-kmrl-aquamarine-200">Kochi Metro Rail Limited</p>
               </div>
             </div>
             
             <div className="space-y-4">
               <h2 className="text-2xl font-semibold">AI-Driven Train Induction Planning</h2>
-              <p className="text-lg text-blue-100 leading-relaxed">
+              <p className="text-lg text-kmrl-aquamarine-100 leading-relaxed">
                 Advanced decision-support system for optimizing daily train operations, 
                 maintenance scheduling, and fleet management across 23 trains.
               </p>
             </div>
 
             <div className="grid grid-cols-2 gap-4 pt-4">
-              <div className="bg-white/10 p-4 rounded-lg backdrop-blur-sm">
+              <div className="bg-kmrl-lime-500/20 p-4 rounded-lg backdrop-blur-sm border border-kmrl-lime-400/30">
                 <div className="text-2xl font-bold">23</div>
-                <div className="text-sm text-blue-200">Active Trains</div>
+                <div className="text-sm text-kmrl-aquamarine-200">Active Trains</div>
               </div>
-              <div className="bg-white/10 p-4 rounded-lg backdrop-blur-sm">
+              <div className="bg-kmrl-yellow-500/20 p-4 rounded-lg backdrop-blur-sm border border-kmrl-yellow-400/30">
                 <div className="text-2xl font-bold">96.8%</div>
-                <div className="text-sm text-blue-200">On-Time Performance</div>
+                <div className="text-sm text-kmrl-aquamarine-200">On-Time Performance</div>
               </div>
-              <div className="bg-white/10 p-4 rounded-lg backdrop-blur-sm">
+              <div className="bg-kmrl-aquamarine-500/20 p-4 rounded-lg backdrop-blur-sm border border-kmrl-aquamarine-400/30">
                 <div className="text-2xl font-bold">24/7</div>
-                <div className="text-sm text-blue-200">Operations Center</div>
+                <div className="text-sm text-kmrl-aquamarine-200">Operations Center</div>
               </div>
-              <div className="bg-white/10 p-4 rounded-lg backdrop-blur-sm">
+              <div className="bg-kmrl-grey-500/20 p-4 rounded-lg backdrop-blur-sm border border-kmrl-grey-400/30">
                 <div className="text-2xl font-bold">AI</div>
-                <div className="text-sm text-blue-200">Powered Decisions</div>
+                <div className="text-sm text-kmrl-aquamarine-200">Powered Decisions</div>
               </div>
             </div>
           </div>
@@ -111,7 +111,7 @@ const LoginPage: React.FC = () => {
                     type="text"
                     value={credentials.username}
                     onChange={(e) => setCredentials({ ...credentials, username: e.target.value })}
-                    className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200"
+                    className="w-full pl-10 pr-4 py-3 border border-kmrl-grey-300 rounded-lg focus:ring-2 focus:ring-kmrl-aquamarine-500 focus:border-transparent transition-all duration-200"
                     placeholder="Enter your username"
                     required
                   />
@@ -128,14 +128,14 @@ const LoginPage: React.FC = () => {
                     type={showPassword ? 'text' : 'password'}
                     value={credentials.password}
                     onChange={(e) => setCredentials({ ...credentials, password: e.target.value })}
-                    className="w-full pl-10 pr-12 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200"
+                    className="w-full pl-10 pr-12 py-3 border border-kmrl-grey-300 rounded-lg focus:ring-2 focus:ring-kmrl-aquamarine-500 focus:border-transparent transition-all duration-200"
                     placeholder="Enter your password"
                     required
                   />
                   <button
                     type="button"
                     onClick={() => setShowPassword(!showPassword)}
-                    className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600"
+                    className="absolute right-3 top-1/2 transform -translate-y-1/2 text-kmrl-grey-400 hover:text-kmrl-grey-600"
                   >
                     {showPassword ? <EyeOff className="h-5 w-5" /> : <Eye className="h-5 w-5" />}
                   </button>
@@ -145,7 +145,7 @@ const LoginPage: React.FC = () => {
               <button
                 type="submit"
                 disabled={loading}
-                className="w-full bg-gradient-to-r from-blue-600 to-blue-700 text-white py-3 px-4 rounded-lg font-medium hover:from-blue-700 hover:to-blue-800 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200"
+                className="w-full bg-gradient-to-r from-kmrl-aquamarine-600 to-kmrl-lime-600 text-white py-3 px-4 rounded-lg font-medium hover:from-kmrl-aquamarine-700 hover:to-kmrl-lime-700 focus:outline-none focus:ring-2 focus:ring-kmrl-aquamarine-500 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200"
               >
                 {loading ? (
                   <div className="flex items-center justify-center space-x-2">
@@ -160,10 +160,10 @@ const LoginPage: React.FC = () => {
 
             <div className="relative">
               <div className="absolute inset-0 flex items-center">
-                <div className="w-full border-t border-gray-300"></div>
+                <div className="w-full border-t border-kmrl-grey-300"></div>
               </div>
               <div className="relative flex justify-center text-sm">
-                <span className="px-2 bg-white text-gray-500">Demo Accounts</span>
+                <span className="px-2 bg-white text-kmrl-grey-500">Demo Accounts</span>
               </div>
             </div>
 
@@ -172,22 +172,22 @@ const LoginPage: React.FC = () => {
                 <button
                   key={user.username}
                   onClick={() => handleDemoLogin(user.username, user.password)}
-                  className={`p-3 text-left border rounded-lg transition-all duration-200 hover:shadow-md ${
+                  className={`p-3 text-left border rounded-lg transition-all duration-200 hover:shadow-lg ${
                     selectedUser === user.username
-                      ? 'border-blue-500 bg-blue-50'
-                      : 'border-gray-200 hover:border-gray-300'
+                      ? 'border-kmrl-aquamarine-500 bg-kmrl-aquamarine-50'
+                      : 'border-kmrl-grey-200 hover:border-kmrl-grey-300'
                   }`}
                 >
                   <div className="font-medium text-gray-900">{user.role}</div>
-                  <div className="text-xs text-gray-600">{user.description}</div>
-                  <div className="text-xs text-blue-600 mt-1">
+                  <div className="text-xs text-kmrl-grey-600">{user.description}</div>
+                  <div className="text-xs text-kmrl-aquamarine-600 mt-1">
                     {user.username} / {user.password}
                   </div>
                 </button>
               ))}
             </div>
 
-            <div className="text-center text-xs text-gray-500">
+            <div className="text-center text-xs text-kmrl-grey-500">
               <p>© 2024 Kochi Metro Rail Limited. All rights reserved.</p>
               <p className="mt-1">Secure Operations Dashboard v2.0</p>
             </div>
