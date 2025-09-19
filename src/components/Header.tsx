@@ -17,22 +17,22 @@ const Header: React.FC = () => {
   ];
 
   return (
-    <header className="bg-white border-b border-gray-200 shadow-sm">
+    <header className="bg-kmrl-aquamarine-600 border-b border-kmrl-aquamarine-700 shadow-lg">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center h-16">
           <div className="flex items-center space-x-4">
             <div className="flex items-center space-x-3">
-              <div className="bg-gradient-to-r from-blue-600 to-green-600 p-2 rounded-lg">
+              <div className="bg-gradient-to-r from-kmrl-lime-500 to-kmrl-yellow-500 p-2 rounded-lg">
                 <Train className="h-6 w-6 text-white" />
               </div>
               <div>
-                <h1 className="text-xl font-bold text-gray-900">KMRL Metro</h1>
-                <p className="text-sm text-gray-600">AI-Driven Fleet Management</p>
+                <h1 className="text-xl font-bold text-white">KMRL Metro</h1>
+                <p className="text-sm text-kmrl-aquamarine-100">AI-Driven Fleet Management</p>
               </div>
             </div>
           </div>
 
-          <nav className="hidden md:flex space-x-1">
+          <nav className="hidden md:flex space-x-2">
             {navItems.map((item) => {
               const IconComponent = item.icon;
               const isActive = location.pathname === item.path;
@@ -41,10 +41,10 @@ const Header: React.FC = () => {
                 <Link
                   key={item.path}
                   to={item.path}
-                  className={`flex items-center space-x-2 px-3 py-2 rounded-md text-sm font-medium transition-colors duration-200 ${
+                  className={`flex items-center space-x-2 px-4 py-2 rounded-lg text-sm font-medium transition-all duration-200 ${
                     isActive
-                      ? 'bg-blue-100 text-blue-700 border border-blue-200'
-                      : 'text-gray-600 hover:text-gray-900 hover:bg-gray-100'
+                      ? 'bg-kmrl-lime-500 text-white shadow-lg'
+                      : 'text-kmrl-aquamarine-100 hover:text-white hover:bg-kmrl-aquamarine-500'
                   }`}
                 >
                   <IconComponent className="h-4 w-4" />
@@ -57,16 +57,16 @@ const Header: React.FC = () => {
           <div className="flex items-center space-x-4">
             <div className="flex items-center space-x-2 text-sm text-gray-600">
               <MapPin className="h-4 w-4" />
-              <span className="hidden sm:inline">Kochi Metro</span>
+              <span className="hidden sm:inline text-kmrl-aquamarine-100">Kochi Metro</span>
             </div>
             {user && (
               <div className="flex items-center space-x-4">
-                <div className="text-sm text-gray-700">
+                <div className="text-sm text-white">
                   Welcome, <span className="font-medium">{user.username}</span>
                 </div>
                 <button
                   onClick={logout}
-                  className="text-sm text-gray-600 hover:text-gray-900"
+                  className="text-sm text-kmrl-aquamarine-100 hover:text-white px-3 py-1 rounded-md hover:bg-kmrl-aquamarine-500 transition-colors duration-200"
                 >
                   Logout
                 </button>
@@ -76,7 +76,7 @@ const Header: React.FC = () => {
         </div>
 
         {/* Mobile Navigation */}
-        <div className="md:hidden border-t border-gray-200 py-2">
+        <div className="md:hidden border-t border-kmrl-aquamarine-700 py-2">
           <div className="flex space-x-1 overflow-x-auto">
             {navItems.map((item) => {
               const IconComponent = item.icon;
@@ -86,10 +86,10 @@ const Header: React.FC = () => {
                 <Link
                   key={item.path}
                   to={item.path}
-                  className={`flex items-center space-x-1 px-3 py-2 rounded-md text-xs font-medium transition-colors duration-200 whitespace-nowrap ${
+                  className={`flex items-center space-x-1 px-3 py-2 rounded-lg text-xs font-medium transition-colors duration-200 whitespace-nowrap ${
                     isActive
-                      ? 'bg-blue-100 text-blue-700'
-                      : 'text-gray-600 hover:text-gray-900 hover:bg-gray-100'
+                      ? 'bg-kmrl-lime-500 text-white'
+                      : 'text-kmrl-aquamarine-100 hover:text-white hover:bg-kmrl-aquamarine-500'
                   }`}
                 >
                   <IconComponent className="h-4 w-4" />

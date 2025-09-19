@@ -544,24 +544,24 @@ const TrainInduction: React.FC = () => {
   );
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-kmrl-grey-50">
       {/* Control Center Header */}
-      <div className="bg-gray-900 text-white border-b border-gray-700">
+      <div className="bg-kmrl-grey-800 text-white border-b border-kmrl-grey-700">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center h-16">
             <div className="flex items-center space-x-4">
-              <div className="bg-gradient-to-r from-blue-600 to-green-600 p-2 rounded-lg">
+              <div className="bg-gradient-to-r from-kmrl-aquamarine-500 to-kmrl-lime-500 p-2 rounded-lg">
                 <Train className="h-6 w-6 text-white" />
               </div>
               <div>
                 <h1 className="text-xl font-bold">KMRL Control Center</h1>
-                <p className="text-sm text-gray-300">AI-Driven Train Induction & Live Tracking</p>
+                <p className="text-sm text-kmrl-grey-300">AI-Driven Train Induction & Live Tracking</p>
               </div>
             </div>
             <div className="flex items-center space-x-6">
               <div className="flex items-center space-x-2">
-                <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
-                <span className="text-green-400 text-sm font-medium">SYSTEM NORMAL</span>
+                <div className="w-2 h-2 bg-kmrl-lime-500 rounded-full animate-pulse"></div>
+                <span className="text-kmrl-lime-400 text-sm font-medium">SYSTEM NORMAL</span>
               </div>
               <div className="text-white text-sm font-mono">
                 {currentTime.toLocaleTimeString()}
@@ -579,8 +579,8 @@ const TrainInduction: React.FC = () => {
                   onClick={() => setActiveTab(tab.id)}
                   className={`flex items-center space-x-2 px-4 py-2 text-sm font-medium rounded-t-lg transition-colors duration-200 whitespace-nowrap ${
                     activeTab === tab.id
-                      ? 'bg-blue-600 text-white'
-                      : 'text-gray-300 hover:text-white hover:bg-gray-800'
+                      ? 'bg-kmrl-aquamarine-600 text-white'
+                      : 'text-kmrl-grey-300 hover:text-white hover:bg-kmrl-grey-700'
                   }`}
                 >
                   <IconComponent className="h-4 w-4" />

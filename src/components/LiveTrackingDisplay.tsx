@@ -290,21 +290,21 @@ const LiveTrackingDisplay: React.FC<LiveTrackingDisplayProps> = ({ height = 600 
   return (
     <div className="bg-gray-900 rounded-xl border border-gray-700 overflow-hidden">
       {/* Control Center Header */}
-      <div className="bg-gray-800 px-6 py-4 border-b border-gray-700">
+      <div className="bg-kmrl-grey-800 px-6 py-4 border-b border-kmrl-grey-700">
         <div className="flex items-center justify-between">
           <div className="flex items-center space-x-3">
-            <div className="bg-green-500 p-2 rounded-lg">
+            <div className="bg-kmrl-lime-500 p-2 rounded-lg">
               <Activity className="h-5 w-5 text-white" />
             </div>
             <div>
               <h3 className="text-lg font-semibold text-white">KMRL Live Tracking System</h3>
-              <p className="text-sm text-gray-300">Real-time train monitoring & control</p>
+              <p className="text-sm text-kmrl-grey-300">Real-time train monitoring & control</p>
             </div>
           </div>
           <div className="flex items-center space-x-4">
             <div className="flex items-center space-x-2">
-              <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
-              <span className="text-green-400 text-sm font-medium">SYSTEM ACTIVE</span>
+              <div className="w-2 h-2 bg-kmrl-lime-500 rounded-full animate-pulse"></div>
+              <span className="text-kmrl-lime-400 text-sm font-medium">SYSTEM ACTIVE</span>
             </div>
             <div className="text-white text-sm font-mono">
               {currentTime.toLocaleTimeString()}
@@ -314,7 +314,7 @@ const LiveTrackingDisplay: React.FC<LiveTrackingDisplayProps> = ({ height = 600 
       </div>
 
       {/* Live Tracking Display */}
-      <div className="relative bg-black p-6" style={{ height: `${height}px` }}>
+      <div className="relative bg-kmrl-grey-900 p-6" style={{ height: `${height}px` }}>
         <svg width="100%" height="100%" viewBox="0 0 2100 400" className="absolute inset-0">
           {/* Track Infrastructure */}
           <defs>
@@ -335,7 +335,7 @@ const LiveTrackingDisplay: React.FC<LiveTrackingDisplayProps> = ({ height = 600 
               y1={section.y}
               x2={section.endX}
               y2={section.y}
-              stroke={section.isOccupied ? '#ef4444' : '#10b981'}
+              stroke={section.isOccupied ? '#ef4444' : '#14b8a6'}
               strokeWidth="8"
               filter="url(#glow)"
             />
@@ -350,8 +350,8 @@ const LiveTrackingDisplay: React.FC<LiveTrackingDisplayProps> = ({ height = 600 
                 y={165}
                 width="30"
                 height="8"
-                fill="#374151"
-                stroke="#10b981"
+                fill="#4b5563"
+                stroke="#14b8a6"
                 strokeWidth="1"
                 rx="2"
               />
@@ -360,8 +360,8 @@ const LiveTrackingDisplay: React.FC<LiveTrackingDisplayProps> = ({ height = 600 
                 y={227}
                 width="30"
                 height="8"
-                fill="#374151"
-                stroke="#10b981"
+                fill="#4b5563"
+                stroke="#14b8a6"
                 strokeWidth="1"
                 rx="2"
               />
@@ -371,7 +371,7 @@ const LiveTrackingDisplay: React.FC<LiveTrackingDisplayProps> = ({ height = 600 
                 x={station.x}
                 y={155}
                 textAnchor="middle"
-                className="text-xs fill-green-400 font-bold"
+                className="text-xs fill-kmrl-lime-400 font-bold"
               >
                 {station.code}
               </text>
@@ -381,7 +381,7 @@ const LiveTrackingDisplay: React.FC<LiveTrackingDisplayProps> = ({ height = 600 
                 x={station.x}
                 y={145}
                 textAnchor="middle"
-                className="text-xs fill-gray-400"
+                className="text-xs fill-kmrl-grey-400"
               >
                 {station.name}
               </text>
@@ -391,7 +391,7 @@ const LiveTrackingDisplay: React.FC<LiveTrackingDisplayProps> = ({ height = 600 
                 x={station.x}
                 y={170}
                 textAnchor="middle"
-                className="text-xs fill-cyan-400 font-mono"
+                className="text-xs fill-kmrl-aquamarine-400 font-mono"
               >
                 1
               </text>
@@ -399,7 +399,7 @@ const LiveTrackingDisplay: React.FC<LiveTrackingDisplayProps> = ({ height = 600 
                 x={station.x}
                 y={245}
                 textAnchor="middle"
-                className="text-xs fill-cyan-400 font-mono"
+                className="text-xs fill-kmrl-aquamarine-400 font-mono"
               >
                 2
               </text>
@@ -409,27 +409,27 @@ const LiveTrackingDisplay: React.FC<LiveTrackingDisplayProps> = ({ height = 600 
                 cx={station.x - 25}
                 cy={175}
                 r="3"
-                fill="#10b981"
+                fill="#14b8a6"
                 className="animate-pulse"
               />
               <circle
                 cx={station.x + 25}
                 cy={225}
                 r="3"
-                fill="#10b981"
+                fill="#14b8a6"
                 className="animate-pulse"
               />
               
               {/* Crossover Points (X marks) at major stations */}
               {(station.code === 'MUT' || station.code === 'PAL' || station.code === 'VYT' || station.code === 'KAL') && (
-                <g stroke="#f59e0b" strokeWidth="3">
+                <g stroke="#fbbf24" strokeWidth="3">
                   <path d={`M ${station.x - 15} 175 L ${station.x + 15} 225`} />
                   <path d={`M ${station.x + 15} 175 L ${station.x - 15} 225`} />
                   <text
                     x={station.x}
                     y={205}
                     textAnchor="middle"
-                    className="text-xs fill-yellow-400 font-bold"
+                    className="text-xs fill-kmrl-yellow-400 font-bold"
                   >
                     ✕
                   </text>
@@ -439,11 +439,11 @@ const LiveTrackingDisplay: React.FC<LiveTrackingDisplayProps> = ({ height = 600 
           ))}
           
           {/* Depot Connection at Muttom */}
-          <g stroke="#f59e0b" strokeWidth="3" strokeDasharray="6,3">
+          <g stroke="#fbbf24" strokeWidth="3" strokeDasharray="6,3">
             <path d="M 420 180 L 420 120 L 380 100" />
             <path d="M 420 220 L 420 280 L 380 300" />
-            <text x="375" y="95" className="text-xs fill-yellow-400 font-bold">DEPOT</text>
-            <text x="375" y="305" className="text-xs fill-yellow-400 font-bold">YARD</text>
+            <text x="375" y="95" className="text-xs fill-kmrl-yellow-400 font-bold">DEPOT</text>
+            <text x="375" y="305" className="text-xs fill-kmrl-yellow-400 font-bold">YARD</text>
           </g>
         </svg>
 
@@ -467,12 +467,12 @@ const LiveTrackingDisplay: React.FC<LiveTrackingDisplayProps> = ({ height = 600 
             {/* Blue Dark Box - Exactly Like Your Diagram */}
             <div className={`relative transition-all duration-300 ${
               selectedTrain === train.id 
-                ? 'border-2 border-cyan-400' 
-                : 'border border-gray-600'
+                ? 'border-2 border-kmrl-aquamarine-400' 
+                : 'border border-kmrl-grey-600'
             }`}>
               <div 
-                className="w-12 h-6 bg-blue-900 border border-blue-700 rounded-sm flex items-center justify-center relative shadow-lg"
-                style={{ backgroundColor: train.status === 'STOPPED' ? '#1e40af' : '#1e3a8a' }}
+                className="w-12 h-6 bg-kmrl-aquamarine-800 border border-kmrl-aquamarine-700 rounded-sm flex items-center justify-center relative shadow-lg"
+                style={{ backgroundColor: train.status === 'STOPPED' ? '#0f766e' : '#115e59' }}
               >
                 {/* Train Number - White Text */}
                 <span className="text-white text-xs font-bold">{train.id}</span>
@@ -500,6 +500,7 @@ const LiveTrackingDisplay: React.FC<LiveTrackingDisplayProps> = ({ height = 600 
               {/* Speed Display */}
               {train.status === 'RUNNING' && (
                 <div className="absolute -top-6 left-1/2 transform -translate-x-1/2 text-xs font-mono text-cyan-400 whitespace-nowrap">
+                <div className="absolute -top-6 left-1/2 transform -translate-x-1/2 text-xs font-mono text-kmrl-aquamarine-400 whitespace-nowrap">
                   {train.speed}km/h
                 </div>
               )}
@@ -508,10 +509,10 @@ const LiveTrackingDisplay: React.FC<LiveTrackingDisplayProps> = ({ height = 600 
         ))}
 
         {/* System Status Overlay */}
-        <div className="absolute top-4 left-4 bg-gray-800/90 rounded-lg p-3 text-white text-xs font-mono">
+        <div className="absolute top-4 left-4 bg-kmrl-grey-800/90 rounded-lg p-3 text-white text-xs font-mono">
           <div className="grid grid-cols-3 gap-4">
             <div>
-              <div className="text-green-400">RUNNING</div>
+              <div className="text-kmrl-lime-400">RUNNING</div>
               <div className="text-2xl font-bold">{trains.filter(t => t.status === 'RUNNING').length}</div>
             </div>
             <div>
@@ -519,25 +520,25 @@ const LiveTrackingDisplay: React.FC<LiveTrackingDisplayProps> = ({ height = 600 
               <div className="text-2xl font-bold">{trains.filter(t => t.status === 'STOPPED').length}</div>
             </div>
             <div>
-              <div className="text-yellow-400">DELAYED</div>
+              <div className="text-kmrl-yellow-400">DELAYED</div>
               <div className="text-2xl font-bold">{trains.filter(t => t.delay > 0).length}</div>
             </div>
           </div>
         </div>
         
         {/* Power Status */}
-        <div className="absolute top-4 right-4 bg-gray-800/90 rounded-lg p-3 text-white text-xs font-mono">
+        <div className="absolute top-4 right-4 bg-kmrl-grey-800/90 rounded-lg p-3 text-white text-xs font-mono">
           <div className="space-y-1">
             <div className="flex items-center space-x-2">
-              <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
+              <div className="w-2 h-2 bg-kmrl-lime-500 rounded-full animate-pulse"></div>
               <span>DEPOT: DC ENERGIZED</span>
             </div>
             <div className="flex items-center space-x-2">
-              <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
+              <div className="w-2 h-2 bg-kmrl-lime-500 rounded-full animate-pulse"></div>
               <span>TT: DC ENERGIZED</span>
             </div>
             <div className="flex items-center space-x-2">
-              <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
+              <div className="w-2 h-2 bg-kmrl-lime-500 rounded-full animate-pulse"></div>
               <span>THIRD RAIL: ACTIVE</span>
             </div>
           </div>
@@ -549,7 +550,7 @@ const LiveTrackingDisplay: React.FC<LiveTrackingDisplayProps> = ({ height = 600 
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
-          className="bg-gray-800 border-t border-gray-700 p-4"
+          className="bg-kmrl-grey-800 border-t border-kmrl-grey-700 p-4"
         >
           {(() => {
             const train = trains.find(t => t.id === selectedTrain);
@@ -557,28 +558,28 @@ const LiveTrackingDisplay: React.FC<LiveTrackingDisplayProps> = ({ height = 600 
             
             return (
               <div className="text-white">
-                <h4 className="font-semibold text-cyan-400 mb-2">Train {train.id} - {train.name}</h4>
+                <h4 className="font-semibold text-kmrl-aquamarine-400 mb-2">Train {train.id} - {train.name}</h4>
                 <div className="grid grid-cols-2 md:grid-cols-5 gap-4 text-sm">
                   <div>
-                    <span className="text-gray-400">Current Station:</span>
+                    <span className="text-kmrl-grey-400">Current Station:</span>
                     <p className="text-white font-medium">{train.currentStation}</p>
                   </div>
                   <div>
-                    <span className="text-gray-400">Next Station:</span>
+                    <span className="text-kmrl-grey-400">Next Station:</span>
                     <p className="text-white font-medium">{train.nextStation}</p>
                   </div>
                   <div>
-                    <span className="text-gray-400">Speed:</span>
+                    <span className="text-kmrl-grey-400">Speed:</span>
                     <p className="text-white font-medium">{train.speed} km/h</p>
                   </div>
                   <div>
-                    <span className="text-gray-400">Direction:</span>
+                    <span className="text-kmrl-grey-400">Direction:</span>
                     <p className="text-white font-medium">{train.direction}</p>
                   </div>
                   <div>
-                    <span className="text-gray-400">Status:</span>
+                    <span className="text-kmrl-grey-400">Status:</span>
                     <p className={`font-medium ${
-                      train.status === 'RUNNING' ? 'text-green-400' :
+                      train.status === 'RUNNING' ? 'text-kmrl-lime-400' :
                       train.status === 'STOPPED' ? 'text-red-400' : 'text-yellow-400'
                     }`}>
                       {train.status}
@@ -587,12 +588,12 @@ const LiveTrackingDisplay: React.FC<LiveTrackingDisplayProps> = ({ height = 600 
                 </div>
                 <div className="mt-3 grid grid-cols-2 gap-4 text-sm">
                   <div>
-                    <span className="text-gray-400">Passenger Load:</span>
+                    <span className="text-kmrl-grey-400">Passenger Load:</span>
                     <p className="text-white font-medium">{train.passengerLoad}%</p>
                   </div>
                   <div>
-                    <span className="text-gray-400">Delay:</span>
-                    <p className={`font-medium ${train.delay > 0 ? 'text-red-400' : 'text-green-400'}`}>
+                    <span className="text-kmrl-grey-400">Delay:</span>
+                    <p className={`font-medium ${train.delay > 0 ? 'text-red-400' : 'text-kmrl-lime-400'}`}>
                       {train.delay > 0 ? `+${train.delay} min` : 'On Time'}
                     </p>
                   </div>
