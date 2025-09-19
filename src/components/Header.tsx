@@ -1,5 +1,5 @@
 import React from 'react';
-import { Train, MapPin, Settings, BarChart3, Wrench, FileText, Users } from 'lucide-react';
+import { Train, MapPin, Brain, BarChart3, Wrench, FileText, Users } from 'lucide-react';
 import { Link, useLocation } from 'react-router-dom';
 
 const Header: React.FC = () => {
@@ -8,7 +8,7 @@ const Header: React.FC = () => {
   const navItems = [
     { path: '/', label: 'Command Center', icon: Train },
     { path: '/analytics', label: 'Analytics', icon: BarChart3 },
-    { path: '/simulator', label: 'Simulator', icon: Settings },
+    { path: '/ai-optimization', label: 'AI Engine', icon: Brain },
     { path: '/maintenance', label: 'Maintenance', icon: Wrench },
     { path: '/fleet', label: 'Fleet', icon: Users },
     { path: '/reports', label: 'Reports', icon: FileText }
