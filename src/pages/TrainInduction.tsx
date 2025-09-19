@@ -155,6 +155,87 @@ const TrainInduction: React.FC = () => {
           </table>
         </div>
       </div>
+
+      {/* AI Decision Reasoning */}
+      {selectedTrain && (
+        <div className="bg-blue-50 border border-blue-200 rounded-lg p-6">
+          <h4 className="font-medium text-blue-900 mb-4">AI Decision Reasoning</h4>
+          {(() => {
+            const train = trainInductions.find(t => t.id === selectedTrain);
+            if (!train) return null;
+            
+            return (
+              <div className="space-y-4">
+                <div className="flex items-center justify-between">
+                  <h5 className="text-lg font-semibold text-blue-900">{train.trainName} ({train.trainNumber})</h5>
+                  <span className={`px-3 py-1 rounded-full text-sm font-medium ${
+                    train.aiRecommendation.decision === 'Induct' ? 'bg-green-100 text-green-800' :
+                    train.aiRecommendation.decision === 'Standby' ? 'bg-yellow-100 text-yellow-800' :
+                    'bg-red-100 text-red-800'
+                  }`}>
+                    {train.aiRecommendation.decision}
+                  </span>
+                </div>
+                
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  <div>
+                    <h6 className="font-medium text-blue-800 mb-2">AI Reasoning:</h6>
+                    <ul className="space-y-1 text-sm text-blue-700">
+                      {train.aiRecommendation.reasoning.map((reason, index) => (
+                        <li key={index}>• {reason}</li>
+                      ))}
+                    </ul>
+                  </div>
+                  
+                  <div>
+                    <h6 className="font-medium text-blue-800 mb-2">Risk Factors:</h6>
+                    {train.aiRecommendation.riskFactors.length > 0 ? (
+                      <ul className="space-y-1 text-sm text-blue-700">
+                        {train.aiRecommendation.riskFactors.map((risk, index) => (
+                          <li key={index}>• {risk}</li>
+                        ))}
+                      </ul>
+                    ) : (
+                      <div className="text-sm text-green-700">No risk factors identified</div>
+                    )}
+                  </div>
+                </div>
+                
+                <div className="bg-white rounded-lg p-4">
+                  <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-sm">
+                    <div>
+                      <span className="text-gray-600">Current Bay:</span>
+                      <div className="font-medium text-gray-900">{train.currentBay.type}{train.currentBay.number}</div>
+                    </div>
+                    <div>
+                      <span className="text-gray-600">Induction Time:</span>
+                      <div className="font-medium text-blue-600">{train.inductionTime}</div>
+                    </div>
+                    <div>
+                      <span className="text-gray-600">Departure:</span>
+                      <div className="font-medium text-green-600">{train.scheduledDeparture}</div>
+                    </div>
+                    <div>
+                      <span className="text-gray-600">Confidence:</span>
+                      <div className="font-medium text-purple-600">{train.aiRecommendation.confidence}%</div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            );
+          })()}
+        </div>
+      )}
+    </div>
+  );
+
+  const renderScheduleManagement = () => (
+    <div className="space-y-6">
+      {/* Schedule Management Content */}
+      <div className="bg-white rounded-lg border border-gray-200 p-6">
+        <h3 className="text-lg font-semibold text-gray-900 mb-4">Schedule Management</h3>
+        <p className="text-gray-600">Schedule management functionality will be implemented here.</p>
+      </div>
     </div>
   );
 
@@ -519,79 +600,6 @@ const TrainInduction: React.FC = () => {
           </div>
         </div>
       </div>
-    </div>
-  );
-
-      {/* AI Decision Reasoning */}
-      {selectedTrain && (
-        <div className="bg-blue-50 border border-blue-200 rounded-lg p-6">
-          <h4 className="font-medium text-blue-900 mb-4">AI Decision Reasoning</h4>
-          {(() => {
-            const train = trainInductions.find(t => t.id === selectedTrain);
-            if (!train) return null;
-            
-            return (
-              <div className="space-y-4">
-                <div className="flex items-center justify-between">
-                  <h5 className="text-lg font-semibold text-blue-900">{train.trainName} ({train.trainNumber})</h5>
-                  <span className={`px-3 py-1 rounded-full text-sm font-medium ${
-                    train.aiRecommendation.decision === 'Induct' ? 'bg-green-100 text-green-800' :
-                    train.aiRecommendation.decision === 'Standby' ? 'bg-yellow-100 text-yellow-800' :
-                    'bg-red-100 text-red-800'
-                  }`}>
-                    {train.aiRecommendation.decision}
-                  </span>
-                </div>
-                
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                  <div>
-                    <h6 className="font-medium text-blue-800 mb-2">AI Reasoning:</h6>
-                    <ul className="space-y-1 text-sm text-blue-700">
-                      {train.aiRecommendation.reasoning.map((reason, index) => (
-                        <li key={index}>• {reason}</li>
-                      ))}
-                    </ul>
-                  </div>
-                  
-                  <div>
-                    <h6 className="font-medium text-blue-800 mb-2">Risk Factors:</h6>
-                    {train.aiRecommendation.riskFactors.length > 0 ? (
-                      <ul className="space-y-1 text-sm text-blue-700">
-                        {train.aiRecommendation.riskFactors.map((risk, index) => (
-                          <li key={index}>• {risk}</li>
-                        ))}
-                      </ul>
-                    ) : (
-                      <div className="text-sm text-green-700">No risk factors identified</div>
-                    )}
-                  </div>
-                </div>
-                
-                <div className="bg-white rounded-lg p-4">
-                  <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-sm">
-                    <div>
-                      <span className="text-gray-600">Current Bay:</span>
-                      <div className="font-medium text-gray-900">{train.currentBay.type}{train.currentBay.number}</div>
-                    </div>
-                    <div>
-                      <span className="text-gray-600">Induction Time:</span>
-                      <div className="font-medium text-blue-600">{train.inductionTime}</div>
-                    </div>
-                    <div>
-                      <span className="text-gray-600">Departure:</span>
-                      <div className="font-medium text-green-600">{train.scheduledDeparture}</div>
-                    </div>
-                    <div>
-                      <span className="text-gray-600">Confidence:</span>
-                      <div className="font-medium text-purple-600">{train.aiRecommendation.confidence}%</div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            );
-          })()}
-        </div>
-      )}
     </div>
   );
 
