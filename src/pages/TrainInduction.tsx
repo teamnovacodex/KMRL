@@ -317,21 +317,21 @@ const TrainInduction: React.FC = () => {
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
           {/* SBL Bays */}
           <div>
-            <h4 className="font-medium text-green-900 mb-4 text-center bg-green-100 py-2 rounded">SBL BAYS (Service Bays Light)</h4>
+            <h4 className="font-medium text-green-900 mb-4 text-center bg-green-100 py-2 rounded">SBL BAYS (Service Bays Light) - TWO ENTRY LINES</h4>
             <div className="space-y-2">
               {[
-                { bay: 'SBL1', openEnd: '05', bufferedEnd: '', crossed: false },
-                { bay: 'SBL2', openEnd: '', bufferedEnd: '', crossed: false },
-                { bay: 'SBL3', openEnd: '', bufferedEnd: '25', crossed: false },
-                { bay: 'SBL4', openEnd: '', bufferedEnd: '', crossed: false },
-                { bay: 'SBL5', openEnd: '', bufferedEnd: '', crossed: false },
-                { bay: 'SBL6', openEnd: '', bufferedEnd: '', crossed: true },
-                { bay: 'SBL7', openEnd: '', bufferedEnd: '2', crossed: true },
-                { bay: 'SBL8', openEnd: '', bufferedEnd: '', crossed: false },
-                { bay: 'SBL9', openEnd: '', bufferedEnd: '', crossed: false },
-                { bay: 'SBL10', openEnd: '18', bufferedEnd: '', crossed: false },
-                { bay: 'SBL11', openEnd: '', bufferedEnd: '', crossed: false },
-                { bay: 'SBL12', openEnd: '', bufferedEnd: '', crossed: false }
+                { bay: 'SBL1', openEnd: '05', bufferedEnd: '', crossed: false, entryLine: 'LINE 1' },
+                { bay: 'SBL2', openEnd: '', bufferedEnd: '', crossed: false, entryLine: 'LINE 2' },
+                { bay: 'SBL3', openEnd: '', bufferedEnd: '25', crossed: false, entryLine: 'LINE 1' },
+                { bay: 'SBL4', openEnd: '', bufferedEnd: '', crossed: false, entryLine: 'LINE 2' },
+                { bay: 'SBL5', openEnd: '', bufferedEnd: '', crossed: false, entryLine: 'LINE 1' },
+                { bay: 'SBL6', openEnd: '', bufferedEnd: '', crossed: true, entryLine: 'LINE 2' },
+                { bay: 'SBL7', openEnd: '', bufferedEnd: '2', crossed: true, entryLine: 'LINE 1' },
+                { bay: 'SBL8', openEnd: '', bufferedEnd: '', crossed: false, entryLine: 'LINE 2' },
+                { bay: 'SBL9', openEnd: '', bufferedEnd: '', crossed: false, entryLine: 'LINE 1' },
+                { bay: 'SBL10', openEnd: '18', bufferedEnd: '', crossed: false, entryLine: 'LINE 2' },
+                { bay: 'SBL11', openEnd: '', bufferedEnd: '', crossed: false, entryLine: 'LINE 1' },
+                { bay: 'SBL12', openEnd: '', bufferedEnd: '', crossed: false, entryLine: 'LINE 2' }
               ].map((bay) => (
                 <div key={bay.bay} className={`p-3 rounded-lg border-2 ${
                   bay.crossed ? 'bg-red-50 border-red-300' : 'bg-green-50 border-green-300'
@@ -339,6 +339,9 @@ const TrainInduction: React.FC = () => {
                   <div className="flex items-center justify-between mb-2">
                     <div className={`font-bold text-lg ${bay.crossed ? 'text-red-900' : 'text-gray-900'}`}>
                       {bay.bay}
+                    </div>
+                    <div className="text-xs bg-blue-100 text-blue-800 px-2 py-1 rounded font-bold">
+                      {bay.entryLine}
                     </div>
                     {bay.crossed && <span className="text-red-600 font-bold">❌ NO STABLING</span>}
                   </div>
@@ -361,19 +364,18 @@ const TrainInduction: React.FC = () => {
             </div>
           </div>
 
-          {/* IBL & HIBL Bays */}
+          {/* IBL & HIBL Bays - ONE ENTRY LINE */}
           <div>
-            <h4 className="font-medium text-yellow-900 mb-4 text-center bg-yellow-100 py-2 rounded">IBL & HIBL BAYS</h4>
+            <h4 className="font-medium text-yellow-900 mb-4 text-center bg-yellow-100 py-2 rounded">IBL & HIBL BAYS - ONE ENTRY LINE</h4>
             <div className="space-y-2">
               {[
-                { bay: 'IBL1', openEnd: '', bufferedEnd: '', type: 'IBL' },
-                { bay: 'IBL2', openEnd: '9', bufferedEnd: '', type: 'IBL' },
-                { bay: 'IBL3', openEnd: '25', bufferedEnd: '', type: 'IBL' },
-                { bay: 'HICL', openEnd: '23', bufferedEnd: '', type: 'HIBL' },
-                { bay: 'HIS1', openEnd: '13', bufferedEnd: '', type: 'HIBL' },
-                { bay: 'HIS2', openEnd: '05', bufferedEnd: '', type: 'HIBL' },
-                { bay: 'HIS3', openEnd: '04', bufferedEnd: '', type: 'HIBL' },
-                { bay: 'FULL', openEnd: '15', bufferedEnd: '', type: 'SPECIAL' }
+                { bay: 'IBL1', openEnd: '', bufferedEnd: '', type: 'IBL', entryLine: 'SINGLE ENTRY' },
+                { bay: 'IBL2', openEnd: '9', bufferedEnd: '', type: 'IBL', entryLine: 'SINGLE ENTRY' },
+                { bay: 'IBL3', openEnd: '25', bufferedEnd: '', type: 'IBL', entryLine: 'SINGLE ENTRY' },
+                { bay: 'HIS1', openEnd: '13', bufferedEnd: '', type: 'HIBL', entryLine: 'SINGLE ENTRY' },
+                { bay: 'HIS2', openEnd: '05', bufferedEnd: '', type: 'HIBL', entryLine: 'SINGLE ENTRY' },
+                { bay: 'HIS3', openEnd: '04', bufferedEnd: '', type: 'HIBL', entryLine: 'SINGLE ENTRY' },
+                { bay: 'FULL', openEnd: '15', bufferedEnd: '', type: 'SPECIAL', entryLine: 'SINGLE ENTRY' }
               ].map((bay) => (
                 <div key={bay.bay} className={`p-3 rounded-lg border-2 ${
                   bay.type === 'IBL' ? 'bg-yellow-50' :
@@ -381,6 +383,9 @@ const TrainInduction: React.FC = () => {
                 }`}>
                   <div className="flex items-center justify-between mb-2">
                     <div className="font-bold text-lg text-gray-900">{bay.bay}</div>
+                    <div className="text-xs bg-orange-100 text-orange-800 px-2 py-1 rounded font-bold">
+                      {bay.entryLine}
+                    </div>
                     <div className={`px-2 py-1 rounded text-xs font-bold ${
                       bay.type === 'IBL' ? 'bg-yellow-200 text-yellow-800' :
                       bay.type === 'HIBL' ? 'bg-red-200 text-red-800' : 'bg-purple-200 text-purple-800'
@@ -407,19 +412,35 @@ const TrainInduction: React.FC = () => {
             </div>
           </div>
 
-          {/* Special Bays */}
+          {/* HICL - RACK OPTION (ONE BAY ONLY) */}
           <div>
-            <h4 className="font-medium text-purple-900 mb-4 text-center bg-purple-100 py-2 rounded">SPECIAL BAYS</h4>
+            <h4 className="font-medium text-purple-900 mb-4 text-center bg-purple-100 py-2 rounded">HICL - RACK OPTION (ONE BAY)</h4>
             <div className="space-y-2">
+              {/* HICL - Rack Option Bay */}
+              <div className="p-4 bg-orange-50 rounded-lg border-2 border-orange-300">
+                <div className="flex items-center justify-between mb-3">
+                  <div className="font-bold text-xl text-gray-900">HICL</div>
+                  <div className="text-xs bg-orange-200 text-orange-800 px-3 py-1 rounded-full font-bold">
+                    RACK OPTION
+                  </div>
+                </div>
+                <div className="text-center">
+                  <div className="text-xs text-gray-600 font-bold bg-orange-100 py-1 rounded mb-2">RACK BAY</div>
+                  <div className="font-bold text-4xl text-orange-600">23</div>
+                  <div className="text-sm text-orange-700 mt-2">Heavy Inspection & Cleaning</div>
+                </div>
+              </div>
+              
+              {/* Special Terminal Bays */}
               {[
-                { bay: 'ETU', openEnd: '', bufferedEnd: '', type: 'SPECIAL', description: 'Empty Train Unit' },
-                { bay: 'ERL', openEnd: '', bufferedEnd: '', type: 'SPECIAL', description: 'Emergency Relief' },
-                { bay: 'UBL', openEnd: '', bufferedEnd: '', type: 'SPECIAL', description: 'Utility Bay' }
+                { bay: 'ETU', openEnd: '', bufferedEnd: '', type: 'TERMINAL', description: 'Empty Train Unit' },
+                { bay: 'ERL', openEnd: '', bufferedEnd: '', type: 'TERMINAL', description: 'Emergency Relief' },
+                { bay: 'UBL', openEnd: '', bufferedEnd: '', type: 'TERMINAL', description: 'Utility Bay' }
               ].map((bay) => (
-                <div key={bay.bay} className="p-3 bg-purple-50 rounded-lg border-2 border-purple-200">
+                <div key={bay.bay} className="p-3 bg-gray-50 rounded-lg border-2 border-gray-300">
                   <div className="flex items-center justify-between mb-2">
                     <div className="font-bold text-lg text-gray-900">{bay.bay}</div>
-                    <div className="text-xs text-purple-700 font-medium">{bay.description}</div>
+                    <div className="text-xs text-gray-700 font-medium">{bay.description}</div>
                   </div>
                   <div className="grid grid-cols-2 gap-4">
                     <div className="text-center">
@@ -429,8 +450,8 @@ const TrainInduction: React.FC = () => {
                       </div>
                     </div>
                     <div className="text-center">
-                      <div className="text-xs text-gray-600 font-bold bg-purple-100 py-1 rounded">BUFFERED END</div>
-                      <div className={`font-bold text-2xl mt-1 ${bay.bufferedEnd ? 'text-purple-600' : 'text-gray-400'}`}>
+                      <div className="text-xs text-gray-600 font-bold bg-gray-100 py-1 rounded">BUFFERED END</div>
+                      <div className={`font-bold text-2xl mt-1 ${bay.bufferedEnd ? 'text-gray-600' : 'text-gray-400'}`}>
                         {bay.bufferedEnd || '-'}
                       </div>
                     </div>
