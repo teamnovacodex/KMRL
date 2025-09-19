@@ -34,11 +34,10 @@ const TrainAnimation: React.FC<TrainAnimationProps> = ({ selectedTrain, onTrainS
   }, []);
 
   const getTrainColor = (train: any) => {
-    switch (train.recommendation) {
-      case 'Service': return '#10b981';
-      case 'Standby': return '#f59e0b';
-      case 'Maintenance': return '#ef4444';
-      case 'Deep Clean': return '#8b5cf6';
+    switch (train.currentBay.type) {
+      case 'SBL': return '#10b981'; // Green - Service ready
+      case 'IBL': return '#f59e0b'; // Yellow - Minor issues
+      case 'HIBL': return '#ef4444'; // Red - Major maintenance
       default: return '#6b7280';
     }
   };
@@ -63,15 +62,15 @@ const TrainAnimation: React.FC<TrainAnimationProps> = ({ selectedTrain, onTrainS
         <div className="flex items-center space-x-4 text-sm">
           <div className="flex items-center space-x-2">
             <div className="w-3 h-3 rounded-full bg-green-500"></div>
-            <span>Service Ready</span>
+            <span>SBL - Service Ready</span>
           </div>
           <div className="flex items-center space-x-2">
             <div className="w-3 h-3 rounded-full bg-yellow-500"></div>
-            <span>Standby</span>
+            <span>IBL - Minor Issues</span>
           </div>
           <div className="flex items-center space-x-2">
             <div className="w-3 h-3 rounded-full bg-red-500"></div>
-            <span>Maintenance</span>
+            <span>HIBL - Major Maintenance</span>
           </div>
         </div>
       </div>
@@ -111,7 +110,7 @@ const TrainAnimation: React.FC<TrainAnimationProps> = ({ selectedTrain, onTrainS
                     style={{ color: getTrainColor(train) }}
                   />
                   <div className="text-xs font-medium text-gray-900">{train.trainName}</div>
-                  <div className="text-xs text-gray-500">Bay {train.depotBay}</div>
+                  <div className="text-xs text-gray-500">{train.currentBay.type}-{train.currentBay.bayNumber}</div>
                   <div className="text-xs text-gray-500">{train.healthScore}%</div>
                 </div>
                 
@@ -146,20 +145,32 @@ const TrainAnimation: React.FC<TrainAnimationProps> = ({ selectedTrain, onTrainS
                 <h4 className="font-semibold text-blue-900 mb-2">{train.trainName} ({train.trainNumber}) Details</h4>
                 <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-sm">
                   <div>
-                    <span className="text-blue-700 font-medium">Status:</span>
-                    <p className="text-blue-800">{train.status}</p>
+                    <span className="text-blue-700 font-medium">Bay Type:</span>
+                    <p className="text-blue-800">{train.currentBay.type}-{train.currentBay.bayNumber}</p>
+                  </div>
+                  <div>
+                    <span className="text-blue-700 font-medium">Location:</span>
+                    <p className="text-blue-800">{train.currentBay.location.replace('_', ' ')}</p>
+                  </div>
+                  <div>
+                    <span className="text-blue-700 font-medium">Can Go to Service:</span>
+                    <p className={`${train.canGoToService ? 'text-green-800' : 'text-red-800'}`}>
+                      {train.canGoToService ? 'Yes' : 'No'}
+                    </p>
                   </div>
                   <div>
                     <span className="text-blue-700 font-medium">Health Score:</span>
                     <p className="text-blue-800">{train.healthScore}%</p>
                   </div>
+                </div>
+                <div className="mt-3 grid grid-cols-2 gap-4 text-sm">
                   <div>
-                    <span className="text-blue-700 font-medium">Mileage:</span>
-                    <p className="text-blue-800">{train.totalMileage.toLocaleString()} km</p>
+                    <span className="text-blue-700 font-medium">Third Rail Consumption:</span>
+                    <p className="text-blue-800">{train.thirdRailConsumption.toFixed(1)} kWh/km</p>
                   </div>
                   <div>
-                    <span className="text-blue-700 font-medium">Recommendation:</span>
-                    <p className="text-blue-800">{train.recommendation}</p>
+                    <span className="text-blue-700 font-medium">Job Cards:</span>
+                    <p className="text-blue-800">{train.jobCardStatus} ({train.maximoWorkOrders.length})</p>
                   </div>
                 </div>
                 {train.riskFactors.length > 0 && (

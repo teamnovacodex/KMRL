@@ -56,6 +56,9 @@ const TrainTable: React.FC<TrainTableProps> = ({ trains }) => {
                 Train Name
               </th>
               <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                Current Bay
+              </th>
+              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                 Train Number
               </th>
               <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
@@ -71,6 +74,9 @@ const TrainTable: React.FC<TrainTableProps> = ({ trains }) => {
                 Mileage (km)
               </th>
               <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                Third Rail (kWh/km)
+              </th>
+              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                 Health Score
               </th>
               <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
@@ -83,6 +89,20 @@ const TrainTable: React.FC<TrainTableProps> = ({ trains }) => {
               <tr key={train.id} className="hover:bg-gray-50 transition-colors duration-150">
                 <td className="px-6 py-4 whitespace-nowrap">
                   <div className="font-medium text-gray-900">{train.trainName}</div>
+                </td>
+                <td className="px-6 py-4 whitespace-nowrap">
+                  <div className="flex flex-col">
+                    <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
+                      train.currentBay.type === 'SBL' ? 'bg-green-100 text-green-800' :
+                      train.currentBay.type === 'IBL' ? 'bg-yellow-100 text-yellow-800' :
+                      'bg-red-100 text-red-800'
+                    }`}>
+                      {train.currentBay.type}-{train.currentBay.bayNumber}
+                    </span>
+                    <span className="text-xs text-gray-500 mt-1">
+                      {train.currentBay.location.replace('_', ' ')}
+                    </span>
+                  </div>
                 </td>
                 <td className="px-6 py-4 whitespace-nowrap">
                   <div className="text-sm text-gray-900">{train.trainNumber}</div>
@@ -118,6 +138,9 @@ const TrainTable: React.FC<TrainTableProps> = ({ trains }) => {
                 <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900 font-mono">
                   {train.totalMileage.toLocaleString()}
                 </td>
+                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900 font-mono">
+                  {train.thirdRailConsumption.toFixed(1)}
+                </td>
                 <td className="px-6 py-4 whitespace-nowrap">
                   <div className="flex items-center">
                     <div className="w-16 bg-gray-200 rounded-full h-2 mr-3">
@@ -135,6 +158,9 @@ const TrainTable: React.FC<TrainTableProps> = ({ trains }) => {
                 <td className="px-6 py-4 whitespace-nowrap">
                   <span className={`inline-flex items-center px-3 py-1 rounded-full text-sm font-medium border ${getRecommendationColor(train.recommendation)}`}>
                     {train.recommendation}
+                    {!train.canGoToService && (
+                      <span className="ml-2 text-xs text-red-600">(No Service)</span>
+                    )}
                   </span>
                 </td>
               </tr>

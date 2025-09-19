@@ -57,14 +57,18 @@ const Dashboard: React.FC = () => {
   };
 
   const stats = {
-    service: mockTrains.filter(t => t.recommendation === 'Service').length,
-    standby: mockTrains.filter(t => t.recommendation === 'Standby').length,
-    maintenance: mockTrains.filter(t => t.recommendation === 'Maintenance').length,
-    deepClean: mockTrains.filter(t => t.recommendation === 'Deep Clean').length,
+    service: mockTrains.filter(t => t.canGoToService && t.currentBay.type === 'SBL').length,
+    standby: mockTrains.filter(t => t.currentBay.type === 'IBL').length,
+    maintenance: mockTrains.filter(t => t.currentBay.type === 'HIBL').length,
+    sblBays: mockTrains.filter(t => t.currentBay.type === 'SBL').length,
     criticalIssues: mockTrains.filter(t => t.criticalJobCards > 0).length,
-    expiredFitness: mockTrains.filter(t => t.fitnessStatus === 'Expired').length,
+    expiredCerts: mockTrains.filter(t => 
+      t.rollingStockCert.status === 'Expired' || 
+      t.signallingCert.status === 'Expired' || 
+      t.telecomCert.status === 'Expired'
+    ).length,
     avgHealthScore: Math.round(mockTrains.reduce((sum, t) => sum + t.healthScore, 0) / mockTrains.length),
-    totalMileage: mockTrains.reduce((sum, t) => sum + t.totalMileage, 0)
+    totalThirdRailConsumption: mockTrains.reduce((sum, t) => sum + t.thirdRailConsumption, 0)
   };
 
   return (
@@ -100,13 +104,25 @@ const Dashboard: React.FC = () => {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.1 }}
-          className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-8"
+          className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-6 mb-8"
         >
           <SummaryCard
-            title="Active Trains"
+            title="SBL Bays (Service Ready)"
             value={realTimeData.activeTrains}
             icon={Train}
             color="text-green-600"
+          />
+          <SummaryCard
+            title="IBL Bays (Minor Issues)"
+            value={stats.standby}
+            icon={AlertTriangle}
+            color="text-yellow-600"
+          />
+          <SummaryCard
+            title="HIBL Bays (Major Maintenance)"
+            value={stats.maintenance}
+            icon={Wrench}
+            color="text-red-600"
           />
           <SummaryCard
             title="On-Time Performance"
@@ -115,15 +131,9 @@ const Dashboard: React.FC = () => {
             color="text-blue-600"
           />
           <SummaryCard
-            title="Daily Passengers"
-            value={Math.round(realTimeData.totalPassengers / 1000)}
-            icon={Users}
-            color="text-purple-600"
-          />
-          <SummaryCard
-            title="Fleet Efficiency"
+            title="Third Rail Consumption"
             value={Math.round(realTimeData.efficiency)}
-            icon={Zap}
+            icon={Activity}
             color="text-orange-600"
           />
         </motion.div>
@@ -170,27 +180,27 @@ const Dashboard: React.FC = () => {
 
           <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
             <div className="bg-gradient-to-br from-green-50 to-green-100 rounded-lg p-4 text-center">
-              <div className="text-sm text-green-700 font-medium mb-2">Service Ready</div>
+              <div className="text-sm text-green-700 font-medium mb-2">SBL Bays - Service Ready</div>
               <div className="text-3xl font-bold text-green-800">{stats.service}</div>
-              <div className="text-sm text-green-600">Trains optimized for service</div>
+              <div className="text-sm text-green-600">Can go to revenue service</div>
             </div>
             
             <div className="bg-gradient-to-br from-yellow-50 to-yellow-100 rounded-lg p-4 text-center">
-              <div className="text-sm text-yellow-700 font-medium mb-2">Standby Queue</div>
+              <div className="text-sm text-yellow-700 font-medium mb-2">IBL Bays - Minor Issues</div>
               <div className="text-3xl font-bold text-yellow-800">{stats.standby}</div>
-              <div className="text-sm text-yellow-600">Ready for deployment</div>
+              <div className="text-sm text-yellow-600">Minor maintenance needed</div>
             </div>
             
             <div className="bg-gradient-to-br from-red-50 to-red-100 rounded-lg p-4 text-center">
-              <div className="text-sm text-red-700 font-medium mb-2">Maintenance</div>
+              <div className="text-sm text-red-700 font-medium mb-2">HIBL Bays - Major Maintenance</div>
               <div className="text-3xl font-bold text-red-800">{stats.maintenance}</div>
-              <div className="text-sm text-red-600">Scheduled maintenance</div>
+              <div className="text-sm text-red-600">Major repairs needed</div>
             </div>
             
-            <div className="bg-gradient-to-br from-purple-50 to-purple-100 rounded-lg p-4 text-center">
-              <div className="text-sm text-purple-700 font-medium mb-2">Deep Cleaning</div>
-              <div className="text-3xl font-bold text-purple-800">{stats.deepClean}</div>
-              <div className="text-sm text-purple-600">Cleaning in progress</div>
+            <div className="bg-gradient-to-br from-blue-50 to-blue-100 rounded-lg p-4">
+              <div className="text-sm text-blue-700 font-medium mb-2">Total SBL Bays</div>
+              <div className="text-3xl font-bold text-blue-800">{stats.sblBays}</div>
+              <div className="text-sm text-blue-600">All service bays</div>
             </div>
           </div>
 
@@ -269,7 +279,7 @@ const Dashboard: React.FC = () => {
         </motion.div>
 
         {/* Critical Alerts */}
-        {(stats.criticalIssues > 0 || stats.expiredFitness > 0) && (
+        {(stats.criticalIssues > 0 || stats.expiredCerts > 0) && (
           <motion.div 
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
@@ -287,10 +297,10 @@ const Dashboard: React.FC = () => {
                   <div className="text-red-600 text-sm">Immediate attention required</div>
                 </div>
               )}
-              {stats.expiredFitness > 0 && (
+              {stats.expiredCerts > 0 && (
                 <div className="bg-white rounded-lg p-4 border border-red-200">
-                  <div className="text-red-800 font-medium">{stats.expiredFitness} Expired Fitness Certificates</div>
-                  <div className="text-red-600 text-sm">Cannot be inducted for service</div>
+                  <div className="text-red-800 font-medium">{stats.expiredCerts} Expired Department Certificates</div>
+                  <div className="text-red-600 text-sm">Rolling Stock/Signalling/Telecom certs expired</div>
                 </div>
               )}
             </div>
