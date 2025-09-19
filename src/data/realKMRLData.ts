@@ -31,7 +31,7 @@ export const realDepotData: RealDepotData = {
   milts: {
     '12': 17,
     '17': 14,
-    '20': 05,
+    '20': 5,
     '21': 24,
     '1': 11,
     '05': 1
@@ -42,14 +42,14 @@ export const realDepotData: RealDepotData = {
     'SBL3': { openEnd: '', bufferedEnd: '25' },
     'SBL4': { openEnd: '', bufferedEnd: '' },
     'SBL5': { openEnd: '', bufferedEnd: '' },
-    'SBL6': { openEnd: '', bufferedEnd: '05' },
-    'SBL7': { openEnd: '2', bufferedEnd: '' },
-    'SBL8': { openEnd: '', bufferedEnd: '15' },
+    'SBL6': { openEnd: '', bufferedEnd: '' }, // X marked - no stabling
+    'SBL7': { openEnd: '', bufferedEnd: '2' }, // X marked - no stabling  
+    'SBL8': { openEnd: '', bufferedEnd: '' },
     'SBL9': { openEnd: '', bufferedEnd: '' },
-    'SBL10': { openEnd: '19', bufferedEnd: '' },
+    'SBL10': { openEnd: '18', bufferedEnd: '' },
     'SBL11': { openEnd: '', bufferedEnd: '' },
     'SBL12': { openEnd: '', bufferedEnd: '' },
-    'IBL1': { openEnd: '9', bufferedEnd: '' },
+    'IBL1': { openEnd: '', bufferedEnd: '' },
     'IBL2': { openEnd: '9', bufferedEnd: '' },
     'IBL3': { openEnd: '25', bufferedEnd: '' },
     'HICL': { openEnd: '23', bufferedEnd: '' },

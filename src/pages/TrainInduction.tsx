@@ -314,7 +314,7 @@ const TrainInduction: React.FC = () => {
       {/* Real Bay Layout */}
       <div className="bg-white rounded-lg border border-gray-200 p-6">
         <h3 className="text-lg font-semibold text-gray-900 mb-6">Bay Layout - Real Time Status</h3>
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
           {/* SBL Bays */}
           <div>
             <h4 className="font-medium text-green-900 mb-4">SBL Bays (Service Bays Light)</h4>
@@ -325,26 +325,31 @@ const TrainInduction: React.FC = () => {
                 { bay: 'SBL3', openEnd: '', bufferedEnd: '25' },
                 { bay: 'SBL4', openEnd: '', bufferedEnd: '' },
                 { bay: 'SBL5', openEnd: '', bufferedEnd: '' },
-                { bay: 'SBL6', openEnd: '', bufferedEnd: '05' },
-                { bay: 'SBL7', openEnd: '2', bufferedEnd: '' },
-                { bay: 'SBL8', openEnd: '', bufferedEnd: '15' },
+                { bay: 'SBL6', openEnd: '', bufferedEnd: '', crossed: true },
+                { bay: 'SBL7', openEnd: '', bufferedEnd: '2', crossed: true },
+                { bay: 'SBL8', openEnd: '', bufferedEnd: '' },
                 { bay: 'SBL9', openEnd: '', bufferedEnd: '' },
-                { bay: 'SBL10', openEnd: '19', bufferedEnd: '' },
+                { bay: 'SBL10', openEnd: '18', bufferedEnd: '' },
                 { bay: 'SBL11', openEnd: '', bufferedEnd: '' },
                 { bay: 'SBL12', openEnd: '', bufferedEnd: '' }
               ].map((bay) => (
-                <div key={bay.bay} className="flex items-center justify-between p-3 bg-green-50 rounded-lg border">
-                  <div className="font-medium text-gray-900">{bay.bay}</div>
-                  <div className="flex space-x-4">
+                <div key={bay.bay} className={`flex items-center justify-between p-3 rounded-lg border ${
+                  bay.crossed ? 'bg-red-50 border-red-200' : 'bg-green-50 border-green-200'
+                }`}>
+                  <div className={`font-medium ${bay.crossed ? 'text-red-900' : 'text-gray-900'}`}>
+                    {bay.bay}
+                    {bay.crossed && <span className="ml-2 text-red-600">❌ NO STABLING</span>}
+                  </div>
+                  <div className="flex space-x-6">
                     <div className="text-center">
                       <div className="text-xs text-gray-600">OPEN END</div>
-                      <div className={`font-bold ${bay.openEnd ? 'text-blue-600' : 'text-gray-400'}`}>
+                      <div className={`font-bold text-lg ${bay.openEnd ? 'text-blue-600' : 'text-gray-400'}`}>
                         {bay.openEnd || '-'}
                       </div>
                     </div>
                     <div className="text-center">
                       <div className="text-xs text-gray-600">BUFFERED END</div>
-                      <div className={`font-bold ${bay.bufferedEnd ? 'text-blue-600' : 'text-gray-400'}`}>
+                      <div className={`font-bold text-lg ${bay.bufferedEnd ? 'text-blue-600' : 'text-gray-400'}`}>
                         {bay.bufferedEnd || '-'}
                       </div>
                     </div>
@@ -359,33 +364,60 @@ const TrainInduction: React.FC = () => {
             <h4 className="font-medium text-yellow-900 mb-4">IBL & HIBL Bays</h4>
             <div className="space-y-2">
               {[
-                { bay: 'IBL1', openEnd: '9', bufferedEnd: '', type: 'IBL' },
+                { bay: 'IBL1', openEnd: '', bufferedEnd: '', type: 'IBL' },
                 { bay: 'IBL2', openEnd: '9', bufferedEnd: '', type: 'IBL' },
                 { bay: 'IBL3', openEnd: '25', bufferedEnd: '', type: 'IBL' },
                 { bay: 'HICL', openEnd: '23', bufferedEnd: '', type: 'HIBL' },
                 { bay: 'HIS1', openEnd: '13', bufferedEnd: '', type: 'HIBL' },
                 { bay: 'HIS2', openEnd: '05', bufferedEnd: '', type: 'HIBL' },
                 { bay: 'HIS3', openEnd: '04', bufferedEnd: '', type: 'HIBL' },
-                { bay: 'FULL', openEnd: '15', bufferedEnd: '', type: 'SPECIAL' },
-                { bay: 'ETU', openEnd: '', bufferedEnd: '', type: 'SPECIAL' },
-                { bay: 'ERL', openEnd: '', bufferedEnd: '', type: 'SPECIAL' },
-                { bay: 'UBL', openEnd: '', bufferedEnd: '', type: 'SPECIAL' }
+                { bay: 'FULL', openEnd: '15', bufferedEnd: '', type: 'SPECIAL' }
               ].map((bay) => (
                 <div key={bay.bay} className={`flex items-center justify-between p-3 rounded-lg border ${
                   bay.type === 'IBL' ? 'bg-yellow-50' :
                   bay.type === 'HIBL' ? 'bg-red-50' : 'bg-purple-50'
                 }`}>
                   <div className="font-medium text-gray-900">{bay.bay}</div>
-                  <div className="flex space-x-4">
+                  <div className="flex space-x-6">
                     <div className="text-center">
                       <div className="text-xs text-gray-600">OPEN END</div>
-                      <div className={`font-bold ${bay.openEnd ? 'text-blue-600' : 'text-gray-400'}`}>
+                      <div className={`font-bold text-lg ${bay.openEnd ? 'text-blue-600' : 'text-gray-400'}`}>
                         {bay.openEnd || '-'}
                       </div>
                     </div>
                     <div className="text-center">
                       <div className="text-xs text-gray-600">BUFFERED END</div>
-                      <div className={`font-bold ${bay.bufferedEnd ? 'text-blue-600' : 'text-gray-400'}`}>
+                      <div className={`font-bold text-lg ${bay.bufferedEnd ? 'text-blue-600' : 'text-gray-400'}`}>
+                        {bay.bufferedEnd || '-'}
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          {/* Special Bays */}
+          <div>
+            <h4 className="font-medium text-purple-900 mb-4">Special Bays</h4>
+            <div className="space-y-2">
+              {[
+                { bay: 'ETU', openEnd: '', bufferedEnd: '', type: 'SPECIAL' },
+                { bay: 'ERL', openEnd: '', bufferedEnd: '', type: 'SPECIAL' },
+                { bay: 'UBL', openEnd: '', bufferedEnd: '', type: 'SPECIAL' }
+              ].map((bay) => (
+                <div key={bay.bay} className="flex items-center justify-between p-3 bg-purple-50 rounded-lg border border-purple-200">
+                  <div className="font-medium text-gray-900">{bay.bay}</div>
+                  <div className="flex space-x-6">
+                    <div className="text-center">
+                      <div className="text-xs text-gray-600">OPEN END</div>
+                      <div className={`font-bold text-lg ${bay.openEnd ? 'text-blue-600' : 'text-gray-400'}`}>
+                        {bay.openEnd || '-'}
+                      </div>
+                    </div>
+                    <div className="text-center">
+                      <div className="text-xs text-gray-600">BUFFERED END</div>
+                      <div className={`font-bold text-lg ${bay.bufferedEnd ? 'text-blue-600' : 'text-gray-400'}`}>
                         {bay.bufferedEnd || '-'}
                       </div>
                     </div>
