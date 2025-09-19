@@ -545,6 +545,7 @@ const LiveTrackingDisplay: React.FC<LiveTrackingDisplayProps> = ({ height = 600 
               <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
               <span>THIRD RAIL: ENERGIZED</span>
             </div>
+          </div>
         </div>
       </div>
     </div>
