@@ -10,7 +10,7 @@ import {
   Activity,
   BarChart3
 } from 'lucide-react';
-import { accurateTrains, fleetOperations, inductionSchedule, automatedSystem, operationalFlow } from '../data/accurateData';
+import { consistentTrains, fleetStats } from '../data/consistentTrainData';
 
 const Dashboard: React.FC = () => {
   const [activeTab, setActiveTab] = useState('overview');
@@ -37,19 +37,19 @@ const Dashboard: React.FC = () => {
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
         <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-4">
           <div className="text-yellow-700 text-sm font-medium">Standby Trains</div>
-          <div className="text-3xl font-bold text-yellow-800">{fleetOperations.standbyTrains}</div>
+          <div className="text-3xl font-bold text-yellow-800">{fleetStats.standby}</div>
         </div>
         <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
           <div className="text-blue-700 text-sm font-medium">Induction Trains</div>
-          <div className="text-3xl font-bold text-blue-800">3</div>
+          <div className="text-3xl font-bold text-blue-800">{fleetStats.service}</div>
         </div>
         <div className="bg-green-50 border border-green-200 rounded-lg p-4">
           <div className="text-green-700 text-sm font-medium">Scheduled Trains</div>
-          <div className="text-3xl font-bold text-green-800">3</div>
+          <div className="text-3xl font-bold text-green-800">{fleetStats.service}</div>
         </div>
         <div className="bg-gray-50 border border-gray-200 rounded-lg p-4">
           <div className="text-gray-700 text-sm font-medium">Total Trains</div>
-          <div className="text-3xl font-bold text-gray-800">{fleetOperations.totalFleet}</div>
+          <div className="text-3xl font-bold text-gray-800">{fleetStats.total}</div>
         </div>
       </div>
 
@@ -154,20 +154,20 @@ const Dashboard: React.FC = () => {
               </tr>
             </thead>
             <tbody className="bg-white divide-y divide-gray-200">
-              {accurateTrains.slice(0, 6).map((train, index) => (
+              {consistentTrains.slice(0, 15).map((train, index) => (
                 <tr key={train.id} className="hover:bg-gray-50">
                   <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{index + 1}</td>
                   <td className="px-6 py-4 whitespace-nowrap font-medium text-gray-900">{train.trainName}</td>
                   <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{train.trainId}</td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{train.positionId}</td>
+                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{train.currentBay.type}{train.currentBay.number}</td>
                   <td className="px-6 py-4 whitespace-nowrap text-sm text-blue-600">{train.fromStation}</td>
                   <td className="px-6 py-4 whitespace-nowrap">
                     <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-purple-100 text-purple-800">
                       {train.status}
                     </span>
                   </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{train.fitnessExpiry}</td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{train.nextDayStart}</td>
+                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">2025-09-21</td>
+                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{train.fromStation}</td>
                 </tr>
               ))}
             </tbody>
@@ -182,35 +182,35 @@ const Dashboard: React.FC = () => {
       <div className="bg-white rounded-lg border border-gray-200 p-6">
         <h3 className="text-lg font-semibold text-gray-900 mb-6">Schedule Timeline</h3>
         <div className="space-y-6">
-          {inductionSchedule.slice(0, 3).map((train, index) => (
-            <div key={train.trainId} className="border-b border-gray-200 pb-6 last:border-b-0">
+          {consistentTrains.slice(0, 3).map((train, index) => (
+            <div key={index} className="border-b border-gray-200 pb-6 last:border-b-0">
               <div className="flex items-center justify-between mb-4">
                 <div className="flex items-center space-x-4">
-                  <h4 className="text-xl font-semibold text-gray-900">{train.trainName}</h4>
+                  <h4 className="text-xl font-semibold text-gray-900">{consistentTrains[index]?.trainName}</h4>
                   <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-purple-100 text-purple-800">
-                    {train.status}
+                    {consistentTrains[index]?.status}
                   </span>
                 </div>
                 <div className="text-right text-sm text-gray-500">
-                  ID: {train.trainId}
+                  ID: {consistentTrains[index]?.trainId}
                 </div>
               </div>
               <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-sm">
                 <div>
                   <span className="text-gray-600">Position:</span>
-                  <div className="font-medium text-gray-900">{train.positionId}</div>
+                  <div className="font-medium text-gray-900">{consistentTrains[index]?.currentBay.type}{consistentTrains[index]?.currentBay.number}</div>
                 </div>
                 <div>
                   <span className="text-gray-600">From Station:</span>
-                  <div className="font-medium text-blue-600">{train.fromStation}</div>
+                  <div className="font-medium text-blue-600">{consistentTrains[index]?.fromStation}</div>
                 </div>
                 <div>
                   <span className="text-gray-600">Induction Time:</span>
-                  <div className="font-medium text-blue-600">{train.inductionTime}</div>
+                  <div className="font-medium text-blue-600">{consistentTrains[index]?.scheduleTiming}</div>
                 </div>
                 <div>
                   <span className="text-gray-600">Scheduled Departure:</span>
-                  <div className="font-medium text-green-600">{train.scheduledDeparture}</div>
+                  <div className="font-medium text-green-600">{consistentTrains[index]?.scheduleTiming}</div>
                 </div>
               </div>
             </div>
@@ -229,28 +229,28 @@ const Dashboard: React.FC = () => {
         <div className="grid grid-cols-2 md:grid-cols-5 gap-4 mb-8">
           <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 text-center">
             <div className="text-blue-700 text-sm font-medium">Total Fleet</div>
-            <div className="text-3xl font-bold text-blue-800">{fleetOperations.totalFleet}</div>
+            <div className="text-3xl font-bold text-blue-800">{fleetStats.total}</div>
             <div className="text-xs text-blue-600">Trains</div>
           </div>
           <div className="bg-green-50 border border-green-200 rounded-lg p-4 text-center">
             <div className="text-green-700 text-sm font-medium">Running Today</div>
-            <div className="text-3xl font-bold text-green-800">{fleetOperations.runningToday}</div>
+            <div className="text-3xl font-bold text-green-800">{fleetStats.service}</div>
             <div className="text-xs text-green-600">Weekday Service</div>
           </div>
           <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-4 text-center">
             <div className="text-yellow-700 text-sm font-medium">Standby Trains</div>
-            <div className="text-3xl font-bold text-yellow-800">{fleetOperations.standbyTrains}</div>
+            <div className="text-3xl font-bold text-yellow-800">{fleetStats.standby}</div>
             <div className="text-xs text-yellow-600">Ready for deployment</div>
           </div>
           <div className="bg-red-50 border border-red-200 rounded-lg p-4 text-center">
             <div className="text-red-700 text-sm font-medium">Maintenance</div>
-            <div className="text-3xl font-bold text-red-800">{fleetOperations.maintenance}</div>
+            <div className="text-3xl font-bold text-red-800">{fleetStats.maintenance}</div>
             <div className="text-xs text-red-600">Under maintenance</div>
           </div>
           <div className="bg-purple-50 border border-purple-200 rounded-lg p-4 text-center">
             <div className="text-purple-700 text-sm font-medium">Service Status</div>
-            <div className="text-2xl font-bold text-purple-800">{fleetOperations.serviceStatus}</div>
-            <div className="text-xs text-purple-600">{fleetOperations.serviceHours}</div>
+            <div className="text-2xl font-bold text-purple-800">Active</div>
+            <div className="text-xs text-purple-600">05:00 - 22:00</div>
           </div>
         </div>
 
@@ -261,19 +261,19 @@ const Dashboard: React.FC = () => {
             <div className="space-y-3">
               <div className="flex justify-between">
                 <span className="text-gray-600">Weekday Operations</span>
-                <span className="font-medium text-gray-900">{fleetOperations.weekdayOperations} trains</span>
+                <span className="font-medium text-gray-900">{fleetStats.service} trains</span>
               </div>
               <div className="flex justify-between">
                 <span className="text-gray-600">Weekend Operations</span>
-                <span className="font-medium text-gray-900">{fleetOperations.weekendOperations} trains</span>
+                <span className="font-medium text-gray-900">12 trains</span>
               </div>
               <div className="flex justify-between">
                 <span className="text-gray-600">Standby Locations</span>
-                <span className="font-medium text-blue-600">{fleetOperations.standbyLocations.join(', ')}</span>
+                <span className="font-medium text-blue-600">Aluva, Tripunithura</span>
               </div>
               <div className="flex justify-between">
                 <span className="text-gray-600">Depot Location</span>
-                <span className="font-medium text-blue-600">{fleetOperations.depotLocation}</span>
+                <span className="font-medium text-blue-600">Muttom Depot</span>
               </div>
             </div>
           </div>
@@ -283,19 +283,19 @@ const Dashboard: React.FC = () => {
             <div className="space-y-3">
               <div className="flex justify-between">
                 <span className="text-gray-600">Weekday Service</span>
-                <span className="font-medium text-gray-900">{fleetOperations.weekdayService}</span>
+                <span className="font-medium text-gray-900">05:00 - 22:00</span>
               </div>
               <div className="flex justify-between">
                 <span className="text-gray-600">Holiday Service</span>
-                <span className="font-medium text-gray-900">{fleetOperations.holidayService}</span>
+                <span className="font-medium text-gray-900">08:00 - 22:00</span>
               </div>
               <div className="flex justify-between">
                 <span className="text-gray-600">Current Status</span>
-                <span className="font-medium text-green-600">{fleetOperations.currentStatus}</span>
+                <span className="font-medium text-green-600">Active</span>
               </div>
               <div className="flex justify-between">
                 <span className="text-gray-600">Service Type</span>
-                <span className="font-medium text-blue-600">{fleetOperations.serviceType}</span>
+                <span className="font-medium text-blue-600">Weekday Schedule</span>
               </div>
             </div>
           </div>
@@ -307,12 +307,22 @@ const Dashboard: React.FC = () => {
           <div className="bg-blue-100 rounded-lg p-4 mb-4">
             <h5 className="font-medium text-blue-900 mb-3">Daily Operations Cycle</h5>
             <ul className="space-y-2 text-sm text-blue-800">
-              {operationalFlow.dailyCycle.map((step, index) => (
-                <li key={index} className="flex items-start">
-                  <span className="text-blue-600 mr-2">•</span>
-                  {step}
-                </li>
-              ))}
+              <li className="flex items-start">
+                <span className="text-blue-600 mr-2">•</span>
+                15 trains scheduled for weekday service
+              </li>
+              <li className="flex items-start">
+                <span className="text-blue-600 mr-2">•</span>
+                12 trains for weekend service
+              </li>
+              <li className="flex items-start">
+                <span className="text-blue-600 mr-2">•</span>
+                2 standby trains at terminals
+              </li>
+              <li className="flex items-start">
+                <span className="text-blue-600 mr-2">•</span>
+                8 trains under maintenance
+              </li>
             </ul>
           </div>
 
@@ -320,9 +330,9 @@ const Dashboard: React.FC = () => {
             <div className="bg-green-50 rounded-lg p-4">
               <h5 className="font-medium text-green-900 mb-3">Sample Active Trains</h5>
               <div className="space-y-2 text-sm">
-                {operationalFlow.sampleActiveTrains.map((train, index) => (
+                {consistentTrains.slice(0, 5).map((train, index) => (
                   <div key={index} className="text-green-800">
-                    • {train.name} ({train.id}): {train.position} → {train.station}
+                    • {train.trainName} ({train.trainNumber}): {train.currentBay.type}{train.currentBay.number} → {train.fromStation}
                   </div>
                 ))}
               </div>
@@ -331,22 +341,21 @@ const Dashboard: React.FC = () => {
             <div className="bg-purple-50 rounded-lg p-4">
               <h5 className="font-medium text-purple-900 mb-3">Induction Schedule</h5>
               <div className="space-y-2 text-sm">
-                {operationalFlow.inductionSchedule.map((item, index) => (
-                  <div key={index} className="text-purple-800">
-                    • {item.time}: {item.description}
-                  </div>
-                ))}
+                <div className="text-purple-800">• 05:00 AM: First Train</div>
+                <div className="text-purple-800">• 05:55 AM: Last Train</div>
+                <div className="text-purple-800">• 05:00 AM: Service Start</div>
+                <div className="text-purple-800">• 22:00 PM: Service End</div>
+                <div className="text-purple-800">• 06:00 AM: Weekend Start</div>
               </div>
             </div>
 
             <div className="bg-gray-50 rounded-lg p-4">
               <h5 className="font-medium text-gray-900 mb-3">Fleet Distribution</h5>
               <div className="space-y-2 text-sm">
-                {operationalFlow.fleetDistribution.map((item, index) => (
-                  <div key={index} className="text-gray-800">
-                    • {item.category}: {item.count} {item.description}
-                  </div>
-                ))}
+                <div className="text-gray-800">• Total Fleet: {fleetStats.total} trains</div>
+                <div className="text-gray-800">• Service Ready: {fleetStats.service} trains</div>
+                <div className="text-gray-800">• Standby: {fleetStats.standby} trains</div>
+                <div className="text-gray-800">• Maintenance: {fleetStats.maintenance} trains</div>
               </div>
             </div>
           </div>
@@ -442,7 +451,7 @@ const Dashboard: React.FC = () => {
                 <span className="font-medium">Fitness Validation</span>
               </div>
               <div className="text-xs text-gray-600">
-                {automatedSystem.fitnessValidation.validCertificates} Valid / {automatedSystem.fitnessValidation.totalTrains} Total
+                {fleetStats.validFitness} Valid / {fleetStats.total} Total
               </div>
             </div>
             
@@ -452,7 +461,7 @@ const Dashboard: React.FC = () => {
                 <span className="font-medium">Induction Scheduling</span>
               </div>
               <div className="text-xs text-gray-600">
-                {automatedSystem.inductionScheduling.scheduledTrains.length} Scheduled
+                {fleetStats.service} Scheduled
               </div>
             </div>
           </div>
