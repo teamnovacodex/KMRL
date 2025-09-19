@@ -510,18 +510,20 @@ const LiveTrackingDisplay: React.FC<LiveTrackingDisplayProps> = ({ height = 600 
 
         {/* Selected Train Details */}
         {selectedTrain && (
-            <div>
-              <div className="text-kmrl-lime-400">RUNNING</div>
-              <div className="text-2xl font-bold">{trains.filter(t => t.status === 'RUNNING').length}</div>
-            </div>
-            <div>
-              <div className="text-red-400">STOPPED</div>
-              <div className="text-2xl font-bold">{trains.filter(t => t.status === 'STOPPED').length}</div>
-            </div>
-            <div>
-              <div className="text-kmrl-yellow-400">DELAYED</div>
-              <div className="text-2xl font-bold">{trains.filter(t => t.delay > 0).length}</div>
-            </div>
+            <>
+              <div>
+                <div className="text-kmrl-lime-400">RUNNING</div>
+                <div className="text-2xl font-bold">{trains.filter(t => t.status === 'RUNNING').length}</div>
+              </div>
+              <div>
+                <div className="text-red-400">STOPPED</div>
+                <div className="text-2xl font-bold">{trains.filter(t => t.status === 'STOPPED').length}</div>
+              </div>
+              <div>
+                <div className="text-kmrl-yellow-400">DELAYED</div>
+                <div className="text-2xl font-bold">{trains.filter(t => t.delay > 0).length}</div>
+              </div>
+            </>
           </div>
         </div>
         
