@@ -18,82 +18,96 @@ interface TrainPosition {
   nextStation: string;
   delay: number;
   passengerLoad: number;
-  trackLine: number; // 1 = UP track, 2 = DOWN track
-  progress: number; // 0-1 progress between stations
+  trackLine: number;
+  progress: number;
+}
+
+interface TrackSection {
+  id: string;
+  startX: number;
+  endX: number;
+  y: number;
+  isOccupied: boolean;
+  occupiedBy?: string;
 }
 
 const LiveTrackingDisplay: React.FC<LiveTrackingDisplayProps> = ({ height = 600 }) => {
   const [selectedTrain, setSelectedTrain] = useState<string>('');
   const [currentTime, setCurrentTime] = useState(new Date());
 
-  // Real Kochi Metro Stations - Exact positions from control center image
+  // Real Kochi Metro Stations - Based on your diagram
   const stations = [
-    { code: 'ALV', name: 'Aluva', x: 80, y: 200, signal: 'GREEN', km: 0.0 },
-    { code: 'COM', name: 'Companypady', x: 160, y: 200, signal: 'GREEN', km: 3.8 },
-    { code: 'AMB', name: 'Ambattukavu', x: 240, y: 200, signal: 'GREEN', km: 5.2 },
-    { code: 'MUT', name: 'Muttom', x: 320, y: 200, signal: 'GREEN', km: 6.8 },
-    { code: 'KAL', name: 'Kalamassery', x: 400, y: 200, signal: 'GREEN', km: 8.4 },
-    { code: 'COC', name: 'Cochin University', x: 480, y: 200, signal: 'GREEN', km: 10.1 },
-    { code: 'PAT', name: 'Pathadipalam', x: 560, y: 200, signal: 'GREEN', km: 11.7 },
-    { code: 'EDA', name: 'Edapally', x: 640, y: 200, signal: 'GREEN', km: 13.2 },
-    { code: 'CHA', name: 'Changampuzha Park', x: 720, y: 200, signal: 'GREEN', km: 14.8 },
-    { code: 'PAL', name: 'Palarivattom', x: 800, y: 200, signal: 'GREEN', km: 16.3 },
-    { code: 'JLN', name: 'JLN Stadium', x: 880, y: 200, signal: 'GREEN', km: 17.9 },
-    { code: 'KAL', name: 'Kaloor', x: 960, y: 200, signal: 'GREEN', km: 19.4 },
-    { code: 'TOW', name: 'Town Hall', x: 1040, y: 200, signal: 'GREEN', km: 20.8 },
-    { code: 'MGR', name: 'M.G Road', x: 1120, y: 200, signal: 'GREEN', km: 22.1 },
-    { code: 'MAH', name: 'Maharajas College', x: 1200, y: 200, signal: 'GREEN', km: 23.4 },
-    { code: 'ERN', name: 'Ernakulam South', x: 1280, y: 200, signal: 'GREEN', km: 24.7 },
-    { code: 'KAD', name: 'Kadavanthra', x: 1360, y: 200, signal: 'GREEN', km: 26.2 },
-    { code: 'ELA', name: 'Elamkulam', x: 1440, y: 200, signal: 'GREEN', km: 27.8 },
-    { code: 'VYT', name: 'Vyttila', x: 1520, y: 200, signal: 'GREEN', km: 29.3 },
-    { code: 'THA', name: 'Thaikoodam', x: 1600, y: 200, signal: 'GREEN', km: 30.9 },
-    { code: 'PET', name: 'Petta', x: 1680, y: 200, signal: 'GREEN', km: 32.4 },
-    { code: 'VAD', name: 'Vadakkekotta', x: 1760, y: 200, signal: 'GREEN', km: 33.8 },
-    { code: 'TRI', name: 'Tripunithura', x: 1840, y: 200, signal: 'GREEN', km: 35.2 }
+    { code: 'ALV', name: 'Aluva', x: 100, y: 200, km: 0.0 },
+    { code: 'PUL', name: 'Pulinchodu', x: 180, y: 200, km: 2.1 },
+    { code: 'COM', name: 'Companypady', x: 260, y: 200, km: 3.8 },
+    { code: 'AMB', name: 'Ambattukavu', x: 340, y: 200, km: 5.2 },
+    { code: 'MUT', name: 'Muttom', x: 420, y: 200, km: 6.8 },
+    { code: 'KAL', name: 'Kalamassery', x: 500, y: 200, km: 8.4 },
+    { code: 'COC', name: 'Cochin University', x: 580, y: 200, km: 10.1 },
+    { code: 'PAT', name: 'Pathadipalam', x: 660, y: 200, km: 11.7 },
+    { code: 'EDA', name: 'Edapally', x: 740, y: 200, km: 13.2 },
+    { code: 'CHA', name: 'Changampuzha Park', x: 820, y: 200, km: 14.8 },
+    { code: 'PAL', name: 'Palarivattom', x: 900, y: 200, km: 16.3 },
+    { code: 'JLN', name: 'JLN Stadium', x: 980, y: 200, km: 17.9 },
+    { code: 'KAL', name: 'Kaloor', x: 1060, y: 200, km: 19.4 },
+    { code: 'TOW', name: 'Town Hall', x: 1140, y: 200, km: 20.8 },
+    { code: 'MGR', name: 'M.G Road', x: 1220, y: 200, km: 22.1 },
+    { code: 'MAH', name: 'Maharajas College', x: 1300, y: 200, km: 23.4 },
+    { code: 'ERN', name: 'Ernakulam South', x: 1380, y: 200, km: 24.7 },
+    { code: 'KAD', name: 'Kadavanthra', x: 1460, y: 200, km: 26.2 },
+    { code: 'ELA', name: 'Elamkulam', x: 1540, y: 200, km: 27.8 },
+    { code: 'VYT', name: 'Vyttila', x: 1620, y: 200, km: 29.3 },
+    { code: 'THA', name: 'Thaikoodam', x: 1700, y: 200, km: 30.9 },
+    { code: 'PET', name: 'Petta', x: 1780, y: 200, km: 32.4 },
+    { code: 'VAD', name: 'Vadakkekotta', x: 1860, y: 200, km: 33.8 },
+    { code: 'TRI', name: 'Tripunithura', x: 1940, y: 200, km: 35.2 }
   ];
 
-  // Track path coordinates - following the exact green lines from your image
-  const trackPath = {
-    down: stations.map(station => ({ x: station.x, y: 220 })), // Bottom track
-    up: stations.map(station => ({ x: station.x, y: 180 }))     // Top track
-  };
+  // Track sections for occupation detection
+  const [trackSections, setTrackSections] = useState<TrackSection[]>(() => {
+    const sections: TrackSection[] = [];
+    for (let i = 0; i < stations.length - 1; i++) {
+      // UP track sections
+      sections.push({
+        id: `up-${i}`,
+        startX: stations[i].x,
+        endX: stations[i + 1].x,
+        y: 180,
+        isOccupied: false
+      });
+      // DOWN track sections
+      sections.push({
+        id: `down-${i}`,
+        startX: stations[i].x,
+        endX: stations[i + 1].x,
+        y: 220,
+        isOccupied: false
+      });
+    }
+    return sections;
+  });
 
+  // Live trains - Based on your diagram with train numbers
   const [trains, setTrains] = useState<TrainPosition[]>([
     {
-      id: '001',
+      id: '009',
       name: 'SARAW',
-      x: 80,
+      x: 180,
       y: 220,
       speed: 48,
       direction: 'DOWN',
       status: 'RUNNING',
-      currentStation: 'ALV',
+      currentStation: 'PUL',
       nextStation: 'COM',
       delay: 0,
       passengerLoad: 65,
       trackLine: 2,
-      progress: 0.2
+      progress: 0.3
     },
     {
-      id: '003',
+      id: '019',
       name: 'TAPTI',
-      x: 200,
-      y: 220,
-      speed: 45,
-      direction: 'DOWN',
-      status: 'RUNNING',
-      currentStation: 'COM',
-      nextStation: 'AMB',
-      delay: 0,
-      passengerLoad: 72,
-      trackLine: 2,
-      progress: 0.5
-    },
-    {
-      id: '005',
-      name: 'GANGA',
-      x: 400,
+      x: 500,
       y: 220,
       speed: 45,
       direction: 'DOWN',
@@ -101,31 +115,46 @@ const LiveTrackingDisplay: React.FC<LiveTrackingDisplayProps> = ({ height = 600 
       currentStation: 'KAL',
       nextStation: 'COC',
       delay: 0,
-      passengerLoad: 68,
+      passengerLoad: 72,
       trackLine: 2,
-      progress: 0.3
+      progress: 0.5
+    },
+    {
+      id: '024',
+      name: 'GANGA',
+      x: 900,
+      y: 220,
+      speed: 52,
+      direction: 'DOWN',
+      status: 'RUNNING',
+      currentStation: 'PAL',
+      nextStation: 'JLN',
+      delay: 0,
+      passengerLoad: 78,
+      trackLine: 2,
+      progress: 0.2
     },
     {
       id: '007',
       name: 'KAVRI',
-      x: 1040,
+      x: 1300,
       y: 180,
       speed: 0,
       direction: 'UP',
       status: 'STOPPED',
-      currentStation: 'TOW',
-      nextStation: 'KAL',
+      currentStation: 'MAH',
+      nextStation: 'MGR',
       delay: 2,
       passengerLoad: 85,
       trackLine: 1,
       progress: 0.0
     },
     {
-      id: '009',
+      id: '025',
       name: 'KRISHNA',
-      x: 1520,
+      x: 1620,
       y: 180,
-      speed: 52,
+      speed: 50,
       direction: 'UP',
       status: 'RUNNING',
       currentStation: 'VYT',
@@ -141,9 +170,9 @@ const LiveTrackingDisplay: React.FC<LiveTrackingDisplayProps> = ({ height = 600 
     const timer = setInterval(() => {
       setCurrentTime(new Date());
       
-      // Move trains along exact track path
-      setTrains(prevTrains => 
-        prevTrains.map(train => {
+      // Update train positions and track occupation
+      setTrains(prevTrains => {
+        const newTrains = prevTrains.map(train => {
           if (train.status === 'RUNNING') {
             const currentStationIndex = stations.findIndex(s => s.code === train.currentStation);
             const nextStationIndex = stations.findIndex(s => s.code === train.nextStation);
@@ -152,25 +181,22 @@ const LiveTrackingDisplay: React.FC<LiveTrackingDisplayProps> = ({ height = 600 
               const currentStation = stations[currentStationIndex];
               const nextStation = stations[nextStationIndex];
               
-              // Calculate new progress (0.01 = 1% per second)
-              let newProgress = train.progress + (train.speed * 0.0002); // Realistic speed
+              // Calculate new progress
+              let newProgress = train.progress + (train.speed * 0.0008);
               
-              // Interpolate position along track line
-              const trackY = train.trackLine === 1 ? 180 : 220; // UP or DOWN track
+              // Interpolate position along track
               const newX = currentStation.x + (nextStation.x - currentStation.x) * newProgress;
-              const newY = trackY;
-                
+              const newY = train.trackLine === 1 ? 180 : 220;
+              
               // Check if reached next station
               if (newProgress >= 1.0) {
-                // Reached next station
-                const newCurrentStationIndex = nextStationIndex;
+                let newCurrentStationIndex = nextStationIndex;
                 let newNextStationIndex;
                 let newDirection = train.direction;
                 let newTrackLine = train.trackLine;
                 
                 if (train.direction === 'DOWN') {
                   newNextStationIndex = Math.min(nextStationIndex + 1, stations.length - 1);
-                  // If reached end terminal, turn around
                   if (newNextStationIndex === stations.length - 1) {
                     newDirection = 'UP';
                     newTrackLine = 1;
@@ -178,7 +204,6 @@ const LiveTrackingDisplay: React.FC<LiveTrackingDisplayProps> = ({ height = 600 
                   }
                 } else {
                   newNextStationIndex = Math.max(nextStationIndex - 1, 0);
-                  // If reached start terminal, turn around
                   if (newNextStationIndex === 0) {
                     newDirection = 'DOWN';
                     newTrackLine = 2;
@@ -207,9 +232,38 @@ const LiveTrackingDisplay: React.FC<LiveTrackingDisplayProps> = ({ height = 600 
             }
           }
           return train;
-        })
-      );
-    }, 100); // Update every 100ms for smooth movement
+        });
+        
+        // Update track occupation
+        setTrackSections(prevSections => 
+          prevSections.map(section => {
+            const isOccupied = newTrains.some(train => {
+              const trainOnCorrectTrack = (section.y === 180 && train.trackLine === 1) || 
+                                        (section.y === 220 && train.trackLine === 2);
+              return trainOnCorrectTrack && 
+                     train.x >= section.startX - 20 && 
+                     train.x <= section.endX + 20;
+            });
+            
+            const occupyingTrain = newTrains.find(train => {
+              const trainOnCorrectTrack = (section.y === 180 && train.trackLine === 1) || 
+                                        (section.y === 220 && train.trackLine === 2);
+              return trainOnCorrectTrack && 
+                     train.x >= section.startX - 20 && 
+                     train.x <= section.endX + 20;
+            });
+            
+            return {
+              ...section,
+              isOccupied,
+              occupiedBy: occupyingTrain?.id
+            };
+          })
+        );
+        
+        return newTrains;
+      });
+    }, 200);
 
     return () => clearInterval(timer);
   }, []);
@@ -259,10 +313,10 @@ const LiveTrackingDisplay: React.FC<LiveTrackingDisplayProps> = ({ height = 600 
         </div>
       </div>
 
-      {/* Live Tracking Display - Exact Layout from Control Center Image */}
+      {/* Live Tracking Display */}
       <div className="relative bg-black p-6" style={{ height: `${height}px` }}>
-        <svg width="100%" height="100%" viewBox="0 0 2000 400" className="absolute inset-0">
-          {/* Track Infrastructure - Like Real Control Center */}
+        <svg width="100%" height="100%" viewBox="0 0 2100 400" className="absolute inset-0">
+          {/* Track Infrastructure */}
           <defs>
             <filter id="glow">
               <feGaussianBlur stdDeviation="3" result="coloredBlur"/>
@@ -271,34 +325,23 @@ const LiveTrackingDisplay: React.FC<LiveTrackingDisplayProps> = ({ height = 600 
                 <feMergeNode in="SourceGraphic"/>
               </feMerge>
             </filter>
-            <linearGradient id="trackGradient" x1="0%" y1="0%" x2="100%" y2="0%">
-              <stop offset="0%" style={{stopColor:'#10b981', stopOpacity:1}} />
-              <stop offset="100%" style={{stopColor:'#059669', stopOpacity:1}} />
-            </linearGradient>
           </defs>
           
-          {/* Main Track Lines - Exactly like your control center image */}
-          <g>
-            {/* DOWN Track (Aluva to Tripunithura) - Bottom green line */}
-            <path 
-              d={`M ${stations.map(s => `${s.x} 220`).join(' L ')}`}
-              stroke="url(#trackGradient)"
-              strokeWidth="6"
-              fill="none"
+          {/* Track Sections with Dynamic Colors */}
+          {trackSections.map((section) => (
+            <line
+              key={section.id}
+              x1={section.startX}
+              y1={section.y}
+              x2={section.endX}
+              y2={section.y}
+              stroke={section.isOccupied ? '#ef4444' : '#10b981'}
+              strokeWidth="8"
               filter="url(#glow)"
             />
-            
-            {/* UP Track (Tripunithura to Aluva) - Top green line */}
-            <path 
-              d={`M ${stations.map(s => `${s.x} 180`).join(' L ')}`}
-              stroke="url(#trackGradient)"
-              strokeWidth="6"
-              fill="none"
-              filter="url(#glow)"
-            />
-          </g>
+          ))}
           
-          {/* Station Infrastructure - Like Real Control Center */}
+          {/* Stations */}
           {stations.map((station, index) => (
             <g key={station.code}>
               {/* Station Platform Blocks */}
@@ -333,6 +376,16 @@ const LiveTrackingDisplay: React.FC<LiveTrackingDisplayProps> = ({ height = 600 
                 {station.code}
               </text>
               
+              {/* Station Name */}
+              <text
+                x={station.x}
+                y={145}
+                textAnchor="middle"
+                className="text-xs fill-gray-400"
+              >
+                {station.name}
+              </text>
+              
               {/* Platform Numbers */}
               <text
                 x={station.x}
@@ -356,44 +409,30 @@ const LiveTrackingDisplay: React.FC<LiveTrackingDisplayProps> = ({ height = 600 
                 cx={station.x - 25}
                 cy={175}
                 r="3"
-                fill={getSignalColor(station.signal)}
+                fill="#10b981"
                 className="animate-pulse"
               />
               <circle
                 cx={station.x + 25}
                 cy={225}
                 r="3"
-                fill={getSignalColor(station.signal)}
+                fill="#10b981"
                 className="animate-pulse"
               />
               
-              {/* Block Sections */}
-              {index < stations.length - 1 && (
-                <g>
-                  <rect
-                    x={station.x + 20}
-                    y={195}
-                    width="6"
-                    height="10"
-                    fill="#10b981"
-                    className="animate-pulse"
-                  />
+              {/* Crossover Points (X marks) at major stations */}
+              {(station.code === 'MUT' || station.code === 'PAL' || station.code === 'VYT' || station.code === 'KAL') && (
+                <g stroke="#f59e0b" strokeWidth="3">
+                  <path d={`M ${station.x - 15} 175 L ${station.x + 15} 225`} />
+                  <path d={`M ${station.x + 15} 175 L ${station.x - 15} 225`} />
                   <text
-                    x={station.x + 23}
-                    y={202}
+                    x={station.x}
+                    y={205}
                     textAnchor="middle"
-                    className="text-xs fill-white font-mono"
+                    className="text-xs fill-yellow-400 font-bold"
                   >
-                    {index + 1}
+                    ✕
                   </text>
-                </g>
-              )}
-              
-              {/* Cross-over Points (at major stations) */}
-              {(station.code === 'MUT' || station.code === 'PAL' || station.code === 'VYT') && (
-                <g stroke="#f59e0b" strokeWidth="2" strokeDasharray="4,4">
-                  <path d={`M ${station.x - 10} 180 L ${station.x + 10} 220`} />
-                  <path d={`M ${station.x + 10} 180 L ${station.x - 10} 220`} />
                 </g>
               )}
             </g>
@@ -401,14 +440,14 @@ const LiveTrackingDisplay: React.FC<LiveTrackingDisplayProps> = ({ height = 600 
           
           {/* Depot Connection at Muttom */}
           <g stroke="#f59e0b" strokeWidth="3" strokeDasharray="6,3">
-            <path d="M 320 180 L 320 120 L 280 100" />
-            <path d="M 320 220 L 320 280 L 280 300" />
-            <text x="285" y="95" className="text-xs fill-yellow-400 font-bold">DEPOT</text>
-            <text x="285" y="305" className="text-xs fill-yellow-400 font-bold">YARD</text>
+            <path d="M 420 180 L 420 120 L 380 100" />
+            <path d="M 420 220 L 420 280 L 380 300" />
+            <text x="375" y="95" className="text-xs fill-yellow-400 font-bold">DEPOT</text>
+            <text x="375" y="305" className="text-xs fill-yellow-400 font-bold">YARD</text>
           </g>
         </svg>
 
-        {/* Live Trains - Moving on Exact Track Lines */}
+        {/* Live Trains - Blue Dark Boxes (Like Your Diagram) */}
         {trains.map((train) => (
           <motion.div
             key={train.id}
@@ -416,26 +455,27 @@ const LiveTrackingDisplay: React.FC<LiveTrackingDisplayProps> = ({ height = 600 
               selectedTrain === train.id ? 'z-20' : 'z-10'
             }`}
             style={{
-              left: `${(train.x / 2000) * 100}%`,
+              left: `${(train.x / 2100) * 100}%`,
               top: `${(train.y / 400) * 100}%`,
             }}
             animate={{
-              scale: selectedTrain === train.id ? 1.3 : 1,
+              scale: selectedTrain === train.id ? 1.2 : 1,
             }}
             transition={{ scale: { duration: 0.3 } }}
             onClick={() => setSelectedTrain(train.id)}
           >
-            {/* Professional Train Icon */}
-            <div className={`relative p-2 rounded-lg shadow-lg border-2 transition-all duration-300 ${
+            {/* Blue Dark Box - Exactly Like Your Diagram */}
+            <div className={`relative transition-all duration-300 ${
               selectedTrain === train.id 
-                ? 'border-cyan-400 bg-gray-700' 
-                : 'border-gray-600 bg-gray-800 hover:border-gray-500'
+                ? 'border-2 border-cyan-400' 
+                : 'border border-gray-600'
             }`}>
               <div 
-                className="w-8 h-4 rounded-sm flex items-center justify-center relative"
-                style={{ backgroundColor: getTrainStatusColor(train.status) }}
+                className="w-12 h-6 bg-blue-900 border border-blue-700 rounded-sm flex items-center justify-center relative shadow-lg"
+                style={{ backgroundColor: train.status === 'STOPPED' ? '#1e40af' : '#1e3a8a' }}
               >
-                <Train className="h-3 w-3 text-white" />
+                {/* Train Number - White Text */}
+                <span className="text-white text-xs font-bold">{train.id}</span>
                 
                 {/* Direction Arrow */}
                 <div className={`absolute ${train.direction === 'DOWN' ? 'right-0' : 'left-0'} top-1/2 transform -translate-y-1/2`}>
@@ -452,49 +492,22 @@ const LiveTrackingDisplay: React.FC<LiveTrackingDisplayProps> = ({ height = 600 
                 {train.delay > 0 && (
                   <div className="w-2 h-2 bg-red-500 rounded-full animate-pulse"></div>
                 )}
-                {train.passengerLoad > 90 && (
-                  <div className="w-2 h-2 bg-yellow-500 rounded-full"></div>
-                )}
                 {train.status === 'RUNNING' && (
                   <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
                 )}
               </div>
               
-              {/* Train Name */}
-              <div className="absolute -bottom-8 left-1/2 transform -translate-x-1/2 text-xs font-bold text-green-400 whitespace-nowrap">
-                {train.name}
-              </div>
-              
               {/* Speed Display */}
               {train.status === 'RUNNING' && (
-                <div className="absolute -top-8 left-1/2 transform -translate-x-1/2 text-xs font-mono text-cyan-400 whitespace-nowrap">
-                  {train.speed} km/h
+                <div className="absolute -top-6 left-1/2 transform -translate-x-1/2 text-xs font-mono text-cyan-400 whitespace-nowrap">
+                  {train.speed}km/h
                 </div>
               )}
             </div>
           </motion.div>
         ))}
 
-        {/* Movement Trails for Running Trains */}
-        <svg width="100%" height="100%" viewBox="0 0 2000 400" className="absolute inset-0 pointer-events-none">
-          {trains.filter(t => t.status === 'RUNNING').map((train) => (
-            <motion.circle
-              key={`trail-${train.id}`}
-              cx={train.x}
-              cy={train.y}
-              r="20"
-              fill="none"
-              stroke={getTrainStatusColor(train.status)}
-              strokeWidth="2"
-              strokeDasharray="4,4"
-              initial={{ opacity: 0 }}
-              animate={{ opacity: [0, 0.4, 0] }}
-              transition={{ duration: 2, repeat: Infinity }}
-            />
-          ))}
-        </svg>
-        
-        {/* Track Information Overlay */}
+        {/* System Status Overlay */}
         <div className="absolute top-4 left-4 bg-gray-800/90 rounded-lg p-3 text-white text-xs font-mono">
           <div className="grid grid-cols-3 gap-4">
             <div>
@@ -502,52 +515,93 @@ const LiveTrackingDisplay: React.FC<LiveTrackingDisplayProps> = ({ height = 600 
               <div className="text-2xl font-bold">{trains.filter(t => t.status === 'RUNNING').length}</div>
             </div>
             <div>
-              <div className="text-yellow-400">STOPPED</div>
+              <div className="text-red-400">STOPPED</div>
               <div className="text-2xl font-bold">{trains.filter(t => t.status === 'STOPPED').length}</div>
             </div>
             <div>
-              <div className="text-red-400">DELAYED</div>
+              <div className="text-yellow-400">DELAYED</div>
               <div className="text-2xl font-bold">{trains.filter(t => t.delay > 0).length}</div>
             </div>
           </div>
         </div>
         
-        {/* Track Legend */}
-        <div className="absolute bottom-4 left-4 bg-gray-800/90 rounded-lg p-3 text-white text-xs">
-          <div className="space-y-2">
-            <div className="flex items-center space-x-2">
-              <div className="w-6 h-1 bg-green-500"></div>
-              <span>UP Track (Line 1) - Tripunithura → Aluva</span>
-            </div>
-            <div className="flex items-center space-x-2">
-              <div className="w-6 h-1 bg-green-500"></div>
-              <span>DOWN Track (Line 2) - Aluva → Tripunithura</span>
-            </div>
-            <div className="flex items-center space-x-2">
-              <div className="w-6 h-1 bg-yellow-500"></div>
-              <span>Cross-over Points & Depot Connection</span>
-            </div>
-          </div>
-        </div>
-        
-        {/* Real-time System Status */}
+        {/* Power Status */}
         <div className="absolute top-4 right-4 bg-gray-800/90 rounded-lg p-3 text-white text-xs font-mono">
           <div className="space-y-1">
             <div className="flex items-center space-x-2">
               <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
-              <span>TRACK CIRCUIT: NORMAL</span>
+              <span>DEPOT: DC ENERGIZED</span>
             </div>
             <div className="flex items-center space-x-2">
               <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
-              <span>SIGNALING: ACTIVE</span>
+              <span>TT: DC ENERGIZED</span>
             </div>
             <div className="flex items-center space-x-2">
               <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
-              <span>THIRD RAIL: ENERGIZED</span>
+              <span>THIRD RAIL: ACTIVE</span>
             </div>
           </div>
         </div>
       </div>
+
+      {/* Selected Train Details */}
+      {selectedTrain && (
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          className="bg-gray-800 border-t border-gray-700 p-4"
+        >
+          {(() => {
+            const train = trains.find(t => t.id === selectedTrain);
+            if (!train) return null;
+            
+            return (
+              <div className="text-white">
+                <h4 className="font-semibold text-cyan-400 mb-2">Train {train.id} - {train.name}</h4>
+                <div className="grid grid-cols-2 md:grid-cols-5 gap-4 text-sm">
+                  <div>
+                    <span className="text-gray-400">Current Station:</span>
+                    <p className="text-white font-medium">{train.currentStation}</p>
+                  </div>
+                  <div>
+                    <span className="text-gray-400">Next Station:</span>
+                    <p className="text-white font-medium">{train.nextStation}</p>
+                  </div>
+                  <div>
+                    <span className="text-gray-400">Speed:</span>
+                    <p className="text-white font-medium">{train.speed} km/h</p>
+                  </div>
+                  <div>
+                    <span className="text-gray-400">Direction:</span>
+                    <p className="text-white font-medium">{train.direction}</p>
+                  </div>
+                  <div>
+                    <span className="text-gray-400">Status:</span>
+                    <p className={`font-medium ${
+                      train.status === 'RUNNING' ? 'text-green-400' :
+                      train.status === 'STOPPED' ? 'text-red-400' : 'text-yellow-400'
+                    }`}>
+                      {train.status}
+                    </p>
+                  </div>
+                </div>
+                <div className="mt-3 grid grid-cols-2 gap-4 text-sm">
+                  <div>
+                    <span className="text-gray-400">Passenger Load:</span>
+                    <p className="text-white font-medium">{train.passengerLoad}%</p>
+                  </div>
+                  <div>
+                    <span className="text-gray-400">Delay:</span>
+                    <p className={`font-medium ${train.delay > 0 ? 'text-red-400' : 'text-green-400'}`}>
+                      {train.delay > 0 ? `+${train.delay} min` : 'On Time'}
+                    </p>
+                  </div>
+                </div>
+              </div>
+            );
+          })()}
+        </motion.div>
+      )}
     </div>
   );
 };
