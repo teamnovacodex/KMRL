@@ -9,9 +9,11 @@ import {
   Wrench,
   Activity,
   Users,
-  Zap
+  Zap,
+  Brain
 } from 'lucide-react';
 import { mockTrains, historicalData } from '../data/mockData';
+import { aiOptimizationService } from '../services/aiOptimizationService';
 import { 
   PerformanceTrendChart, 
   FleetStatusChart, 
@@ -26,6 +28,7 @@ const Dashboard: React.FC = () => {
   const [selectedTrain, setSelectedTrain] = useState<string>('');
   const [isOptimizing, setIsOptimizing] = useState(false);
   const [lastOptimized, setLastOptimized] = useState<string>('');
+  const [optimizationResult, setOptimizationResult] = useState<any>(null);
   const [realTimeData, setRealTimeData] = useState({
     activeTrains: 0,
     onTimePerformance: 0,
@@ -48,12 +51,22 @@ const Dashboard: React.FC = () => {
     return () => clearInterval(interval);
   }, []);
 
-  const handleOptimization = () => {
+  const handleOptimization = async () => {
     setIsOptimizing(true);
-    setTimeout(() => {
-      setIsOptimizing(false);
+    
+    try {
+      const result = await aiOptimizationService.runOptimization({
+        maxServiceTrains: 18,
+        minStandbyTrains: 3
+      });
+      
+      setOptimizationResult(result);
       setLastOptimized(new Date().toLocaleTimeString());
-    }, 3000);
+    } catch (error) {
+      console.error('Optimization failed:', error);
+    } finally {
+      setIsOptimizing(false);
+    }
   };
 
   const stats = {
@@ -148,10 +161,12 @@ const Dashboard: React.FC = () => {
           <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-6">
             <div>
               <h3 className="text-xl font-semibold text-gray-900 flex items-center space-x-2">
-                <TrendingUp className="h-6 w-6 text-blue-600" />
+                <Brain className="h-6 w-6 text-blue-600" />
                 <span>AI Optimization Engine</span>
               </h3>
-              <p className="text-gray-600 mt-1">Advanced multi-objective optimization for tomorrow's service</p>
+              <p className="text-gray-600 mt-1">
+                Automatic train induction planning for {new Date(Date.now() + 24*60*60*1000).toLocaleDateString()}
+              </p>
             </div>
             <button
               onClick={handleOptimization}
@@ -171,7 +186,7 @@ const Dashboard: React.FC = () => {
                 </>
               ) : (
                 <>
-                  <TrendingUp className="mr-3 h-5 w-5" />
+                  <Brain className="mr-3 h-5 w-5" />
                   Run AI Optimization
                 </>
               )}
@@ -179,6 +194,25 @@ const Dashboard: React.FC = () => {
           </div>
 
           <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
+            {optimizationResult && (
+              <>
+                <div className="bg-gradient-to-br from-blue-50 to-blue-100 rounded-lg p-4 text-center">
+                  <div className="text-sm text-blue-700 font-medium mb-2">AI Confidence Score</div>
+                  <div className="text-3xl font-bold text-blue-800">
+                    {(optimizationResult.totalScore * 100).toFixed(1)}%
+                  </div>
+                  <div className="text-sm text-blue-600">Optimization accuracy</div>
+                </div>
+                <div className="bg-gradient-to-br from-purple-50 to-purple-100 rounded-lg p-4 text-center">
+                  <div className="text-sm text-purple-700 font-medium mb-2">Expected Revenue</div>
+                  <div className="text-3xl font-bold text-purple-800">
+                    ₹{(optimizationResult.expectedPerformance.estimatedRevenue / 100000).toFixed(1)}L
+                  </div>
+                  <div className="text-sm text-purple-600">Tomorrow's target</div>
+                </div>
+              </>
+            )}
+            
             <div className="bg-gradient-to-br from-green-50 to-green-100 rounded-lg p-4 text-center">
               <div className="text-sm text-green-700 font-medium mb-2">SBL Bays - Service Ready</div>
               <div className="text-3xl font-bold text-green-800">{stats.service}</div>
@@ -207,7 +241,13 @@ const Dashboard: React.FC = () => {
           {lastOptimized && (
             <div className="mt-4 flex items-center space-x-2 text-sm text-green-600">
               <CheckCircle className="h-4 w-4" />
-              <span>Last optimized at {lastOptimized} - 96.2% efficiency achieved</span>
+              <span>
+                Last optimized at {lastOptimized} - 
+                {optimizationResult ? 
+                  ` ${(optimizationResult.totalScore * 100).toFixed(1)}% efficiency achieved` : 
+                  ' 96.2% efficiency achieved'
+                }
+              </span>
             </div>
           )}
         </motion.div>

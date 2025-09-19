@@ -1,4 +1,4 @@
-import { Train, HistoricalData, DepotBay } from '../types/train';
+import { Train, HistoricalData, DepotBay, AIOptimizationResult } from '../types/train';
 
 // Kochi Metro Stations (Correct Order)
 export const kochiMetroStations = [
@@ -15,68 +15,128 @@ export const trainNames = [
   'PAMPA', 'NARMADA', 'MAARUT', 'SABARMATHI', 'GODHAVARI', 'GANGA', 'PAVAN'
 ];
 
-// Depot Bay Configuration
-export const depotBays: DepotBay[] = [
-  // IBL Bays (Inspection Bay Light) - Minor maintenance
-  { bayNumber: 1, type: 'IBL', description: 'Inspection Bay Light - Minor Service', capacity: 1, location: 'Muttom_Depot', canServiceRevenue: false },
-  { bayNumber: 2, type: 'IBL', description: 'Inspection Bay Light - Minor Service', capacity: 1, location: 'Muttom_Depot', canServiceRevenue: false },
-  { bayNumber: 3, type: 'IBL', description: 'Inspection Bay Light - Minor Service', capacity: 1, location: 'Muttom_Depot', canServiceRevenue: false },
-  { bayNumber: 4, type: 'IBL', description: 'Inspection Bay Light - Minor Service', capacity: 1, location: 'Muttom_Depot', canServiceRevenue: false },
-  
-  // HIBL Bays (Heavy Inspection Bay Light) - Major maintenance
-  { bayNumber: 5, type: 'HIBL', description: 'Heavy Inspection Bay - Major Maintenance', capacity: 1, location: 'Muttom_Depot', canServiceRevenue: false },
-  { bayNumber: 6, type: 'HIBL', description: 'Heavy Inspection Bay - Major Maintenance', capacity: 1, location: 'Muttom_Depot', canServiceRevenue: false },
-  { bayNumber: 7, type: 'HIBL', description: 'Heavy Inspection Bay - Major Maintenance', capacity: 1, location: 'Muttom_Depot', canServiceRevenue: false },
-  
-  // SBL Bays (Service Bay Light) - Ready for revenue service
-  { bayNumber: 8, type: 'SBL', description: 'Service Bay - Ready for Revenue Service', capacity: 1, location: 'Muttom_Depot', position: 'OPEN_END', canServiceRevenue: true },
-  { bayNumber: 9, type: 'SBL', description: 'Service Bay - Ready for Revenue Service', capacity: 1, location: 'Muttom_Depot', position: 'BUFFERED_END', canServiceRevenue: true },
-  { bayNumber: 10, type: 'SBL', description: 'Service Bay - Ready for Revenue Service', capacity: 1, location: 'Muttom_Depot', position: 'OPEN_END', canServiceRevenue: true },
-  { bayNumber: 11, type: 'SBL', description: 'Service Bay - Ready for Revenue Service', capacity: 1, location: 'Muttom_Depot', position: 'BUFFERED_END', canServiceRevenue: true },
-  { bayNumber: 12, type: 'SBL', description: 'Service Bay - Ready for Revenue Service', capacity: 1, location: 'Muttom_Depot', position: 'OPEN_END', canServiceRevenue: true },
-  { bayNumber: 13, type: 'SBL', description: 'Service Bay - Ready for Revenue Service', capacity: 1, location: 'Muttom_Depot', position: 'BUFFERED_END', canServiceRevenue: true },
-  { bayNumber: 14, type: 'SBL', description: 'Service Bay - Ready for Revenue Service', capacity: 1, location: 'Muttom_Depot', position: 'OPEN_END', canServiceRevenue: true },
-  { bayNumber: 15, type: 'SBL', description: 'Service Bay - Ready for Revenue Service', capacity: 1, location: 'Muttom_Depot', position: 'BUFFERED_END', canServiceRevenue: true },
-  { bayNumber: 16, type: 'SBL', description: 'Service Bay - Ready for Revenue Service', capacity: 1, location: 'Muttom_Depot', position: 'OPEN_END', canServiceRevenue: true },
-  { bayNumber: 17, type: 'SBL', description: 'Service Bay - Ready for Revenue Service', capacity: 1, location: 'Muttom_Depot', position: 'BUFFERED_END', canServiceRevenue: true },
-  { bayNumber: 18, type: 'SBL', description: 'Service Bay - Ready for Revenue Service', capacity: 1, location: 'Muttom_Depot', position: 'OPEN_END', canServiceRevenue: true },
-  { bayNumber: 19, type: 'SBL', description: 'Service Bay - Ready for Revenue Service', capacity: 1, location: 'Muttom_Depot', position: 'BUFFERED_END', canServiceRevenue: true },
-  
-  // Terminal Stabling
-  { bayNumber: 20, type: 'SBL', description: 'Aluva Terminal Stabling', capacity: 2, location: 'Aluva_Terminal', canServiceRevenue: true },
-  { bayNumber: 21, type: 'SBL', description: 'Aluva Terminal Stabling', capacity: 2, location: 'Aluva_Terminal', canServiceRevenue: true },
-  { bayNumber: 22, type: 'SBL', description: 'Tripunithura Terminal Stabling', capacity: 2, location: 'Tripunithura_Terminal', canServiceRevenue: true },
-  { bayNumber: 23, type: 'SBL', description: 'Tripunithura Terminal Stabling', capacity: 2, location: 'Tripunithura_Terminal', canServiceRevenue: true }
-];
+// Helper function to generate realistic dates
+const getRandomDate = (daysFromNow: number, variance: number = 0) => {
+  const date = new Date();
+  date.setDate(date.getDate() + daysFromNow + Math.floor(Math.random() * variance * 2) - variance);
+  return date.toISOString();
+};
 
-// Generate 23 comprehensive train records
-export const mockTrains: Train[] = trainNames.map((name, index) => {
-  const id = (index + 1).toString();
-  const hasMaintenanceIssue = Math.random() > 0.8;
-  const hasMinorIssue = Math.random() > 0.7;
-  const needsBranding = Math.random() > 0.6;
-  const isHighMileage = Math.random() > 0.7;
+const getRandomTime = () => {
+  const hours = Math.floor(Math.random() * 24);
+  const minutes = Math.floor(Math.random() * 60);
+  return `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}`;
+};
+
+// AI Optimization Engine - Automatic Scheduling Logic
+const calculateAIRecommendation = (train: any, index: number): any => {
+  const now = new Date();
+  const tomorrow = new Date(now);
+  tomorrow.setDate(tomorrow.getDate() + 1);
   
-  // Determine bay type based on train condition
-  let bayType: 'IBL' | 'HIBL' | 'SBL';
-  let bayNumber: number;
-  let canGoToService: boolean;
+  let decision: 'Service' | 'Standby' | 'Maintenance' | 'Deep Clean' = 'Service';
+  let confidence = 85;
+  let reasoning: string[] = [];
+  let riskFactors: string[] = [];
+  let estimatedServiceHours = 16;
   
-  if (hasMaintenanceIssue) {
-    bayType = 'HIBL';
-    bayNumber = 5 + (index % 3); // HIBL bays 5-7
-    canGoToService = false;
-  } else if (hasMinorIssue) {
-    bayType = 'IBL';
-    bayNumber = 1 + (index % 4); // IBL bays 1-4
-    canGoToService = false;
+  // AI Decision Logic
+  if (train.rollingStockCert.status === 'Expired' || 
+      train.signallingCert.status === 'Expired' || 
+      train.telecomCert.status === 'Expired') {
+    decision = 'Maintenance';
+    confidence = 95;
+    reasoning.push('Expired fitness certificates require immediate attention');
+    riskFactors.push('Safety compliance violation');
+    estimatedServiceHours = 0;
+  } else if (train.criticalJobCards > 0) {
+    decision = 'Maintenance';
+    confidence = 90;
+    reasoning.push('Critical job cards must be resolved before service');
+    riskFactors.push('Potential service disruption');
+    estimatedServiceHours = 0;
+  } else if (train.currentBay.type !== 'SBL') {
+    decision = 'Maintenance';
+    confidence = 88;
+    reasoning.push('Train not in Service Bay Light - cannot go to revenue service');
+    riskFactors.push('Depot positioning constraint');
+    estimatedServiceHours = 0;
+  } else if (train.cleaningStatus === 'Deep Clean Required') {
+    decision = 'Deep Clean';
+    confidence = 82;
+    reasoning.push('Deep cleaning required before passenger service');
+    riskFactors.push('Passenger experience impact');
+    estimatedServiceHours = 8;
+  } else if (train.brandingRequired && train.exteriorWrapContract?.status === 'Active') {
+    decision = 'Service';
+    confidence = 92;
+    reasoning.push('Active branding contract requires maximum exposure hours');
+    reasoning.push('High revenue potential from advertising');
+    estimatedServiceHours = 18;
+  } else if (train.healthScore < 70) {
+    decision = 'Standby';
+    confidence = 75;
+    reasoning.push('Low health score requires monitoring');
+    riskFactors.push('Potential reliability issues');
+    estimatedServiceHours = 12;
   } else {
-    bayType = 'SBL';
-    bayNumber = 8 + (index % 12); // SBL bays 8-19
-    canGoToService = true;
+    decision = 'Service';
+    confidence = 85 + Math.floor(Math.random() * 10);
+    reasoning.push('All systems operational and ready for service');
+    reasoning.push('Optimal mileage and wear patterns');
+    estimatedServiceHours = 16 + Math.floor(Math.random() * 4);
   }
   
   return {
+    decision,
+    confidence,
+    reasoning,
+    scheduledFor: tomorrow.toISOString().split('T')[0],
+    estimatedServiceHours,
+    riskFactors,
+    alternativeOptions: decision === 'Service' ? ['Standby if needed'] : ['Service after resolution'],
+    lastUpdated: now.toISOString()
+  };
+};
+
+// Generate 23 comprehensive train records with AI scheduling
+export const mockTrains: Train[] = trainNames.map((name, index) => {
+  const id = (index + 1).toString();
+  const now = new Date();
+  
+  // Determine bay type and service eligibility
+  let bayType: 'IBL' | 'HIBL' | 'SBL';
+  let bayNumber: number;
+  let canGoToService: boolean;
+  let location: 'Muttom_Depot' | 'Aluva_Terminal' | 'Tripunithura_Terminal';
+  
+  const random = Math.random();
+  if (random > 0.85) {
+    // 15% in maintenance bays
+    bayType = Math.random() > 0.6 ? 'HIBL' : 'IBL';
+    bayNumber = bayType === 'HIBL' ? 5 + (index % 3) : 1 + (index % 4);
+    canGoToService = false;
+    location = 'Muttom_Depot';
+  } else if (index >= 20) {
+    // Last 3 trains at terminals
+    bayType = 'SBL';
+    bayNumber = 20 + (index - 20);
+    canGoToService = true;
+    location = index === 20 || index === 21 ? 'Aluva_Terminal' : 'Tripunithura_Terminal';
+  } else {
+    // Majority in service bays
+    bayType = 'SBL';
+    bayNumber = 8 + (index % 12);
+    canGoToService = true;
+    location = 'Muttom_Depot';
+  }
+  
+  const isHighMileage = Math.random() > 0.7;
+  const hasMaintenanceIssue = bayType !== 'SBL';
+  const needsBranding = Math.random() > 0.6;
+  const needsCleaning = Math.random() > 0.7;
+  
+  const baseData = {
     id,
     trainNumber: `KMRL-${(index + 1).toString().padStart(3, '0')}`,
     trainName: name,
@@ -84,109 +144,189 @@ export const mockTrains: Train[] = trainNames.map((name, index) => {
     manufacturingYear: index < 10 ? 2017 : index < 20 ? 2018 : 2019,
     status: hasMaintenanceIssue ? 'Maintenance' : 'Active',
     
-    // Fitness Certificates - 3 departments
+    // Fitness Certificates with proper scheduling
     fitnessStatus: Math.random() > 0.9 ? 'Expired' : Math.random() > 0.8 ? 'Expiring Soon' : 'Valid',
-    fitnessExpiryDate: `2025-${Math.floor(Math.random() * 12) + 1}-${Math.floor(Math.random() * 28) + 1}`,
-    fitnessScore: Math.floor(Math.random() * 40) + 60,
     rollingStockCert: {
       status: Math.random() > 0.95 ? 'Expired' : 'Valid',
-      expiryDate: `2025-${Math.floor(Math.random() * 12) + 1}-${Math.floor(Math.random() * 28) + 1}`,
-      issuedBy: 'Rolling Stock Department'
+      issueDate: getRandomDate(-365, 30),
+      expiryDate: getRandomDate(365, 60),
+      lastInspection: getRandomDate(-30, 15),
+      nextInspection: getRandomDate(30, 15),
+      issuedBy: 'Rolling Stock Department',
+      certificateNumber: `RS-${index + 1}-2024`
     },
     signallingCert: {
       status: Math.random() > 0.95 ? 'Expired' : 'Valid',
-      expiryDate: `2025-${Math.floor(Math.random() * 12) + 1}-${Math.floor(Math.random() * 28) + 1}`,
-      issuedBy: 'Signalling Department'
+      issueDate: getRandomDate(-365, 30),
+      expiryDate: getRandomDate(365, 60),
+      lastInspection: getRandomDate(-30, 15),
+      nextInspection: getRandomDate(30, 15),
+      issuedBy: 'Signalling Department',
+      certificateNumber: `SG-${index + 1}-2024`
     },
     telecomCert: {
       status: Math.random() > 0.95 ? 'Expired' : 'Valid',
-      expiryDate: `2025-${Math.floor(Math.random() * 12) + 1}-${Math.floor(Math.random() * 28) + 1}`,
-      issuedBy: 'Telecom Department'
+      issueDate: getRandomDate(-365, 30),
+      expiryDate: getRandomDate(365, 60),
+      lastInspection: getRandomDate(-30, 15),
+      nextInspection: getRandomDate(30, 15),
+      issuedBy: 'Telecom Department',
+      certificateNumber: `TC-${index + 1}-2024`
     },
     
-    // IBM Maximo Job Cards
-    jobCardStatus: hasMaintenanceIssue || hasMinorIssue ? 'Open' : 'Closed',
-    maximoWorkOrders: hasMaintenanceIssue || hasMinorIssue ? [{
+    // Job Cards with scheduling
+    jobCardStatus: hasMaintenanceIssue ? 'Open' : 'Closed',
+    maximoWorkOrders: hasMaintenanceIssue ? [{
       workOrderNumber: `WO-2024-${1200 + index}`,
-      type: hasMaintenanceIssue ? 'Corrective' : 'Preventive',
-      priority: hasMaintenanceIssue ? 'High' : 'Medium',
+      type: Math.random() > 0.7 ? 'Emergency' : 'Corrective',
+      priority: Math.random() > 0.8 ? 'Critical' : 'High',
       status: 'Open',
-      description: hasMaintenanceIssue ? 'Major brake system overhaul required' : 'Routine inspection and minor repairs',
-      estimatedHours: hasMaintenanceIssue ? 24 : 8,
+      description: `${bayType === 'HIBL' ? 'Major brake system overhaul' : 'Minor door adjustment'} required`,
+      createdDate: getRandomDate(-5, 2),
+      scheduledDate: getRandomDate(1, 1),
+      dueDate: getRandomDate(3, 2),
+      estimatedHours: bayType === 'HIBL' ? 24 : 8,
       assignedTechnician: `Tech-${Math.floor(Math.random() * 20) + 1}`,
-      createdDate: '2024-12-20',
-      dueDate: '2024-12-25'
+      partsRequired: bayType === 'HIBL' ? ['Brake Pads', 'Hydraulic Fluid'] : ['Door Sensor'],
+      estimatedCost: bayType === 'HIBL' ? 75000 : 25000
     }] : [],
-    criticalJobCards: hasMaintenanceIssue ? 1 : 0,
-    lastMaintenance: `2024-12-${Math.floor(Math.random() * 20) + 1}`,
-    nextScheduledMaintenance: `2025-01-${Math.floor(Math.random() * 30) + 1}`,
+    criticalJobCards: hasMaintenanceIssue && Math.random() > 0.7 ? 1 : 0,
+    lastMaintenance: getRandomDate(-15, 10),
+    nextScheduledMaintenance: getRandomDate(30, 15),
+    maintenanceWindow: {
+      startTime: `${Math.floor(Math.random() * 6) + 22}:00`, // 22:00 to 04:00
+      endTime: `${Math.floor(Math.random() * 6) + 4}:00`,
+      estimatedDuration: bayType === 'HIBL' ? 8 : bayType === 'IBL' ? 4 : 2,
+      priority: hasMaintenanceIssue ? 'High' : 'Medium'
+    },
     
-    // Branding - Exterior wraps and interior posters
+    // Branding with scheduling
     brandingRequired: needsBranding,
     exteriorWrapContract: needsBranding ? {
-      advertiser: ['Coca-Cola', 'Samsung', 'Flipkart', 'Amazon', 'Jio', 'BSNL', 'Airtel'][Math.floor(Math.random() * 7)],
-      campaignName: `Campaign ${index + 1}`,
-      requiredExposureHours: Math.floor(Math.random() * 500) + 200,
-      currentExposureHours: Math.floor(Math.random() * 300) + 50,
+      advertiser: ['Coca-Cola India', 'Samsung Electronics', 'Flipkart', 'Amazon India', 'Reliance Jio'][Math.floor(Math.random() * 5)],
+      campaignName: `New Year Campaign ${index + 1}`,
+      contractStartDate: getRandomDate(-30, 15),
+      contractEndDate: getRandomDate(60, 30),
+      requiredExposureHours: Math.floor(Math.random() * 500) + 300,
+      currentExposureHours: Math.floor(Math.random() * 200) + 100,
+      dailyTargetHours: Math.floor(Math.random() * 6) + 12,
       contractValue: Math.floor(Math.random() * 1000000) + 500000,
-      status: 'Active'
+      penaltyPerHour: Math.floor(Math.random() * 5000) + 2000,
+      status: 'Active',
+      lastExposureUpdate: getRandomDate(-1, 0)
     } : undefined,
     interiorPosterAds: [
       {
         advertiser: 'Kerala Tourism',
         positionCount: Math.floor(Math.random() * 8) + 4,
-        revenue: Math.floor(Math.random() * 50000) + 25000
-      },
-      {
-        advertiser: 'Local Business',
-        positionCount: Math.floor(Math.random() * 6) + 2,
-        revenue: Math.floor(Math.random() * 30000) + 15000
+        installationDate: getRandomDate(-60, 30),
+        expiryDate: getRandomDate(30, 30),
+        revenue: Math.floor(Math.random() * 50000) + 25000,
+        status: 'Active'
       }
     ],
     
-    // Mileage & Third Rail System
+    // Mileage & Third Rail with time tracking
     totalMileage: isHighMileage ? Math.floor(Math.random() * 50000) + 150000 : Math.floor(Math.random() * 80000) + 50000,
     dailyMileage: Math.floor(Math.random() * 100) + 200,
+    weeklyMileage: Math.floor(Math.random() * 700) + 1400,
+    monthlyMileage: Math.floor(Math.random() * 3000) + 6000,
+    lastMileageUpdate: getRandomDate(-1, 0),
     thirdRailConsumption: Math.random() * 2 + 3.5, // kWh per km
-    bogieWear: Math.floor(Math.random() * 40) + 30,
-    brakePadWear: Math.floor(Math.random() * 50) + 25,
-    hvacWear: Math.floor(Math.random() * 35) + 40,
+    dailyPowerConsumption: Math.floor(Math.random() * 2000) + 1000,
+    bogieWear: {
+      currentWear: Math.floor(Math.random() * 40) + 30,
+      lastInspection: getRandomDate(-30, 15),
+      nextInspection: getRandomDate(30, 15),
+      replacementDue: getRandomDate(180, 60)
+    },
+    brakePadWear: {
+      currentWear: Math.floor(Math.random() * 50) + 25,
+      lastInspection: getRandomDate(-15, 10),
+      nextInspection: getRandomDate(15, 10),
+      replacementDue: getRandomDate(90, 30)
+    },
+    hvacWear: {
+      currentWear: Math.floor(Math.random() * 35) + 40,
+      lastInspection: getRandomDate(-45, 20),
+      nextInspection: getRandomDate(45, 20),
+      replacementDue: getRandomDate(270, 90)
+    },
     utilizationRate: Math.floor(Math.random() * 30) + 70,
     
-    // Depot Bay System
+    // Depot Bay with scheduling
     currentBay: {
       type: bayType,
       bayNumber: bayNumber,
-      position: bayType === 'SBL' && bayNumber <= 19 ? (bayNumber % 2 === 0 ? 'BUFFERED_END' : 'OPEN_END') : 'OPEN_END',
-      location: bayNumber >= 20 ? (bayNumber <= 21 ? 'Aluva_Terminal' : 'Tripunithura_Terminal') : 'Muttom_Depot'
+      position: bayType === 'SBL' && bayNumber <= 19 ? (bayNumber % 2 === 0 ? 'BUFFERED_END' : 'OPEN_END') : undefined,
+      location: location,
+      entryTime: getRandomDate(-1, 0),
+      expectedExitTime: getRandomDate(1, 0),
+      occupancyDuration: Math.floor(Math.random() * 12) + 8
     },
     
-    // Cleaning Status
-    cleaningStatus: Math.random() > 0.7 ? 'Pending' : Math.random() > 0.8 ? 'In Progress' : 'Done',
-    lastCleaning: `2024-12-${Math.floor(Math.random() * 21) + 1} ${Math.floor(Math.random() * 24)}:${Math.floor(Math.random() * 60)}`,
-    cleaningType: ['Basic', 'Deep', 'Interior_Detail', 'Exterior_Wash'][Math.floor(Math.random() * 4)] as any,
+    // Cleaning with scheduling
+    cleaningStatus: needsCleaning ? 'Pending' : Math.random() > 0.8 ? 'In Progress' : 'Done',
+    cleaningSchedule: {
+      scheduledDate: getRandomDate(1, 1),
+      scheduledTime: `${Math.floor(Math.random() * 4) + 1}:00`, // 01:00 to 05:00
+      estimatedDuration: needsCleaning ? 6 : 3,
+      cleaningType: needsCleaning ? 'Deep' : 'Basic',
+      assignedCrew: `Crew-${Math.floor(Math.random() * 5) + 1}`,
+      bayRequired: Math.floor(Math.random() * 3) + 21, // Cleaning bays 21-23
+      manpowerRequired: needsCleaning ? 4 : 2
+    },
+    lastCleaning: getRandomDate(-2, 1),
+    nextCleaningDue: getRandomDate(7, 3),
     
-    // Health Monitoring
+    // Health Monitoring with timestamps
     healthScore: Math.floor(Math.random() * 40) + 60,
-    engineHealth: Math.floor(Math.random() * 40) + 60,
-    brakeHealth: Math.floor(Math.random() * 40) + 60,
-    doorSystemHealth: Math.floor(Math.random() * 40) + 60,
-    acSystemHealth: Math.floor(Math.random() * 40) + 60,
+    lastHealthCheck: getRandomDate(-1, 0),
+    nextHealthCheck: getRandomDate(1, 0),
+    engineHealth: {
+      score: Math.floor(Math.random() * 40) + 60,
+      lastCheck: getRandomDate(-7, 3),
+      nextCheck: getRandomDate(7, 3),
+      issues: Math.random() > 0.8 ? ['Minor oil leak detected'] : []
+    },
+    brakeHealth: {
+      score: Math.floor(Math.random() * 40) + 60,
+      lastCheck: getRandomDate(-7, 3),
+      nextCheck: getRandomDate(7, 3),
+      issues: Math.random() > 0.8 ? ['Brake pad wear at 75%'] : []
+    },
+    doorSystemHealth: {
+      score: Math.floor(Math.random() * 40) + 60,
+      lastCheck: getRandomDate(-7, 3),
+      nextCheck: getRandomDate(7, 3),
+      issues: Math.random() > 0.8 ? ['Door sensor calibration needed'] : []
+    },
+    acSystemHealth: {
+      score: Math.floor(Math.random() * 40) + 60,
+      lastCheck: getRandomDate(-7, 3),
+      nextCheck: getRandomDate(7, 3),
+      issues: Math.random() > 0.8 ? ['Filter replacement due'] : []
+    },
     
-    // AI Recommendations
-    recommendation: canGoToService ? 'Service' : hasMaintenanceIssue ? 'Maintenance' : 'Standby',
-    confidenceScore: Math.floor(Math.random() * 30) + 70,
-    riskFactors: [
-      ...(isHighMileage ? ['High mileage requires attention'] : []),
-      ...(hasMaintenanceIssue ? ['Critical maintenance pending'] : []),
-      ...(hasMinorIssue ? ['Minor issues need resolution'] : []),
-      ...(!canGoToService ? ['Not in service bay - cannot go to revenue service'] : [])
-    ],
-    canGoToService
+    canGoToService,
+    serviceEligibilityReasons: canGoToService ? 
+      ['In SBL bay', 'All certificates valid', 'No critical issues'] : 
+      [`In ${bayType} bay - not service ready`, 'Maintenance required'],
+    nextServiceDate: canGoToService ? getRandomDate(1, 0) : getRandomDate(7, 5),
+    estimatedRevenue: canGoToService ? Math.floor(Math.random() * 50000) + 30000 : 0
+  };
+  
+  // Calculate AI recommendation
+  const aiRecommendation = calculateAIRecommendation(baseData, index);
+  
+  return {
+    ...baseData,
+    aiRecommendation
   };
 });
 
-export const historicalData: HistoricalData[] = Array.from({ length: 30 }, (_, i) => {
+// Generate historical data for AI training
+export const historicalData: HistoricalData[] = Array.from({ length: 90 }, (_, i) => {
   const date = new Date();
   date.setDate(date.getDate() - i);
   
@@ -199,6 +339,108 @@ export const historicalData: HistoricalData[] = Array.from({ length: 30 }, (_, i
     passengerCount: Math.floor(Math.random() * 50000) + 150000,
     revenue: Math.floor(Math.random() * 500000) + 2000000,
     efficiency: Math.floor(Math.random() * 20) + 80,
-    thirdRailConsumption: Math.floor(Math.random() * 5000) + 15000 // kWh per day
+    thirdRailConsumption: Math.floor(Math.random() * 5000) + 15000,
+    averageHealthScore: Math.floor(Math.random() * 20) + 75,
+    criticalIssues: Math.floor(Math.random() * 3),
+    completedMaintenance: Math.floor(Math.random() * 5) + 2
   };
 });
+
+// Depot Bay Configuration
+export const depotBays: DepotBay[] = [
+  // IBL Bays (1-4) - Minor maintenance
+  ...Array.from({ length: 4 }, (_, i) => ({
+    bayNumber: i + 1,
+    type: 'IBL' as const,
+    description: 'Inspection Bay Light - Minor Service',
+    capacity: 1,
+    location: 'Muttom_Depot' as const,
+    canServiceRevenue: false,
+    maintenanceCapabilities: ['Minor Repairs', 'Inspections', 'Component Replacement'],
+    availableFrom: getRandomDate(0, 1),
+    nextAvailable: getRandomDate(1, 1)
+  })),
+  
+  // HIBL Bays (5-7) - Major maintenance
+  ...Array.from({ length: 3 }, (_, i) => ({
+    bayNumber: i + 5,
+    type: 'HIBL' as const,
+    description: 'Heavy Inspection Bay - Major Maintenance',
+    capacity: 1,
+    location: 'Muttom_Depot' as const,
+    canServiceRevenue: false,
+    maintenanceCapabilities: ['Major Overhauls', 'System Replacements', 'Heavy Repairs'],
+    availableFrom: getRandomDate(0, 2),
+    nextAvailable: getRandomDate(2, 2)
+  })),
+  
+  // SBL Bays (8-19) - Service ready
+  ...Array.from({ length: 12 }, (_, i) => ({
+    bayNumber: i + 8,
+    type: 'SBL' as const,
+    description: 'Service Bay - Ready for Revenue Service',
+    capacity: 1,
+    location: 'Muttom_Depot' as const,
+    position: (i % 2 === 0 ? 'OPEN_END' : 'BUFFERED_END') as const,
+    canServiceRevenue: true,
+    maintenanceCapabilities: ['Light Maintenance', 'Cleaning', 'Pre-service Checks'],
+    availableFrom: getRandomDate(0, 1),
+    nextAvailable: getRandomDate(1, 1)
+  })),
+  
+  // Terminal Stabling (20-23)
+  ...Array.from({ length: 4 }, (_, i) => ({
+    bayNumber: i + 20,
+    type: 'SBL' as const,
+    description: i < 2 ? 'Aluva Terminal Stabling' : 'Tripunithura Terminal Stabling',
+    capacity: 2,
+    location: (i < 2 ? 'Aluva_Terminal' : 'Tripunithura_Terminal') as const,
+    canServiceRevenue: true,
+    maintenanceCapabilities: ['Light Cleaning', 'Pre-service Checks'],
+    availableFrom: getRandomDate(0, 1),
+    nextAvailable: getRandomDate(1, 1)
+  }))
+];
+
+// AI Optimization Result Generator
+export const generateAIOptimization = (): AIOptimizationResult => {
+  const now = new Date();
+  const tomorrow = new Date(now);
+  tomorrow.setDate(tomorrow.getDate() + 1);
+  
+  const serviceTrains = mockTrains.filter(t => t.aiRecommendation.decision === 'Service').map(t => t.id);
+  const standbyTrains = mockTrains.filter(t => t.aiRecommendation.decision === 'Standby').map(t => t.id);
+  const maintenanceTrains = mockTrains.filter(t => t.aiRecommendation.decision === 'Maintenance').map(t => t.id);
+  const cleaningTrains = mockTrains.filter(t => t.aiRecommendation.decision === 'Deep Clean').map(t => t.id);
+  
+  return {
+    optimizationId: `OPT-${Date.now()}`,
+    timestamp: now.toISOString(),
+    targetDate: tomorrow.toISOString().split('T')[0],
+    totalScore: 0.94,
+    selectedForService: serviceTrains,
+    standbyTrains,
+    maintenanceTrains,
+    cleaningTrains,
+    reasoning: mockTrains.map(train => ({
+      trainId: train.id,
+      decision: train.aiRecommendation.decision,
+      score: train.aiRecommendation.confidence,
+      factors: train.aiRecommendation.reasoning,
+      scheduledTime: `${Math.floor(Math.random() * 4) + 5}:00` // 05:00 to 09:00
+    })),
+    constraints: {
+      maxServiceTrains: 18,
+      minStandbyTrains: 3,
+      availableManpower: 25,
+      depotCapacity: 23
+    },
+    expectedPerformance: {
+      onTimePerformance: 96.5,
+      passengerCapacity: 180000,
+      estimatedRevenue: 2800000,
+      operationalCost: 1200000,
+      riskLevel: 'Low'
+    }
+  };
+};

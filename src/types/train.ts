@@ -6,83 +6,172 @@ export interface Train {
   manufacturingYear: number;
   status: 'Active' | 'Maintenance' | 'Standby' | 'Out of Service';
   
-  // Fitness Certificates - Rolling-Stock, Signalling, Telecom departments
+  // Fitness Certificates - 3 departments with timestamps
   fitnessStatus: 'Valid' | 'Expired' | 'Expiring Soon';
-  fitnessExpiryDate: string;
-  fitnessScore: number; // 0-100
   rollingStockCert: {
     status: 'Valid' | 'Expired';
+    issueDate: string;
     expiryDate: string;
+    lastInspection: string;
+    nextInspection: string;
     issuedBy: string;
+    certificateNumber: string;
   };
   signallingCert: {
     status: 'Valid' | 'Expired';
+    issueDate: string;
     expiryDate: string;
+    lastInspection: string;
+    nextInspection: string;
     issuedBy: string;
+    certificateNumber: string;
   };
   telecomCert: {
     status: 'Valid' | 'Expired';
+    issueDate: string;
     expiryDate: string;
+    lastInspection: string;
+    nextInspection: string;
     issuedBy: string;
+    certificateNumber: string;
   };
   
-  // Job Cards - IBM Maximo Integration
+  // Job Cards - IBM Maximo with scheduling
   jobCardStatus: 'Open' | 'Closed' | 'In Progress';
   maximoWorkOrders: MaximoJobCard[];
   criticalJobCards: number;
   lastMaintenance: string;
   nextScheduledMaintenance: string;
+  maintenanceWindow: {
+    startTime: string;
+    endTime: string;
+    estimatedDuration: number; // hours
+    priority: 'Low' | 'Medium' | 'High' | 'Critical';
+  };
   
-  // Branding - Sticker wrapping and interior posters
+  // Branding - Sticker wrapping + interior posters with scheduling
   brandingRequired: boolean;
   exteriorWrapContract?: {
     advertiser: string;
     campaignName: string;
+    contractStartDate: string;
+    contractEndDate: string;
     requiredExposureHours: number;
     currentExposureHours: number;
+    dailyTargetHours: number;
     contractValue: number;
-    status: 'Active' | 'Expired';
+    penaltyPerHour: number;
+    status: 'Active' | 'Expired' | 'Pending';
+    lastExposureUpdate: string;
   };
   interiorPosterAds: {
     advertiser: string;
     positionCount: number;
+    installationDate: string;
+    expiryDate: string;
     revenue: number;
+    status: 'Active' | 'Expired';
   }[];
   
-  // Mileage & Third Rail System
+  // Mileage & Third Rail System with time tracking
   totalMileage: number;
   dailyMileage: number;
+  weeklyMileage: number;
+  monthlyMileage: number;
+  lastMileageUpdate: string;
   thirdRailConsumption: number; // kWh per km
-  bogieWear: number; // 0-100
-  brakePadWear: number; // 0-100
-  hvacWear: number; // 0-100
+  dailyPowerConsumption: number; // kWh
+  bogieWear: {
+    currentWear: number; // 0-100%
+    lastInspection: string;
+    nextInspection: string;
+    replacementDue: string;
+  };
+  brakePadWear: {
+    currentWear: number; // 0-100%
+    lastInspection: string;
+    nextInspection: string;
+    replacementDue: string;
+  };
+  hvacWear: {
+    currentWear: number; // 0-100%
+    lastInspection: string;
+    nextInspection: string;
+    replacementDue: string;
+  };
   utilizationRate: number; // 0-100
   
-  // Depot Bay System - IBL, HIBL, SBL
+  // Depot Bay System with scheduling
   currentBay: {
     type: 'IBL' | 'HIBL' | 'SBL';
     bayNumber: number;
-    position: 'OPEN_END' | 'BUFFERED_END';
+    position?: 'OPEN_END' | 'BUFFERED_END';
     location: 'Muttom_Depot' | 'Aluva_Terminal' | 'Tripunithura_Terminal';
+    entryTime: string;
+    expectedExitTime: string;
+    occupancyDuration: number; // hours
   };
   
-  // Cleaning & Detailing
+  // Cleaning & Detailing with scheduling
   cleaningStatus: 'Pending' | 'In Progress' | 'Done' | 'Deep Clean Required';
+  cleaningSchedule: {
+    scheduledDate: string;
+    scheduledTime: string;
+    estimatedDuration: number; // hours
+    cleaningType: 'Basic' | 'Deep' | 'Interior_Detail' | 'Exterior_Wash';
+    assignedCrew: string;
+    bayRequired: number;
+    manpowerRequired: number;
+  };
   lastCleaning: string;
-  cleaningType: 'Basic' | 'Deep' | 'Interior_Detail' | 'Exterior_Wash';
+  nextCleaningDue: string;
   
-  // Health Monitoring
+  // Health Monitoring with timestamps
   healthScore: number; // 0-100
-  engineHealth: number;
-  brakeHealth: number;
-  doorSystemHealth: number;
-  acSystemHealth: number;
+  lastHealthCheck: string;
+  nextHealthCheck: string;
+  engineHealth: {
+    score: number;
+    lastCheck: string;
+    nextCheck: string;
+    issues: string[];
+  };
+  brakeHealth: {
+    score: number;
+    lastCheck: string;
+    nextCheck: string;
+    issues: string[];
+  };
+  doorSystemHealth: {
+    score: number;
+    lastCheck: string;
+    nextCheck: string;
+    issues: string[];
+  };
+  acSystemHealth: {
+    score: number;
+    lastCheck: string;
+    nextCheck: string;
+    issues: string[];
+  };
   
-  // AI Recommendations
-  recommendation: 'Service' | 'Standby' | 'Maintenance' | 'Deep Clean';
-  confidenceScore: number; // 0-100
-  riskFactors: string[];
-  canGoToService: boolean; // Only SBL bay trains can go to service
+  // AI Scheduling & Recommendations
+  aiRecommendation: {
+    decision: 'Service' | 'Standby' | 'Maintenance' | 'Deep Clean';
+    confidence: number; // 0-100
+    reasoning: string[];
+    scheduledFor: string; // tomorrow's date
+    estimatedServiceHours: number;
+    riskFactors: string[];
+    alternativeOptions: string[];
+    lastUpdated: string;
+  };
+  
+  // Service Eligibility
+  canGoToService: boolean;
+  serviceEligibilityReasons: string[];
+  nextServiceDate: string;
+  estimatedRevenue: number; // for tomorrow
 }
 
 export interface MaximoJobCard {
@@ -91,10 +180,15 @@ export interface MaximoJobCard {
   priority: 'Low' | 'Medium' | 'High' | 'Critical';
   status: 'Open' | 'Closed' | 'In Progress';
   description: string;
-  estimatedHours: number;
-  assignedTechnician: string;
   createdDate: string;
+  scheduledDate: string;
   dueDate: string;
+  completedDate?: string;
+  estimatedHours: number;
+  actualHours?: number;
+  assignedTechnician: string;
+  partsRequired: string[];
+  estimatedCost: number;
 }
 
 export interface DepotBay {
@@ -106,13 +200,40 @@ export interface DepotBay {
   location: 'Muttom_Depot' | 'Aluva_Terminal' | 'Tripunithura_Terminal';
   position?: 'OPEN_END' | 'BUFFERED_END';
   canServiceRevenue: boolean;
+  maintenanceCapabilities: string[];
+  availableFrom: string;
+  nextAvailable: string;
 }
 
-export interface TrainSummary {
-  service: number;
-  standby: number;
-  maintenance: number;
-  total: number;
+export interface AIOptimizationResult {
+  optimizationId: string;
+  timestamp: string;
+  targetDate: string; // tomorrow's date
+  totalScore: number;
+  selectedForService: string[];
+  standbyTrains: string[];
+  maintenanceTrains: string[];
+  cleaningTrains: string[];
+  reasoning: {
+    trainId: string;
+    decision: string;
+    score: number;
+    factors: string[];
+    scheduledTime: string;
+  }[];
+  constraints: {
+    maxServiceTrains: number;
+    minStandbyTrains: number;
+    availableManpower: number;
+    depotCapacity: number;
+  };
+  expectedPerformance: {
+    onTimePerformance: number;
+    passengerCapacity: number;
+    estimatedRevenue: number;
+    operationalCost: number;
+    riskLevel: 'Low' | 'Medium' | 'High';
+  };
 }
 
 export interface HistoricalData {
@@ -125,4 +246,7 @@ export interface HistoricalData {
   revenue: number;
   efficiency: number;
   thirdRailConsumption: number;
+  averageHealthScore: number;
+  criticalIssues: number;
+  completedMaintenance: number;
 }
