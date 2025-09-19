@@ -499,7 +499,6 @@ const LiveTrackingDisplay: React.FC<LiveTrackingDisplayProps> = ({ height = 600 
               
               {/* Speed Display */}
               {train.status === 'RUNNING' && (
-                <div className="absolute -top-6 left-1/2 transform -translate-x-1/2 text-xs font-mono text-cyan-400 whitespace-nowrap">
                 <div className="absolute -top-6 left-1/2 transform -translate-x-1/2 text-xs font-mono text-kmrl-aquamarine-400 whitespace-nowrap">
                   {train.speed}km/h
                 </div>
@@ -507,6 +506,7 @@ const LiveTrackingDisplay: React.FC<LiveTrackingDisplayProps> = ({ height = 600 
             </div>
           </motion.div>
         ))}
+        </div>
 
         {/* System Status Overlay */}
         <div className="absolute top-4 left-4 bg-kmrl-grey-800/90 rounded-lg p-3 text-white text-xs font-mono">
