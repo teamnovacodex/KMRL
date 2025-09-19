@@ -10,9 +10,14 @@ import {
   Activity,
   Target,
   Zap,
-  RefreshCw
+  RefreshCw,
+  Bot,
+  Brain
 } from 'lucide-react';
 import { trainInductions, todayInductionSchedule, depotOperations, inductionTimeSlots, servicePatterns } from '../data/inductionData';
+import { tomorrowInductionPlan, controlCenterData } from '../data/controlCenterData';
+import LiveTrackingDisplay from '../components/LiveTrackingDisplay';
+import AISchedulingBot from '../components/AISchedulingBot';
 
 const TrainInduction: React.FC = () => {
   const [activeTab, setActiveTab] = useState('induction-plan');
@@ -28,56 +33,82 @@ const TrainInduction: React.FC = () => {
   }, []);
 
   const tabs = [
-    { id: 'induction-plan', label: 'Induction Planning', icon: Target },
-    { id: 'schedule', label: 'Schedule Management', icon: Calendar },
-    { id: 'depot-status', label: 'Depot Status', icon: MapPin },
-    { id: 'ai-optimization', label: 'AI Optimization', icon: Zap }
+    { id: 'induction-plan', label: 'Tomorrow\'s Plan', icon: Calendar },
+    { id: 'live-tracking', label: 'Live Tracking', icon: Activity },
+    { id: 'depot-control', label: 'Depot Control', icon: MapPin },
+    { id: 'ai-assistant', label: 'AI Assistant', icon: Brain }
   ];
 
-  const inductionStats = {
-    eligible: trainInductions.filter(t => t.inductionEligible).length,
-    scheduled: todayInductionSchedule.inductionSlots.length,
-    standby: todayInductionSchedule.standbyList.length,
-    maintenance: todayInductionSchedule.maintenanceList.length,
-    validFitness: trainInductions.filter(t => t.fitnessStatus === 'Valid').length,
-    invalidFitness: trainInductions.filter(t => t.fitnessStatus === 'Invalid').length
+  const dailyStats = {
+    tomorrowPlan: tomorrowInductionPlan.totalTrainsRequired,
+    standbyReady: tomorrowInductionPlan.standbyTrains.length,
+    maintenance: tomorrowInductionPlan.maintenanceSchedule.length,
+    currentActive: controlCenterData.activeTrains,
+    systemStatus: controlCenterData.operationalStatus,
+    confidence: aiSchedulingBot.confidence
   };
 
-  const renderInductionPlan = () => (
+  const renderTomorrowPlan = () => (
     <div className="space-y-6">
-      {/* Induction Status Cards */}
-      <div className="grid grid-cols-2 md:grid-cols-6 gap-4">
-        <div className="bg-green-50 border border-green-200 rounded-lg p-4 text-center">
-          <div className="text-2xl font-bold text-green-600">{inductionStats.eligible}</div>
-          <div className="text-sm text-green-700">Induction Eligible</div>
-        </div>
-        <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 text-center">
-          <div className="text-2xl font-bold text-blue-600">{inductionStats.scheduled}</div>
-          <div className="text-sm text-blue-700">Scheduled Today</div>
-        </div>
-        <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-4 text-center">
-          <div className="text-2xl font-bold text-yellow-600">{inductionStats.standby}</div>
-          <div className="text-sm text-yellow-700">Standby Ready</div>
-        </div>
-        <div className="bg-red-50 border border-red-200 rounded-lg p-4 text-center">
-          <div className="text-2xl font-bold text-red-600">{inductionStats.maintenance}</div>
-          <div className="text-sm text-red-700">Under Maintenance</div>
-        </div>
-        <div className="bg-emerald-50 border border-emerald-200 rounded-lg p-4 text-center">
-          <div className="text-2xl font-bold text-emerald-600">{inductionStats.validFitness}</div>
-          <div className="text-sm text-emerald-700">Valid Fitness</div>
-        </div>
-        <div className="bg-rose-50 border border-rose-200 rounded-lg p-4 text-center">
-          <div className="text-2xl font-bold text-rose-600">{inductionStats.invalidFitness}</div>
-          <div className="text-sm text-rose-700">Invalid Fitness</div>
+      {/* Tomorrow's Plan Header */}
+      <div className="bg-gradient-to-r from-blue-600 to-blue-700 text-white rounded-xl p-6">
+        <div className="flex items-center justify-between">
+          <div>
+            <h2 className="text-2xl font-bold mb-2">Tomorrow's Service Plan</h2>
+            <p className="text-blue-100">
+              📅 {tomorrowInductionPlan.planDate} | Generated once daily at 23:00
+            </p>
+          </div>
+          <div className="text-right">
+            <div className="text-3xl font-bold">{tomorrowInductionPlan.totalTrainsRequired}</div>
+            <div className="text-blue-100">Trains Scheduled</div>
+          </div>
         </div>
       </div>
 
-      {/* Induction Planning Table */}
+      {/* Daily Plan Status Cards */}
+      <div className="grid grid-cols-2 md:grid-cols-6 gap-4">
+        <div className="bg-green-50 border border-green-200 rounded-lg p-4 text-center">
+          <div className="text-2xl font-bold text-green-600">{dailyStats.tomorrowPlan}</div>
+          <div className="text-sm text-green-700">Revenue Service</div>
+        </div>
+        <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-4 text-center">
+          <div className="text-2xl font-bold text-yellow-600">{dailyStats.standbyReady}</div>
+          <div className="text-sm text-yellow-700">Standby Ready</div>
+        </div>
+        <div className="bg-red-50 border border-red-200 rounded-lg p-4 text-center">
+          <div className="text-2xl font-bold text-red-600">{dailyStats.maintenance}</div>
+          <div className="text-sm text-red-700">Maintenance</div>
+        </div>
+        <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 text-center">
+          <div className="text-2xl font-bold text-blue-600">{dailyStats.currentActive}</div>
+          <div className="text-sm text-blue-700">Currently Active</div>
+        </div>
+        <div className="bg-purple-50 border border-purple-200 rounded-lg p-4 text-center">
+          <div className="text-2xl font-bold text-purple-600">{dailyStats.systemStatus}</div>
+          <div className="text-sm text-purple-700">System Status</div>
+        </div>
+        <div className="bg-emerald-50 border border-emerald-200 rounded-lg p-4 text-center">
+          <div className="text-2xl font-bold text-emerald-600">{dailyStats.confidence}%</div>
+          <div className="text-sm text-emerald-700">AI Confidence</div>
+        </div>
+      </div>
+
+      {/* Tomorrow's Induction Schedule */}
       <div className="bg-white rounded-lg border border-gray-200">
         <div className="px-6 py-4 border-b border-gray-200">
-          <h3 className="text-lg font-semibold text-gray-900">Tomorrow's Induction Plan</h3>
-          <p className="text-sm text-gray-600">AI-optimized train induction schedule for {new Date(Date.now() + 24*60*60*1000).toLocaleDateString()}</p>
+          <div className="flex items-center justify-between">
+            <div>
+              <h3 className="text-lg font-semibold text-gray-900">Tomorrow's Induction Schedule</h3>
+              <p className="text-sm text-gray-600">
+                🤖 AI-generated daily plan | Valid for {tomorrowInductionPlan.planDate} | Generated once at 23:00
+              </p>
+            </div>
+            <div className="flex items-center space-x-2">
+              <CheckCircle className="h-5 w-5 text-green-600" />
+              <span className="text-sm text-green-600 font-medium">APPROVED</span>
+            </div>
+          </div>
         </div>
         <div className="overflow-x-auto">
           <table className="min-w-full divide-y divide-gray-200">
@@ -85,69 +116,50 @@ const TrainInduction: React.FC = () => {
               <tr>
                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Slot</th>
                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Train Name</th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Train ID</th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Current Bay</th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Fitness Status</th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Bay Position</th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">From Terminal</th>
                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Induction Time</th>
                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Departure Time</th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">From Station</th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">AI Decision</th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Route</th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Revenue Target</th>
               </tr>
             </thead>
             <tbody className="bg-white divide-y divide-gray-200">
-              {trainInductions.slice(0, 18).map((train, index) => (
+              {tomorrowInductionPlan.inductionSlots.map((slot, index) => (
                 <tr 
-                  key={train.id} 
-                  className={`hover:bg-gray-50 cursor-pointer ${selectedTrain === train.id ? 'bg-blue-50' : ''}`}
-                  onClick={() => setSelectedTrain(train.id)}
+                  key={slot.trainId} 
+                  className={`hover:bg-gray-50 cursor-pointer ${selectedTrain === slot.trainId ? 'bg-blue-50' : ''}`}
+                  onClick={() => setSelectedTrain(slot.trainId)}
                 >
                   <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
-                    {index + 1}
+                    {slot.slotNumber}
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap font-medium text-gray-900">
-                    {train.trainName}
+                    {slot.trainName}
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                    {train.trainNumber}
+                    {slot.bayPosition}
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap">
                     <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
-                      train.currentBay.type === 'SBL' ? 'bg-green-100 text-green-800' :
-                      train.currentBay.type === 'IBL' ? 'bg-yellow-100 text-yellow-800' :
-                      train.currentBay.type === 'HIBL' ? 'bg-red-100 text-red-800' :
-                      'bg-purple-100 text-purple-800'
+                      slot.fromTerminal === 'ALUVA' ? 'bg-blue-100 text-blue-800' : 'bg-green-100 text-green-800'
                     }`}>
-                      {train.currentBay.type}{train.currentBay.number}
+                      {slot.fromTerminal}
                     </span>
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap">
-                    <div className="flex items-center space-x-2">
-                      {train.fitnessStatus === 'Valid' ? 
-                        <CheckCircle className="h-4 w-4 text-green-600" /> : 
-                        <AlertTriangle className="h-4 w-4 text-red-600" />
-                      }
-                      <span className={`text-sm ${train.fitnessStatus === 'Valid' ? 'text-green-700' : 'text-red-700'}`}>
-                        {train.fitnessStatus}
-                      </span>
-                    </div>
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-blue-600">
-                    {train.inductionTime}
+                    {slot.inductionTime}
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-green-600">
-                    {train.scheduledDeparture}
+                    {slot.departureTime}
                   </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-blue-600">
-                    {train.fromStation}
+                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                    {slot.assignedRoute}
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap">
-                    <span className={`inline-flex items-center px-3 py-1 rounded-full text-sm font-medium ${
-                      train.aiRecommendation.decision === 'Induct' ? 'bg-green-100 text-green-800 border border-green-200' :
-                      train.aiRecommendation.decision === 'Standby' ? 'bg-yellow-100 text-yellow-800 border border-yellow-200' :
-                      'bg-red-100 text-red-800 border border-red-200'
-                    }`}>
-                      {train.aiRecommendation.decision}
-                    </span>
+                    <div className="text-sm font-medium text-green-600">
+                      ₹{(slot.revenueTarget / 1000).toFixed(0)}K
+                    </div>
                   </td>
                 </tr>
               ))}
@@ -156,68 +168,44 @@ const TrainInduction: React.FC = () => {
         </div>
       </div>
 
-      {/* AI Decision Reasoning */}
+      {/* Plan Details */}
       {selectedTrain && (
-        <div className="bg-blue-50 border border-blue-200 rounded-lg p-6">
-          <h4 className="font-medium text-blue-900 mb-4">AI Decision Reasoning</h4>
+        <div className="bg-green-50 border border-green-200 rounded-lg p-6">
+          <h4 className="font-medium text-green-900 mb-4">Train Schedule Details</h4>
           {(() => {
-            const train = trainInductions.find(t => t.id === selectedTrain);
-            if (!train) return null;
+            const slot = tomorrowInductionPlan.inductionSlots.find(s => s.trainId === selectedTrain);
+            if (!slot) return null;
             
             return (
               <div className="space-y-4">
                 <div className="flex items-center justify-between">
-                  <h5 className="text-lg font-semibold text-blue-900">{train.trainName} ({train.trainNumber})</h5>
-                  <span className={`px-3 py-1 rounded-full text-sm font-medium ${
-                    train.aiRecommendation.decision === 'Induct' ? 'bg-green-100 text-green-800' :
-                    train.aiRecommendation.decision === 'Standby' ? 'bg-yellow-100 text-yellow-800' :
-                    'bg-red-100 text-red-800'
-                  }`}>
-                    {train.aiRecommendation.decision}
+                  <h5 className="text-lg font-semibold text-green-900">{slot.trainName} ({slot.trainId})</h5>
+                  <span className="px-3 py-1 rounded-full text-sm font-medium bg-green-100 text-green-800">
+                    SCHEDULED
                   </span>
                 </div>
                 
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                  <div>
-                    <h6 className="font-medium text-blue-800 mb-2">AI Reasoning:</h6>
-                    <ul className="space-y-1 text-sm text-blue-700">
-                      {train.aiRecommendation.reasoning.map((reason, index) => (
-                        <li key={index}>• {reason}</li>
-                      ))}
-                    </ul>
-                  </div>
-                  
-                  <div>
-                    <h6 className="font-medium text-blue-800 mb-2">Risk Factors:</h6>
-                    {train.aiRecommendation.riskFactors.length > 0 ? (
-                      <ul className="space-y-1 text-sm text-blue-700">
-                        {train.aiRecommendation.riskFactors.map((risk, index) => (
-                          <li key={index}>• {risk}</li>
-                        ))}
-                      </ul>
-                    ) : (
-                      <div className="text-sm text-green-700">No risk factors identified</div>
-                    )}
-                  </div>
-                </div>
-                
                 <div className="bg-white rounded-lg p-4">
-                  <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-sm">
+                  <div className="grid grid-cols-2 md:grid-cols-5 gap-4 text-sm">
                     <div>
-                      <span className="text-gray-600">Current Bay:</span>
-                      <div className="font-medium text-gray-900">{train.currentBay.type}{train.currentBay.number}</div>
+                      <span className="text-gray-600">Bay Position:</span>
+                      <div className="font-medium text-gray-900">{slot.bayPosition}</div>
                     </div>
                     <div>
                       <span className="text-gray-600">Induction Time:</span>
-                      <div className="font-medium text-blue-600">{train.inductionTime}</div>
+                      <div className="font-medium text-blue-600">{slot.inductionTime}</div>
                     </div>
                     <div>
                       <span className="text-gray-600">Departure:</span>
-                      <div className="font-medium text-green-600">{train.scheduledDeparture}</div>
+                      <div className="font-medium text-green-600">{slot.departureTime}</div>
                     </div>
                     <div>
-                      <span className="text-gray-600">Confidence:</span>
-                      <div className="font-medium text-purple-600">{train.aiRecommendation.confidence}%</div>
+                      <span className="text-gray-600">Passengers:</span>
+                      <div className="font-medium text-purple-600">{slot.estimatedPassengers.toLocaleString()}</div>
+                    </div>
+                    <div>
+                      <span className="text-gray-600">Revenue:</span>
+                      <div className="font-medium text-green-600">₹{(slot.revenueTarget / 1000).toFixed(0)}K</div>
                     </div>
                   </div>
                 </div>
@@ -229,17 +217,13 @@ const TrainInduction: React.FC = () => {
     </div>
   );
 
-  const renderScheduleManagement = () => (
+  const renderLiveTracking = () => (
     <div className="space-y-6">
-      {/* Schedule Management Content */}
-      <div className="bg-white rounded-lg border border-gray-200 p-6">
-        <h3 className="text-lg font-semibold text-gray-900 mb-4">Schedule Management</h3>
-        <p className="text-gray-600">Schedule management functionality will be implemented here.</p>
-      </div>
+      <LiveTrackingDisplay height={600} />
     </div>
   );
 
-  const renderDepotStatus = () => (
+  const renderDepotControl = () => (
     <div className="space-y-6">
       {/* Real Depot Overview Board */}
       <div className="bg-white rounded-lg border border-gray-200 p-6">
@@ -450,26 +434,142 @@ const TrainInduction: React.FC = () => {
     </div>
   );
 
-  const renderAIOptimization = () => (
+  const renderAIAssistant = () => (
     <div className="space-y-6">
-      {/* Real Fitness Certificate Validation */}
+      {/* AI Assistant Interface */}
       <div className="bg-white rounded-lg border border-gray-200 p-6">
         <div className="flex items-center justify-between mb-6">
           <div>
-            <h3 className="text-lg font-semibold text-gray-900">Automated Systems</h3>
-            <p className="text-sm text-gray-600">AI-Powered Fitness Validation & Induction Scheduling</p>
+            <h3 className="text-lg font-semibold text-gray-900 flex items-center space-x-2">
+              <Bot className="h-5 w-5 text-blue-600" />
+              <span>AI Scheduling Assistant</span>
+            </h3>
+            <p className="text-sm text-gray-600">Interactive AI chatbot for train operations</p>
           </div>
-          <div className="flex items-center space-x-4">
-            <button className="inline-flex items-center px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700">
-              <RefreshCw className="h-4 w-4 mr-2" />
-              Refresh
-            </button>
-            <div className="flex items-center space-x-2">
-              <input type="checkbox" id="autoRefresh" defaultChecked className="rounded" />
-              <label htmlFor="autoRefresh" className="text-sm text-gray-700">Auto Refresh</label>
+          <div className="flex items-center space-x-2">
+            <div className="w-3 h-3 bg-green-500 rounded-full animate-pulse"></div>
+            <span className="text-sm text-green-600 font-medium">AI ACTIVE</span>
+          </div>
+        </div>
+
+        <div className="bg-blue-50 rounded-lg p-6 mb-6">
+          <div className="flex items-center space-x-3 mb-4">
+            <div className="bg-blue-600 p-2 rounded-lg">
+              <Brain className="h-5 w-5 text-white" />
+            </div>
+            <div>
+              <h4 className="font-semibold text-blue-900">AI Assistant Status</h4>
+              <p className="text-sm text-blue-700">Ready to help with train operations</p>
+            </div>
+          </div>
+          
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-sm">
+            <div>
+              <span className="text-blue-700">Current Task:</span>
+              <p className="font-medium text-blue-900">{aiSchedulingBot.currentTask}</p>
+            </div>
+            <div>
+              <span className="text-blue-700">Status:</span>
+              <p className="font-medium text-blue-900">{aiSchedulingBot.processingStatus}</p>
+            </div>
+            <div>
+              <span className="text-blue-700">Confidence:</span>
+              <p className="font-medium text-blue-900">{aiSchedulingBot.confidence}%</p>
+            </div>
+            <div>
+              <span className="text-blue-700">Next Optimization:</span>
+              <p className="font-medium text-blue-900">Tomorrow 23:00</p>
             </div>
           </div>
         </div>
+
+        <div className="bg-gray-50 rounded-lg p-4">
+          <h4 className="font-medium text-gray-900 mb-3">AI Recommendations</h4>
+          <ul className="space-y-2 text-sm text-gray-700">
+            {aiSchedulingBot.recommendations.map((rec, index) => (
+              <li key={index} className="flex items-start space-x-2">
+                <CheckCircle className="h-4 w-4 text-green-600 mt-0.5 flex-shrink-0" />
+                <span>{rec}</span>
+              </li>
+            ))}
+          </ul>
+        </div>
+      </div>
+    </div>
+  );
+
+  return (
+    <div className="min-h-screen bg-gray-50">
+      {/* Control Center Header */}
+      <div className="bg-gray-900 text-white border-b border-gray-700">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="flex justify-between items-center h-16">
+            <div className="flex items-center space-x-4">
+              <div className="bg-gradient-to-r from-blue-600 to-green-600 p-2 rounded-lg">
+                <Train className="h-6 w-6 text-white" />
+              </div>
+              <div>
+                <h1 className="text-xl font-bold">KMRL Control Center</h1>
+                <p className="text-sm text-gray-300">AI-Driven Train Induction & Live Tracking</p>
+              </div>
+            </div>
+            <div className="flex items-center space-x-6">
+              <div className="flex items-center space-x-2">
+                <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
+                <span className="text-green-400 text-sm font-medium">SYSTEM NORMAL</span>
+              </div>
+              <div className="text-white text-sm font-mono">
+                {currentTime.toLocaleTimeString()}
+              </div>
+            </div>
+          </div>
+
+          {/* Navigation Tabs */}
+          <div className="flex space-x-1 overflow-x-auto">
+            {tabs.map((tab) => {
+              const IconComponent = tab.icon;
+              return (
+                <button
+                  key={tab.id}
+                  onClick={() => setActiveTab(tab.id)}
+                  className={`flex items-center space-x-2 px-4 py-2 text-sm font-medium rounded-t-lg transition-colors duration-200 whitespace-nowrap ${
+                    activeTab === tab.id
+                      ? 'bg-blue-600 text-white'
+                      : 'text-gray-300 hover:text-white hover:bg-gray-800'
+                  }`}
+                >
+                  <IconComponent className="h-4 w-4" />
+                  <span>{tab.label}</span>
+                </button>
+              );
+            })}
+          </div>
+        </div>
+      </div>
+
+      {/* Content */}
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        <motion.div
+          key={activeTab}
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.3 }}
+        >
+          {activeTab === 'induction-plan' && renderTomorrowPlan()}
+          {activeTab === 'live-tracking' && renderLiveTracking()}
+          {activeTab === 'depot-control' && renderDepotControl()}
+          {activeTab === 'ai-assistant' && renderAIAssistant()}
+        </motion.div>
+      </div>
+
+      {/* AI Scheduling Bot */}
+      <AISchedulingBot />
+    </div>
+  );
+};
+
+export default TrainInduction;
+
 
         {/* Fitness Validation Status */}
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
