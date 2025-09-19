@@ -24,20 +24,20 @@ class AIOptimizationService {
     const trainEvaluations = mockTrains.map(train => this.evaluateTrainFitness(train));
     
     // Step 2: Apply business rules and constraints
-    const eligibleTrains = trainEvaluations.filter(eval => eval.canGoToService);
-    const maintenanceTrains = trainEvaluations.filter(eval => eval.requiresMaintenance);
-    const cleaningTrains = trainEvaluations.filter(eval => eval.requiresCleaning);
+    const eligibleTrains = trainEvaluations.filter(evaluation => evaluation.canGoToService);
+    const maintenanceTrains = trainEvaluations.filter(evaluation => evaluation.requiresMaintenance);
+    const cleaningTrains = trainEvaluations.filter(evaluation => evaluation.requiresCleaning);
     
     // Step 3: Optimize for multiple objectives
     const optimizedSelection = this.multiObjectiveOptimization(eligibleTrains, constraints);
     
     // Step 4: Generate detailed reasoning
-    const reasoning = trainEvaluations.map(eval => ({
-      trainId: eval.trainId,
-      decision: eval.recommendation,
-      score: eval.overallScore,
-      factors: eval.reasoningFactors,
-      scheduledTime: this.calculateOptimalScheduleTime(eval)
+    const reasoning = trainEvaluations.map(evaluation => ({
+      trainId: evaluation.trainId,
+      decision: evaluation.recommendation,
+      score: evaluation.overallScore,
+      factors: evaluation.reasoningFactors,
+      scheduledTime: this.calculateOptimalScheduleTime(evaluation)
     }));
     
     // Step 5: Calculate expected performance
