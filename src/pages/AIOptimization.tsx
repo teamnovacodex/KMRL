@@ -284,41 +284,162 @@ const AIOptimization: React.FC = () => {
               <span>AI Decision Reasoning</span>
             </h3>
             
-            <div className="space-y-4">
-              {optimizationResult.reasoning.slice(0, 10).map((reasoning: any) => {
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+              {optimizationResult.reasoning.slice(0, 12).map((reasoning: any) => {
                 const train = mockTrains.find(t => t.id === reasoning.trainId);
+                const decisionColor = reasoning.decision === 'Service' ? 'green' :
+                                    reasoning.decision === 'Standby' ? 'yellow' : 'red';
+                
                 return (
-                  <div key={reasoning.trainId} className="border border-gray-200 rounded-lg p-4">
-                    <div className="flex items-center justify-between mb-2">
-                      <h5 className="font-medium text-gray-900">
-                        {train?.trainName} ({train?.trainNumber})
-                      </h5>
-                      <div className="flex items-center space-x-2">
-                        <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
-                          reasoning.decision === 'Service' ? 'bg-green-100 text-green-800' :
-                          reasoning.decision === 'Standby' ? 'bg-yellow-100 text-yellow-800' :
-                          'bg-red-100 text-red-800'
+                  <motion.div 
+                    key={reasoning.trainId}
+                    initial={{ opacity: 0, scale: 0.95 }}
+                    animate={{ opacity: 1, scale: 1 }}
+                    transition={{ delay: 0.1 }}
+                    className={`relative overflow-hidden rounded-xl border-2 transition-all duration-300 hover:shadow-lg ${
+                      reasoning.decision === 'Service' ? 'border-green-200 bg-gradient-to-br from-green-50 to-green-100' :
+                      reasoning.decision === 'Standby' ? 'border-yellow-200 bg-gradient-to-br from-yellow-50 to-yellow-100' :
+                      'border-red-200 bg-gradient-to-br from-red-50 to-red-100'
+                    }`}
+                  >
+                    {/* Train Header */}
+                    <div className={`px-4 py-3 border-b ${
+                      reasoning.decision === 'Service' ? 'border-green-200 bg-green-100' :
+                      reasoning.decision === 'Standby' ? 'border-yellow-200 bg-yellow-100' :
+                      'border-red-200 bg-red-100'
+                    }`}>
+                      <div className="flex items-center justify-between">
+                        <div className="flex items-center space-x-3">
+                          <div className={`p-2 rounded-lg ${
+                            reasoning.decision === 'Service' ? 'bg-green-600' :
+                            reasoning.decision === 'Standby' ? 'bg-yellow-600' :
+                            'bg-red-600'
+                          }`}>
+                            <Train className="h-4 w-4 text-white" />
+                          </div>
+                          <div>
+                            <h4 className={`text-lg font-bold ${
+                              reasoning.decision === 'Service' ? 'text-green-900' :
+                              reasoning.decision === 'Standby' ? 'text-yellow-900' :
+                              'text-red-900'
+                            }`}>
+                              {train?.trainName || 'Unknown'}
+                            </h4>
+                            <p className={`text-sm ${
+                              reasoning.decision === 'Service' ? 'text-green-700' :
+                              reasoning.decision === 'Standby' ? 'text-yellow-700' :
+                              'text-red-700'
+                            }`}>
+                              {train?.trainNumber || reasoning.trainId}
+                            </p>
+                          </div>
+                        </div>
+                        <div className="text-right">
+                          <div className={`text-2xl font-bold ${
+                            reasoning.decision === 'Service' ? 'text-green-800' :
+                            reasoning.decision === 'Standby' ? 'text-yellow-800' :
+                            'text-red-800'
+                          }`}>
+                            {(reasoning.score * 100).toFixed(0)}%
+                          </div>
+                          <div className={`text-xs ${
+                            reasoning.decision === 'Service' ? 'text-green-600' :
+                            reasoning.decision === 'Standby' ? 'text-yellow-600' :
+                            'text-red-600'
+                          }`}>
+                            AI Score
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* Decision Badge */}
+                    <div className="absolute top-3 right-3">
+                      <span className={`inline-flex items-center px-3 py-1 rounded-full text-sm font-bold shadow-sm ${
+                        reasoning.decision === 'Service' ? 'bg-green-600 text-white' :
+                        reasoning.decision === 'Standby' ? 'bg-yellow-600 text-white' :
+                        'bg-red-600 text-white'
+                      }`}>
+                        {reasoning.decision.toUpperCase()}
+                      </span>
+                    </div>
+
+                    {/* Train Details */}
+                    <div className="p-4 space-y-4">
+                      {/* Key Metrics */}
+                      <div className="grid grid-cols-2 gap-3">
+                        <div className="bg-white/60 rounded-lg p-3 text-center">
+                          <div className={`text-lg font-bold ${
+                            reasoning.decision === 'Service' ? 'text-green-800' :
+                            reasoning.decision === 'Standby' ? 'text-yellow-800' :
+                            'text-red-800'
+                          }`}>
+                            {train?.healthScore || 85}%
+                          </div>
+                          <div className="text-xs text-gray-600">Health Score</div>
+                        </div>
+                        <div className="bg-white/60 rounded-lg p-3 text-center">
+                          <div className={`text-lg font-bold ${
+                            reasoning.decision === 'Service' ? 'text-green-800' :
+                            reasoning.decision === 'Standby' ? 'text-yellow-800' :
+                            'text-red-800'
+                          }`}>
+                            {train?.currentBay.type || 'SBL'}-{train?.currentBay.bayNumber || 1}
+                          </div>
+                          <div className="text-xs text-gray-600">Current Bay</div>
+                        </div>
+                      </div>
+
+                      {/* AI Reasoning Factors */}
+                      <div className="bg-white/60 rounded-lg p-3">
+                        <h5 className={`text-sm font-semibold mb-2 ${
+                          reasoning.decision === 'Service' ? 'text-green-800' :
+                          reasoning.decision === 'Standby' ? 'text-yellow-800' :
+                          'text-red-800'
                         }`}>
-                          {reasoning.decision}
-                        </span>
-                        <span className="text-sm text-gray-600">
-                          Score: {(reasoning.score * 100).toFixed(0)}%
-                        </span>
-                        <span className="text-xs text-gray-500">
-                          {reasoning.scheduledTime}
+                          🤖 AI Analysis:
+                        </h5>
+                        <div className="space-y-1">
+                          {reasoning.factors.slice(0, 3).map((factor: string, index: number) => (
+                            <div key={index} className="flex items-start space-x-2">
+                              <div className={`w-1.5 h-1.5 rounded-full mt-1.5 ${
+                                factor.includes('✅') ? 'bg-green-500' :
+                                factor.includes('⚠️') ? 'bg-yellow-500' :
+                                factor.includes('❌') ? 'bg-red-500' : 'bg-blue-500'
+                              }`}></div>
+                              <span className="text-xs text-gray-700 leading-relaxed">{factor}</span>
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+
+                      {/* Schedule Time */}
+                      <div className="flex items-center justify-between bg-white/60 rounded-lg p-3">
+                        <div className="flex items-center space-x-2">
+                          <Clock className={`h-4 w-4 ${
+                            reasoning.decision === 'Service' ? 'text-green-600' :
+                            reasoning.decision === 'Standby' ? 'text-yellow-600' :
+                            'text-red-600'
+                          }`} />
+                          <span className="text-sm font-medium text-gray-700">Schedule:</span>
+                        </div>
+                        <span className={`text-sm font-bold ${
+                          reasoning.decision === 'Service' ? 'text-green-800' :
+                          reasoning.decision === 'Standby' ? 'text-yellow-800' :
+                          'text-red-800'
+                        }`}>
+                          {reasoning.scheduledTime || '05:00'}
                         </span>
                       </div>
                     </div>
-                    
-                    <div className="text-sm">
-                      <span className="font-medium text-gray-700">AI Reasoning:</span>
-                      <ul className="mt-1 space-y-1">
-                        {reasoning.factors.slice(0, 3).map((factor: string, index: number) => (
-                          <li key={index} className="text-gray-600">• {factor}</li>
-                        ))}
-                      </ul>
-                    </div>
-                  </div>
+
+                    {/* Status Indicator Strip */}
+                    <div className={`h-1 w-full ${
+                      reasoning.decision === 'Service' ? 'bg-green-600' :
+                      reasoning.decision === 'Standby' ? 'bg-yellow-600' :
+                      'bg-red-600'
+                    }`}></div>
+                  </motion.div>
                 );
               })}
             </div>
