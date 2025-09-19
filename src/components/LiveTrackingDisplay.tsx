@@ -547,8 +547,6 @@ const LiveTrackingDisplay: React.FC<LiveTrackingDisplayProps> = ({ height = 600 
             </div>
           </div>
         </div>
-            </pattern>
-          </defs>
           
           {/* Main Track Lines - UP and DOWN tracks (parallel) */}
           <g stroke="#10b981" strokeWidth="4" fill="none">
