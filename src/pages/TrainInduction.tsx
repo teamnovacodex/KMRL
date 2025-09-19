@@ -158,206 +158,211 @@ const TrainInduction: React.FC = () => {
     </div>
   );
 
-  const renderScheduleManagement = () => (
-    <div className="space-y-6">
-      {/* Schedule Overview */}
-      <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
-        <div className="bg-white rounded-lg border border-gray-200 p-6">
-          <div className="flex items-center justify-between mb-4">
-            <h3 className="text-lg font-semibold text-gray-900">Service Pattern</h3>
-            <Calendar className="h-6 w-6 text-blue-600" />
-          </div>
-          <div className="space-y-2 text-sm">
-            <div className="flex justify-between">
-              <span className="text-gray-600">Service Type:</span>
-              <span className="font-medium text-gray-900">Weekday</span>
-            </div>
-            <div className="flex justify-between">
-              <span className="text-gray-600">Required Trains:</span>
-              <span className="font-medium text-blue-600">15</span>
-            </div>
-            <div className="flex justify-between">
-              <span className="text-gray-600">Service Hours:</span>
-              <span className="font-medium text-green-600">05:00 - 22:00</span>
-            </div>
-            <div className="flex justify-between">
-              <span className="text-gray-600">Frequency:</span>
-              <span className="font-medium text-gray-900">6-8 minutes</span>
-            </div>
-          </div>
-        </div>
-
-        <div className="bg-white rounded-lg border border-gray-200 p-6">
-          <div className="flex items-center justify-between mb-4">
-            <h3 className="text-lg font-semibold text-gray-900">Induction Window</h3>
-            <Clock className="h-6 w-6 text-green-600" />
-          </div>
-          <div className="space-y-2 text-sm">
-            <div className="flex justify-between">
-              <span className="text-gray-600">First Induction:</span>
-              <span className="font-medium text-blue-600">04:30</span>
-            </div>
-            <div className="flex justify-between">
-              <span className="text-gray-600">Last Induction:</span>
-              <span className="font-medium text-blue-600">08:00</span>
-            </div>
-            <div className="flex justify-between">
-              <span className="text-gray-600">Service Start:</span>
-              <span className="font-medium text-green-600">05:00</span>
-            </div>
-            <div className="flex justify-between">
-              <span className="text-gray-600">Total Slots:</span>
-              <span className="font-medium text-gray-900">15</span>
-            </div>
-          </div>
-        </div>
-
-        <div className="bg-white rounded-lg border border-gray-200 p-6">
-          <div className="flex items-center justify-between mb-4">
-            <h3 className="text-lg font-semibold text-gray-900">Depot Status</h3>
-            <MapPin className="h-6 w-6 text-purple-600" />
-          </div>
-          <div className="space-y-2 text-sm">
-            <div className="flex justify-between">
-              <span className="text-gray-600">SBL Bays:</span>
-              <span className="font-medium text-green-600">{depotOperations.currentOccupancy.sbl}/18</span>
-            </div>
-            <div className="flex justify-between">
-              <span className="text-gray-600">IBL Bays:</span>
-              <span className="font-medium text-yellow-600">{depotOperations.currentOccupancy.ibl}/4</span>
-            </div>
-            <div className="flex justify-between">
-              <span className="text-gray-600">HIBL Bays:</span>
-              <span className="font-medium text-red-600">{depotOperations.currentOccupancy.hibl}/3</span>
-            </div>
-            <div className="flex justify-between">
-              <span className="text-gray-600">Shunting:</span>
-              <span className="font-medium text-blue-600">{depotOperations.shuntingOperations.inProgress} active</span>
-            </div>
-          </div>
-        </div>
-
-        <div className="bg-white rounded-lg border border-gray-200 p-6">
-          <div className="flex items-center justify-between mb-4">
-            <h3 className="text-lg font-semibold text-gray-900">AI Status</h3>
-            <Activity className="h-6 w-6 text-blue-600" />
-          </div>
-          <div className="space-y-2 text-sm">
-            <div className="flex justify-between">
-              <span className="text-gray-600">Optimization:</span>
-              <span className="font-medium text-green-600">Active</span>
-            </div>
-            <div className="flex justify-between">
-              <span className="text-gray-600">Confidence:</span>
-              <span className="font-medium text-blue-600">94.2%</span>
-            </div>
-            <div className="flex justify-between">
-              <span className="text-gray-600">Last Run:</span>
-              <span className="font-medium text-gray-900">10:45 AM</span>
-            </div>
-            <div className="flex justify-between">
-              <span className="text-gray-600">Next Run:</span>
-              <span className="font-medium text-blue-600">10:50 AM</span>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      {/* Detailed Induction Timeline */}
-      <div className="bg-white rounded-lg border border-gray-200 p-6">
-        <h3 className="text-lg font-semibold text-gray-900 mb-6">Induction Timeline - Tomorrow</h3>
-        <div className="space-y-4">
-          {todayInductionSchedule.inductionSlots.slice(0, 8).map((slot, index) => (
-            <div key={slot.slotId} className="flex items-center justify-between p-4 bg-gray-50 rounded-lg">
-              <div className="flex items-center space-x-4">
-                <div className="bg-blue-600 text-white rounded-full w-8 h-8 flex items-center justify-center text-sm font-medium">
-                  {slot.priority}
-                </div>
-                <div>
-                  <div className="font-medium text-gray-900">{slot.trainName}</div>
-                  <div className="text-sm text-gray-600">ID: {slot.trainId}</div>
-                </div>
-              </div>
-              <div className="grid grid-cols-4 gap-8 text-sm">
-                <div className="text-center">
-                  <div className="text-gray-600">Induction</div>
-                  <div className="font-medium text-blue-600">{slot.inductionTime}</div>
-                </div>
-                <div className="text-center">
-                  <div className="text-gray-600">Departure</div>
-                  <div className="font-medium text-green-600">{slot.departureTime}</div>
-                </div>
-                <div className="text-center">
-                  <div className="text-gray-600">From</div>
-                  <div className="font-medium text-gray-900">{slot.fromStation}</div>
-                </div>
-                <div className="text-center">
-                  <div className="text-gray-600">Passengers</div>
-                  <div className="font-medium text-purple-600">{slot.estimatedPassengers.toLocaleString()}</div>
-                </div>
-              </div>
-            </div>
-          ))}
-        </div>
-      </div>
-    </div>
-  );
-
   const renderDepotStatus = () => (
     <div className="space-y-6">
-      {/* Depot Bay Status */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-        <div className="bg-white rounded-lg border border-gray-200 p-6">
-          <h3 className="text-lg font-semibold text-green-900 mb-4">SBL Bays (Service Ready)</h3>
-          <div className="space-y-3">
-            {trainInductions.filter(t => t.currentBay.type === 'SBL').slice(0, 6).map((train) => (
-              <div key={train.id} className="flex items-center justify-between p-3 bg-green-50 rounded-lg">
-                <div>
-                  <div className="font-medium text-gray-900">{train.trainName}</div>
-                  <div className="text-sm text-gray-600">Bay {train.currentBay.number}</div>
-                </div>
-                <div className="text-right">
-                  <div className="text-sm text-green-600">Ready</div>
-                  <div className="text-xs text-gray-500">{train.inductionTime}</div>
-                </div>
-              </div>
-            ))}
+      {/* Real Depot Overview Board */}
+      <div className="bg-white rounded-lg border border-gray-200 p-6">
+        <div className="flex items-center justify-between mb-6">
+          <h3 className="text-lg font-semibold text-gray-900">DEPOT OVERVIEW - 16/09/2025</h3>
+          <div className="flex items-center space-x-4">
+            <div className="flex items-center space-x-2">
+              <div className="w-3 h-3 bg-green-500 rounded-full"></div>
+              <span className="text-sm text-green-600 font-medium">DEPOT: DC ENERGIZED</span>
+            </div>
+            <div className="flex items-center space-x-2">
+              <div className="w-3 h-3 bg-green-500 rounded-full"></div>
+              <span className="text-sm text-green-600 font-medium">TT: DC ENERGIZED</span>
+            </div>
           </div>
         </div>
 
-        <div className="bg-white rounded-lg border border-gray-200 p-6">
-          <h3 className="text-lg font-semibold text-yellow-900 mb-4">IBL Bays (Inspection)</h3>
-          <div className="space-y-3">
-            {trainInductions.filter(t => t.currentBay.type === 'IBL').map((train) => (
-              <div key={train.id} className="flex items-center justify-between p-3 bg-yellow-50 rounded-lg">
-                <div>
-                  <div className="font-medium text-gray-900">{train.trainName}</div>
-                  <div className="text-sm text-gray-600">Bay {train.currentBay.number}</div>
-                </div>
-                <div className="text-right">
-                  <div className="text-sm text-yellow-600">Inspection</div>
-                  <div className="text-xs text-gray-500">{train.maintenanceWindow.estimatedDuration}h</div>
-                </div>
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+          {/* MILTS Data */}
+          <div className="bg-gray-50 rounded-lg p-4">
+            <h4 className="font-medium text-gray-900 mb-4">MILTS</h4>
+            <div className="grid grid-cols-3 gap-3 text-sm">
+              <div className="text-center">
+                <div className="font-bold text-gray-900">12</div>
+                <div className="text-gray-600">17</div>
               </div>
-            ))}
+              <div className="text-center">
+                <div className="font-bold text-gray-900">17</div>
+                <div className="text-gray-600">14</div>
+              </div>
+              <div className="text-center">
+                <div className="font-bold text-gray-900">20</div>
+                <div className="text-gray-600">05</div>
+              </div>
+              <div className="text-center">
+                <div className="font-bold text-gray-900">21</div>
+                <div className="text-gray-600">24</div>
+              </div>
+              <div className="text-center">
+                <div className="font-bold text-gray-900">1</div>
+                <div className="text-gray-600">11</div>
+              </div>
+              <div className="text-center">
+                <div className="font-bold text-gray-900">05</div>
+                <div className="text-gray-600">1</div>
+              </div>
+            </div>
+          </div>
+
+          {/* Stabling Instructions */}
+          <div className="bg-red-50 rounded-lg p-4">
+            <h4 className="font-medium text-red-900 mb-4">NO STABLING</h4>
+            <div className="space-y-2 text-sm">
+              <div className="text-red-800 font-medium">SBL 04, 05</div>
+              <div className="text-gray-600 mt-3">
+                <div>ROAD SIDE GATE: <span className="font-medium">1 OPEN</span></div>
+                <div>TT & WSP SIDE GATE: <span className="font-medium">5 OPEN</span></div>
+                <div>CLOSE: <span className="font-medium">4</span></div>
+              </div>
+            </div>
+          </div>
+
+          {/* System Status */}
+          <div className="bg-blue-50 rounded-lg p-4">
+            <h4 className="font-medium text-blue-900 mb-4">DRILLS: SEP 2025</h4>
+            <div className="grid grid-cols-2 gap-2 text-sm">
+              <div className="flex items-center space-x-2">
+                <div className="w-3 h-3 border border-gray-400 rounded"></div>
+                <span className="text-gray-600">ETS</span>
+              </div>
+              <div className="flex items-center space-x-2">
+                <div className="w-3 h-3 border border-gray-400 rounded"></div>
+                <span className="text-gray-600">SDD</span>
+              </div>
+              <div className="flex items-center space-x-2">
+                <div className="w-3 h-3 border border-gray-400 rounded"></div>
+                <span className="text-gray-600">ESP</span>
+              </div>
+              <div className="flex items-center space-x-2">
+                <div className="w-3 h-3 border border-gray-400 rounded"></div>
+                <span className="text-gray-600">MDD</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* Real Bay Layout */}
+      <div className="bg-white rounded-lg border border-gray-200 p-6">
+        <h3 className="text-lg font-semibold text-gray-900 mb-6">Bay Layout - Real Time Status</h3>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          {/* SBL Bays */}
+          <div>
+            <h4 className="font-medium text-green-900 mb-4">SBL Bays (Service Bays Light)</h4>
+            <div className="space-y-2">
+              {[
+                { bay: 'SBL1', openEnd: '05', bufferedEnd: '' },
+                { bay: 'SBL2', openEnd: '', bufferedEnd: '' },
+                { bay: 'SBL3', openEnd: '', bufferedEnd: '25' },
+                { bay: 'SBL4', openEnd: '', bufferedEnd: '' },
+                { bay: 'SBL5', openEnd: '', bufferedEnd: '' },
+                { bay: 'SBL6', openEnd: '', bufferedEnd: '05' },
+                { bay: 'SBL7', openEnd: '2', bufferedEnd: '' },
+                { bay: 'SBL8', openEnd: '', bufferedEnd: '15' },
+                { bay: 'SBL9', openEnd: '', bufferedEnd: '' },
+                { bay: 'SBL10', openEnd: '19', bufferedEnd: '' },
+                { bay: 'SBL11', openEnd: '', bufferedEnd: '' },
+                { bay: 'SBL12', openEnd: '', bufferedEnd: '' }
+              ].map((bay) => (
+                <div key={bay.bay} className="flex items-center justify-between p-3 bg-green-50 rounded-lg border">
+                  <div className="font-medium text-gray-900">{bay.bay}</div>
+                  <div className="flex space-x-4">
+                    <div className="text-center">
+                      <div className="text-xs text-gray-600">OPEN END</div>
+                      <div className={`font-bold ${bay.openEnd ? 'text-blue-600' : 'text-gray-400'}`}>
+                        {bay.openEnd || '-'}
+                      </div>
+                    </div>
+                    <div className="text-center">
+                      <div className="text-xs text-gray-600">BUFFERED END</div>
+                      <div className={`font-bold ${bay.bufferedEnd ? 'text-blue-600' : 'text-gray-400'}`}>
+                        {bay.bufferedEnd || '-'}
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          {/* IBL & HIBL Bays */}
+          <div>
+            <h4 className="font-medium text-yellow-900 mb-4">IBL & HIBL Bays</h4>
+            <div className="space-y-2">
+              {[
+                { bay: 'IBL1', openEnd: '9', bufferedEnd: '', type: 'IBL' },
+                { bay: 'IBL2', openEnd: '9', bufferedEnd: '', type: 'IBL' },
+                { bay: 'IBL3', openEnd: '25', bufferedEnd: '', type: 'IBL' },
+                { bay: 'HICL', openEnd: '23', bufferedEnd: '', type: 'HIBL' },
+                { bay: 'HIS1', openEnd: '13', bufferedEnd: '', type: 'HIBL' },
+                { bay: 'HIS2', openEnd: '05', bufferedEnd: '', type: 'HIBL' },
+                { bay: 'HIS3', openEnd: '04', bufferedEnd: '', type: 'HIBL' },
+                { bay: 'FULL', openEnd: '15', bufferedEnd: '', type: 'SPECIAL' },
+                { bay: 'ETU', openEnd: '', bufferedEnd: '', type: 'SPECIAL' },
+                { bay: 'ERL', openEnd: '', bufferedEnd: '', type: 'SPECIAL' },
+                { bay: 'UBL', openEnd: '', bufferedEnd: '', type: 'SPECIAL' }
+              ].map((bay) => (
+                <div key={bay.bay} className={`flex items-center justify-between p-3 rounded-lg border ${
+                  bay.type === 'IBL' ? 'bg-yellow-50' :
+                  bay.type === 'HIBL' ? 'bg-red-50' : 'bg-purple-50'
+                }`}>
+                  <div className="font-medium text-gray-900">{bay.bay}</div>
+                  <div className="flex space-x-4">
+                    <div className="text-center">
+                      <div className="text-xs text-gray-600">OPEN END</div>
+                      <div className={`font-bold ${bay.openEnd ? 'text-blue-600' : 'text-gray-400'}`}>
+                        {bay.openEnd || '-'}
+                      </div>
+                    </div>
+                    <div className="text-center">
+                      <div className="text-xs text-gray-600">BUFFERED END</div>
+                      <div className={`font-bold ${bay.bufferedEnd ? 'text-blue-600' : 'text-gray-400'}`}>
+                        {bay.bufferedEnd || '-'}
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* Instructions Panel */}
+      <div className="bg-white rounded-lg border border-gray-200 p-6">
+        <h3 className="text-lg font-semibold text-gray-900 mb-6">INST: SHUNTING (24/8/24)</h3>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div className="bg-blue-50 rounded-lg p-4">
+            <h4 className="font-medium text-blue-900 mb-3">Shunting Instructions</h4>
+            <ul className="space-y-1 text-sm text-blue-800">
+              <li>→ Any Movement - ATO BY PASS</li>
+              <li>→ ATC TRIP CONDITION</li>
+              <li>→ TRAIN POWER OFF</li>
+              <li>→ Note in Shunting Register</li>
+            </ul>
+          </div>
+
+          <div className="bg-green-50 rounded-lg p-4">
+            <h4 className="font-medium text-green-900 mb-3">DEPOT MOVEMENT (24/8/24)</h4>
+            <ul className="space-y-1 text-sm text-green-800">
+              <li>→ All Revenue Train in ATO</li>
+              <li>→ Induction/Withdrawal</li>
+              <li>→ 1st Train in ETP</li>
+              <li>→ Trains scheduled for washing in ATO</li>
+              <li>→ Washing to RM</li>
+            </ul>
           </div>
         </div>
 
-        <div className="bg-white rounded-lg border border-gray-200 p-6">
-          <h3 className="text-lg font-semibold text-red-900 mb-4">HIBL Bays (Heavy Maintenance)</h3>
-          <div className="space-y-3">
-            {trainInductions.filter(t => t.currentBay.type === 'HIBL').map((train) => (
-              <div key={train.id} className="flex items-center justify-between p-3 bg-red-50 rounded-lg">
-                <div>
-                  <div className="font-medium text-gray-900">{train.trainName}</div>
-                  <div className="text-sm text-gray-600">Bay {train.currentBay.number}</div>
-                </div>
-                <div className="text-right">
-                  <div className="text-sm text-red-600">Heavy Maint.</div>
-                  <div className="text-xs text-gray-500">{train.maintenanceWindow.estimatedDuration}h</div>
-                </div>
-              </div>
-            ))}
+        <div className="mt-6 bg-green-100 rounded-lg p-4">
+          <h4 className="font-medium text-green-900 mb-2">Working Instructions (10:05 2025)</h4>
+          <div className="text-green-800 font-medium">
+            → Do Stabling SBL 04 & 05<br/>
+            → Till Further Instruction
           </div>
         </div>
       </div>
@@ -366,57 +371,156 @@ const TrainInduction: React.FC = () => {
 
   const renderAIOptimization = () => (
     <div className="space-y-6">
-      {/* AI Optimization Results */}
+      {/* Real Fitness Certificate Validation */}
       <div className="bg-white rounded-lg border border-gray-200 p-6">
         <div className="flex items-center justify-between mb-6">
           <div>
-            <h3 className="text-lg font-semibold text-gray-900">AI Optimization Results</h3>
-            <p className="text-sm text-gray-600">Automated induction planning for optimal performance</p>
+            <h3 className="text-lg font-semibold text-gray-900">Automated Systems</h3>
+            <p className="text-sm text-gray-600">AI-Powered Fitness Validation & Induction Scheduling</p>
           </div>
-          <div className="text-right">
-            <div className="text-2xl font-bold text-blue-600">94.2%</div>
-            <div className="text-sm text-gray-600">Optimization Score</div>
+          <div className="flex items-center space-x-4">
+            <button className="inline-flex items-center px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700">
+              <RefreshCw className="h-4 w-4 mr-2" />
+              Refresh
+            </button>
+            <div className="flex items-center space-x-2">
+              <input type="checkbox" id="autoRefresh" defaultChecked className="rounded" />
+              <label htmlFor="autoRefresh" className="text-sm text-gray-700">Auto Refresh</label>
+            </div>
           </div>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-          <div className="bg-green-50 rounded-lg p-4">
-            <h4 className="font-medium text-green-900 mb-3">Recommended for Induction</h4>
-            <div className="space-y-2">
-              {trainInductions.filter(t => t.aiRecommendation.decision === 'Induct').slice(0, 5).map((train) => (
-                <div key={train.id} className="flex items-center justify-between">
-                  <span className="text-sm text-green-800">{train.trainName}</span>
-                  <span className="text-xs text-green-600">{train.aiRecommendation.confidence}%</span>
-                </div>
-              ))}
+        {/* Fitness Validation Status */}
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
+          <div className="bg-green-50 border border-green-200 rounded-lg p-4 text-center">
+            <div className="flex items-center justify-center mb-2">
+              <CheckCircle className="h-6 w-6 text-green-600 mr-2" />
+              <span className="text-sm text-green-700 font-medium">Valid Certificates</span>
             </div>
+            <div className="text-3xl font-bold text-green-800">18</div>
           </div>
-
-          <div className="bg-yellow-50 rounded-lg p-4">
-            <h4 className="font-medium text-yellow-900 mb-3">Standby Recommendations</h4>
-            <div className="space-y-2">
-              {trainInductions.filter(t => t.operationalStatus === 'Standby').map((train) => (
-                <div key={train.id} className="flex items-center justify-between">
-                  <span className="text-sm text-yellow-800">{train.trainName}</span>
-                  <span className="text-xs text-yellow-600">{train.currentBay.location.replace('_', ' ')}</span>
-                </div>
-              ))}
+          <div className="bg-red-50 border border-red-200 rounded-lg p-4 text-center">
+            <div className="flex items-center justify-center mb-2">
+              <AlertTriangle className="h-6 w-6 text-red-600 mr-2" />
+              <span className="text-sm text-red-700 font-medium">Invalid Certificates</span>
             </div>
+            <div className="text-3xl font-bold text-red-800">7</div>
           </div>
+          <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-4 text-center">
+            <div className="flex items-center justify-center mb-2">
+              <Clock className="h-6 w-6 text-yellow-600 mr-2" />
+              <span className="text-sm text-yellow-700 font-medium">Expiring Soon</span>
+            </div>
+            <div className="text-3xl font-bold text-yellow-800">0</div>
+          </div>
+          <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 text-center">
+            <div className="flex items-center justify-center mb-2">
+              <Train className="h-6 w-6 text-blue-600 mr-2" />
+              <span className="text-sm text-blue-700 font-medium">Total Trains</span>
+            </div>
+            <div className="text-3xl font-bold text-blue-800">25</div>
+          </div>
+        </div>
 
-          <div className="bg-red-50 rounded-lg p-4">
-            <h4 className="font-medium text-red-900 mb-3">Maintenance Required</h4>
-            <div className="space-y-2">
-              {trainInductions.filter(t => t.aiRecommendation.decision === 'Maintenance').slice(0, 5).map((train) => (
-                <div key={train.id} className="flex items-center justify-between">
-                  <span className="text-sm text-red-800">{train.trainName}</span>
-                  <span className="text-xs text-red-600">{train.maintenanceWindow.type}</span>
+        {/* Fitness Certificate Validation Results */}
+        <div className="bg-gray-50 rounded-lg p-4">
+          <h4 className="font-medium text-gray-900 mb-4">Fitness Certificate Validation Results</h4>
+          <p className="text-sm text-gray-600 mb-4">AI-powered automated validation for all 25 trains</p>
+          
+          <div className="space-y-4">
+            {/* Sample validation results */}
+            <div className="bg-white rounded-lg p-4 border border-gray-200">
+              <div className="grid grid-cols-6 gap-4 text-sm">
+                <div>
+                  <div className="font-medium text-gray-900">GANGA</div>
+                  <div className="text-gray-600">ID: 001</div>
                 </div>
-              ))}
+                <div>
+                  <div className="text-gray-600">FC-001-175829340782</div>
+                  <div className="text-gray-600">Expires: 2025-09-21</div>
+                </div>
+                <div>
+                  <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-green-100 text-green-800">
+                    Valid
+                  </span>
+                </div>
+                <div className="space-y-1">
+                  <div className="flex items-center space-x-1">
+                    <CheckCircle className="h-3 w-3 text-green-600" />
+                    <span className="text-xs text-green-600">Mechanical</span>
+                  </div>
+                  <div className="flex items-center space-x-1">
+                    <CheckCircle className="h-3 w-3 text-green-600" />
+                    <span className="text-xs text-green-600">Electrical</span>
+                  </div>
+                  <div className="flex items-center space-x-1">
+                    <CheckCircle className="h-3 w-3 text-green-600" />
+                    <span className="text-xs text-green-600">BrakeSystem</span>
+                  </div>
+                  <div className="flex items-center space-x-1">
+                    <CheckCircle className="h-3 w-3 text-green-600" />
+                    <span className="text-xs text-green-600">DoorSystem</span>
+                  </div>
+                </div>
+                <div>
+                  <div className="text-xs text-gray-600">AI Automated System</div>
+                  <div className="text-xs text-blue-600">2025-09-19</div>
+                </div>
+                <div>
+                  <div className="text-xs text-green-600">All systems validated successfully</div>
+                  <div className="text-xs text-blue-600">🤖 AI Generated</div>
+                </div>
+              </div>
+            </div>
+
+            <div className="bg-white rounded-lg p-4 border border-gray-200">
+              <div className="grid grid-cols-6 gap-4 text-sm">
+                <div>
+                  <div className="font-medium text-gray-900">KAVRI</div>
+                  <div className="text-gray-600">ID: 002</div>
+                </div>
+                <div>
+                  <div className="text-gray-600">FC-002-175829340782</div>
+                  <div className="text-gray-600">Expires: 2025-09-21</div>
+                </div>
+                <div>
+                  <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-red-100 text-red-800">
+                    Invalid
+                  </span>
+                </div>
+                <div className="space-y-1">
+                  <div className="flex items-center space-x-1">
+                    <CheckCircle className="h-3 w-3 text-green-600" />
+                    <span className="text-xs text-green-600">Mechanical</span>
+                  </div>
+                  <div className="flex items-center space-x-1">
+                    <CheckCircle className="h-3 w-3 text-green-600" />
+                    <span className="text-xs text-green-600">Electrical</span>
+                  </div>
+                  <div className="flex items-center space-x-1">
+                    <CheckCircle className="h-3 w-3 text-green-600" />
+                    <span className="text-xs text-green-600">BrakeSystem</span>
+                  </div>
+                  <div className="flex items-center space-x-1">
+                    <AlertTriangle className="h-3 w-3 text-red-600" />
+                    <span className="text-xs text-red-600">DoorSystem</span>
+                  </div>
+                </div>
+                <div>
+                  <div className="text-xs text-gray-600">AI Automated System</div>
+                  <div className="text-xs text-blue-600">2025-09-19</div>
+                </div>
+                <div>
+                  <div className="text-xs text-red-600">Some validation checks failed - manual inspection required</div>
+                  <div className="text-xs text-blue-600">🤖 AI Generated</div>
+                </div>
+              </div>
             </div>
           </div>
         </div>
       </div>
+    </div>
+  );
 
       {/* AI Decision Reasoning */}
       {selectedTrain && (
