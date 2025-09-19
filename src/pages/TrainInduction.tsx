@@ -103,12 +103,12 @@ const TrainInduction: React.FC = () => {
             <div>
               <h3 className="text-lg font-semibold text-gray-900">Real KMRL Train Schedule</h3>
               <p className="text-sm text-gray-600">
-                📋 Actual operational schedule | Weekdays: 15 trains | Weekends: 12 trains
+                📊 Weekdays: 15 trains | Weekends: 12 trains | Passenger-based optimization
               </p>
             </div>
             <div className="flex items-center space-x-2">
               <CheckCircle className="h-5 w-5 text-green-600" />
-              <span className="text-sm text-green-600 font-medium">OPERATIONAL</span>
+              <span className="text-sm text-green-600 font-medium">ACTIVE SCHEDULE</span>
             </div>
           </div>
         </div>
@@ -122,12 +122,12 @@ const TrainInduction: React.FC = () => {
                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Train ID</th>
                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Timing</th>
                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Station</th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Expected Passengers</th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Service Type</th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Passenger Load</th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Revenue</th>
               </tr>
             </thead>
             <tbody className="bg-white divide-y divide-gray-200">
-              {getCurrentSchedule().map((train, index) => (
+              {weekdaySchedule.map((train, index) => (
                 <tr 
                   key={train.trainId} 
                   className={`hover:bg-gray-50 cursor-pointer ${selectedTrain === train.trainId ? 'bg-blue-50' : ''}`}
@@ -160,11 +160,9 @@ const TrainInduction: React.FC = () => {
                     {train.passengerLoad.toLocaleString()}
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap">
-                    <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
-                      train.serviceType === 'Weekday' ? 'bg-green-100 text-green-800' : 'bg-blue-100 text-blue-800'
-                    }`}>
-                      {train.serviceType}
-                    </span>
+                    <div className="text-sm font-medium text-green-600">
+                      ₹{(train.estimatedRevenue / 1000).toFixed(0)}K
+                    </div>
                   </td>
                 </tr>
               ))}
@@ -176,15 +174,15 @@ const TrainInduction: React.FC = () => {
       {/* Plan Details */}
       {selectedTrain && (
         <div className="bg-green-50 border border-green-200 rounded-lg p-6">
-          <h4 className="font-medium text-green-900 mb-4">Train Schedule Details</h4>
+          <h4 className="font-medium text-green-900 mb-4">Real Train Schedule Details</h4>
           {(() => {
-            const train = getCurrentSchedule().find(t => t.trainId === selectedTrain);
+            const train = weekdaySchedule.find(t => t.trainId === selectedTrain);
             if (!train) return null;
             
             return (
               <div className="space-y-4">
                 <div className="flex items-center justify-between">
-                  <h5 className="text-lg font-semibold text-green-900">{train.trainName} ({train.trainId})</h5>
+                  <h5 className="text-lg font-semibold text-green-900">{train.trainName} ({train.trainNo})</h5>
                   <span className="px-3 py-1 rounded-full text-sm font-medium bg-green-100 text-green-800">
                     SCHEDULED
                   </span>
@@ -193,11 +191,11 @@ const TrainInduction: React.FC = () => {
                 <div className="bg-white rounded-lg p-4">
                   <div className="grid grid-cols-2 md:grid-cols-5 gap-4 text-sm">
                     <div>
-                      <span className="text-gray-600">Train No:</span>
-                      <div className="font-medium text-gray-900">{train.trainNo}</div>
+                      <span className="text-gray-600">Train ID:</span>
+                      <div className="font-medium text-gray-900">{train.trainId}</div>
                     </div>
                     <div>
-                      <span className="text-gray-600">Timing:</span>
+                      <span className="text-gray-600">Service Time:</span>
                       <div className="font-medium text-blue-600">{train.timing}</div>
                     </div>
                     <div>
@@ -209,8 +207,8 @@ const TrainInduction: React.FC = () => {
                       <div className="font-medium text-purple-600">{train.passengerLoad.toLocaleString()}</div>
                     </div>
                     <div>
-                      <span className="text-gray-600">Priority:</span>
-                      <div className="font-medium text-green-600">#{train.priority}</div>
+                      <span className="text-gray-600">Revenue:</span>
+                      <div className="font-medium text-green-600">₹{(train.estimatedRevenue / 1000).toFixed(0)}K</div>
                     </div>
                   </div>
                 </div>
@@ -318,7 +316,7 @@ const TrainInduction: React.FC = () => {
 
       {/* Real Bay Layout */}
       <div className="bg-white rounded-lg border border-gray-200 p-6">
-        <h3 className="text-lg font-semibold text-gray-900 mb-6">DEPOT BAY LAYOUT - ENTRY LINE CONFIGURATION</h3>
+        <h3 className="text-lg font-semibold text-gray-900 mb-6">DEPOT BAY LAYOUT - REAL TIME STATUS (16/09/2025)</h3>
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
           {/* SBL Bays - Two Entry Lines */}
           <div>
@@ -327,7 +325,7 @@ const TrainInduction: React.FC = () => {
             </h4>
             <div className="space-y-2">
               {realDepotBays.sbl.bays.map((bay) => (
-                <div key={`SBL${bay.number}`} className={`p-3 rounded-lg border-2 ${
+                <div key={bay.number} className={`p-3 rounded-lg border-2 ${
                   !bay.canStable ? 'bg-red-50 border-red-300' : 'bg-green-50 border-green-300'
                 }`}>
                   <div className="flex items-center justify-between mb-2">
@@ -339,10 +337,18 @@ const TrainInduction: React.FC = () => {
                     </div>
                     {!bay.canStable && <span className="text-red-600 font-bold">❌ NO STABLING</span>}
                   </div>
-                  <div className="text-center">
-                    <div className="text-xs text-gray-600 font-bold bg-gray-100 py-1 rounded mb-2">CURRENT TRAIN</div>
-                    <div className={`font-bold text-lg ${bay.currentTrain ? 'text-blue-600' : 'text-gray-400'}`}>
-                      {bay.currentTrain || 'EMPTY'}
+                  <div className="grid grid-cols-2 gap-4">
+                    <div className="text-center">
+                      <div className="text-xs text-gray-600 font-bold bg-blue-100 py-1 rounded">OPEN END</div>
+                      <div className={`font-bold text-3xl mt-1 ${bay.currentTrain ? 'text-blue-600' : 'text-gray-400'}`}>
+                        {bay.currentTrain || '-'}
+                      </div>
+                    </div>
+                    <div className="text-center">
+                      <div className="text-xs text-gray-600 font-bold bg-purple-100 py-1 rounded">BUFFERED END</div>
+                      <div className="font-bold text-3xl mt-1 text-gray-400">
+                        -
+                      </div>
                     </div>
                   </div>
                 </div>
@@ -350,115 +356,90 @@ const TrainInduction: React.FC = () => {
             </div>
           </div>
 
-          {/* IBL Bays - ONE ENTRY LINE */}
+          {/* IBL & HIBL Bays - ONE ENTRY LINE */}
           <div>
-            <h4 className="font-medium text-yellow-900 mb-4 text-center bg-yellow-100 py-2 rounded">IBL BAYS - ONE ENTRY LINE</h4>
+            <h4 className="font-medium text-yellow-900 mb-4 text-center bg-yellow-100 py-2 rounded">IBL & HIBL BAYS - ONE ENTRY LINE</h4>
             <div className="space-y-2">
               {realDepotBays.ibl.bays.map((bay) => (
-                <div key={`IBL${bay.number}`} className="p-3 rounded-lg border-2 bg-yellow-50 border-yellow-300">
+                <div key={bay.number} className="p-3 bg-yellow-50 rounded-lg border-2 border-yellow-300">
                   <div className="flex items-center justify-between mb-2">
                     <div className="font-bold text-lg text-gray-900">IBL{bay.number}</div>
                     <div className="text-xs bg-orange-100 text-orange-800 px-2 py-1 rounded font-bold">
                       {bay.entryLine}
                     </div>
                     <div className="px-2 py-1 rounded text-xs font-bold bg-yellow-200 text-yellow-800">
-                      {bay.purpose}
+                      IBL
                     </div>
                   </div>
                   <div className="text-center">
-                    <div className="text-xs text-gray-600 font-bold bg-gray-100 py-1 rounded mb-2">CURRENT TRAIN</div>
-                    <div className={`font-bold text-lg ${bay.currentTrain ? 'text-yellow-600' : 'text-gray-400'}`}>
-                      {bay.currentTrain || 'EMPTY'}
+                    <div className="text-xs text-gray-600 font-bold bg-blue-100 py-1 rounded">CURRENT TRAIN</div>
+                    <div className={`font-bold text-2xl mt-1 ${bay.currentTrain ? 'text-blue-600' : 'text-gray-400'}`}>
+                      {bay.currentTrain || '-'}
                     </div>
+                    <div className="text-xs text-gray-600 mt-1">{bay.purpose}</div>
+                  </div>
+                </div>
+              ))}
+              
+              {realDepotBays.hibl.bays.map((bay) => (
+                <div key={bay.number} className="p-3 bg-red-50 rounded-lg border-2 border-red-300">
+                  <div className="flex items-center justify-between mb-2">
+                    <div className="font-bold text-lg text-gray-900">HIBL{bay.number}</div>
+                    <div className="text-xs bg-orange-100 text-orange-800 px-2 py-1 rounded font-bold">
+                      {bay.entryLine}
+                    </div>
+                    <div className="px-2 py-1 rounded text-xs font-bold bg-red-200 text-red-800">
+                      HIBL
+                    </div>
+                  </div>
+                  <div className="text-center">
+                    <div className="text-xs text-gray-600 font-bold bg-blue-100 py-1 rounded">CURRENT TRAIN</div>
+                    <div className={`font-bold text-2xl mt-1 ${bay.currentTrain ? 'text-blue-600' : 'text-gray-400'}`}>
+                      {bay.currentTrain || '-'}
+                    </div>
+                    <div className="text-xs text-gray-600 mt-1">{bay.purpose}</div>
                   </div>
                 </div>
               ))}
             </div>
           </div>
 
-          {/* HIBL & HICL Bays */}
+          {/* HICL - RACK OPTION (ONE BAY ONLY) */}
           <div>
-            <h4 className="font-medium text-red-900 mb-4 text-center bg-red-100 py-2 rounded">HIBL BAYS - ONE ENTRY LINE</h4>
+            <h4 className="font-medium text-purple-900 mb-4 text-center bg-purple-100 py-2 rounded">HICL - RACK OPTION (ONE BAY)</h4>
             <div className="space-y-2">
-              {realDepotBays.hibl.bays.map((bay) => (
-                <div key={`HIBL${bay.number}`} className="p-3 rounded-lg border-2 bg-red-50 border-red-300">
-                  <div className="flex items-center justify-between mb-2">
-                    <div className="font-bold text-lg text-gray-900">HIBL{bay.number}</div>
-                    <div className="text-xs bg-red-100 text-red-800 px-2 py-1 rounded font-bold">
-                      {bay.entryLine}
-                    </div>
-                    <div className="px-2 py-1 rounded text-xs font-bold bg-red-200 text-red-800">
-                      {bay.purpose}
-                    </div>
-                  </div>
-                  <div className="text-center">
-                    <div className="text-xs text-gray-600 font-bold bg-gray-100 py-1 rounded mb-2">CURRENT TRAIN</div>
-                    <div className={`font-bold text-lg ${bay.currentTrain ? 'text-red-600' : 'text-gray-400'}`}>
-                      {bay.currentTrain || 'EMPTY'}
-                    </div>
-                  </div>
-                </div>
-              ))}
-              
-              {/* HICL - Rack Option Bay (ONLY ONE BAY) */}
-              <div className="p-4 bg-purple-50 rounded-lg border-2 border-purple-300">
+              {/* HICL - Rack Option Bay */}
+              <div className="p-4 bg-orange-50 rounded-lg border-2 border-orange-300">
                 <div className="flex items-center justify-between mb-3">
                   <div className="font-bold text-xl text-gray-900">HICL</div>
-                  <div className="text-xs bg-purple-200 text-purple-800 px-3 py-1 rounded-full font-bold">
+                  <div className="text-xs bg-orange-200 text-orange-800 px-3 py-1 rounded-full font-bold">
                     RACK OPTION
                   </div>
                 </div>
                 <div className="text-center">
-                  <div className="text-xs text-gray-600 font-bold bg-purple-100 py-1 rounded mb-2">RACK BAY (ONE BAY ONLY)</div>
-                  <div className={`font-bold text-2xl ${realDepotBays.hicl.bays[0].currentTrain ? 'text-purple-600' : 'text-gray-400'}`}>
-                    {realDepotBays.hicl.bays[0].currentTrain || 'EMPTY'}
+                  <div className="text-xs text-gray-600 font-bold bg-orange-100 py-1 rounded mb-2">RACK BAY</div>
+                  <div className="font-bold text-4xl text-orange-600">
+                    {realDepotBays.hicl.bays[0].currentTrain || '-'}
                   </div>
-                  <div className="text-sm text-purple-700 mt-2">Heavy Inspection & Cleaning</div>
+                  <div className="text-sm text-orange-700 mt-2">Heavy Inspection & Cleaning</div>
                 </div>
               </div>
               
               {/* Special Terminal Bays */}
               {realDepotBays.terminal.bays.map((bay) => (
-                <div key={bay.code} className="p-3 bg-gray-50 rounded-lg border-2 border-gray-300">
+                <div key={bay.bay} className="p-3 bg-gray-50 rounded-lg border-2 border-gray-300">
                   <div className="flex items-center justify-between mb-2">
                     <div className="font-bold text-lg text-gray-900">{bay.code}</div>
                     <div className="text-xs text-gray-700 font-medium">{bay.purpose}</div>
                   </div>
                   <div className="text-center">
-                    <div className="text-xs text-gray-600 font-bold bg-gray-100 py-1 rounded mb-2">STATUS</div>
-                    <div className={`font-bold text-lg ${bay.currentTrain ? 'text-gray-600' : 'text-gray-400'}`}>
-                      {bay.currentTrain || 'AVAILABLE'}
+                    <div className="text-xs text-gray-600 font-bold bg-gray-100 py-1 rounded">CURRENT TRAIN</div>
+                    <div className={`font-bold text-2xl mt-1 ${bay.currentTrain ? 'text-gray-600' : 'text-gray-400'}`}>
+                      {bay.currentTrain || '-'}
                     </div>
                   </div>
                 </div>
               ))}
-            </div>
-          </div>
-        </div>
-        
-        {/* Entry Line Summary */}
-        <div className="mt-6 bg-blue-50 rounded-lg p-4">
-          <h4 className="font-medium text-blue-900 mb-3">Entry Line Configuration Summary</h4>
-          <div className="grid grid-cols-1 md:grid-cols-4 gap-4 text-sm">
-            <div className="bg-white rounded-lg p-3 text-center">
-              <div className="font-bold text-green-600">SBL BAYS</div>
-              <div className="text-gray-600">12 Bays</div>
-              <div className="text-blue-600 font-medium">TWO ENTRY LINES</div>
-            </div>
-            <div className="bg-white rounded-lg p-3 text-center">
-              <div className="font-bold text-yellow-600">IBL BAYS</div>
-              <div className="text-gray-600">3 Bays</div>
-              <div className="text-orange-600 font-medium">ONE ENTRY LINE</div>
-            </div>
-            <div className="bg-white rounded-lg p-3 text-center">
-              <div className="font-bold text-red-600">HIBL BAYS</div>
-              <div className="text-gray-600">3 Bays</div>
-              <div className="text-red-600 font-medium">ONE ENTRY LINE</div>
-            </div>
-            <div className="bg-white rounded-lg p-3 text-center">
-              <div className="font-bold text-purple-600">HICL BAY</div>
-              <div className="text-gray-600">1 Bay Only</div>
-              <div className="text-purple-600 font-medium">RACK OPTION</div>
             </div>
           </div>
         </div>
