@@ -507,103 +507,85 @@ const LiveTrackingDisplay: React.FC<LiveTrackingDisplayProps> = ({ height = 600 
           </motion.div>
         ))}
         
-        {/* Train Status Summary */}
-        <div className="absolute bottom-4 left-4 bg-kmrl-grey-800/90 rounded-lg p-3 text-white text-xs">
-          <div className="grid grid-cols-3 gap-4">
-            <div>
-              <div className="text-kmrl-lime-400">RUNNING</div>
-              <div className="text-2xl font-bold">{trains.filter(t => t.status === 'RUNNING').length}</div>
-            </div>
-            <div>
-              <div className="text-red-400">STOPPED</div>
-              <div className="text-2xl font-bold">{trains.filter(t => t.status === 'STOPPED').length}</div>
-            </div>
-            <div>
-              <div className="text-kmrl-yellow-400">DELAYED</div>
-              <div className="text-2xl font-bold">{trains.filter(t => t.delay > 0).length}</div>
-            </div>
-          </div>
-        </div>
-        
-        {/* Power Status */}
-        <div className="absolute top-4 right-4 bg-kmrl-grey-800/90 rounded-lg p-3 text-white text-xs font-mono">
-          <div className="space-y-1">
-            <div className="flex items-center space-x-2">
-              <div className="w-2 h-2 bg-kmrl-lime-500 rounded-full animate-pulse"></div>
-              <span>DEPOT: DC ENERGIZED</span>
-            </div>
-            <div className="flex items-center space-x-2">
-              <div className="w-2 h-2 bg-kmrl-lime-500 rounded-full animate-pulse"></div>
-              <span>TT: DC ENERGIZED</span>
-            </div>
-            <div className="flex items-center space-x-2">
-              <div className="w-2 h-2 bg-kmrl-lime-500 rounded-full animate-pulse"></div>
-              <span>THIRD RAIL: ACTIVE</span>
-            </div>
-          </div>
-        </div>
-      </div>
+         {/* Power Status */}
+         <div className="absolute top-4 right-4 bg-kmrl-grey-800/90 rounded-lg p-3 text-white text-xs font-mono">
+           <div className="space-y-1">
+             <div className="flex items-center space-x-2">
+               <div className="w-2 h-2 bg-kmrl-lime-500 rounded-full animate-pulse"></div>
+               <span>DEPOT: DC ENERGIZED</span>
+             </div>
+             <div className="flex items-center space-x-2">
+               <div className="w-2 h-2 bg-kmrl-lime-500 rounded-full animate-pulse"></div>
+               <span>TT: DC ENERGIZED</span>
+             </div>
+             <div className="flex items-center space-x-2">
+               <div className="w-2 h-2 bg-kmrl-lime-500 rounded-full animate-pulse"></div>
+               <span>THIRD RAIL: ACTIVE</span>
+             </div>
+           </div>
+         </div>
+       </div>
 
-      {/* Selected Train Details */}
-      {selectedTrain && (
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          className="bg-kmrl-grey-800 border-t border-kmrl-grey-700 p-4"
-        >
-          {(() => {
-            const train = trains.find(t => t.id === selectedTrain);
-            if (!train) return null;
-            
-            return (
-              <div className="text-white">
-                <h4 className="font-semibold text-kmrl-aquamarine-400 mb-2">Train {train.id} - {train.name}</h4>
-                <div className="grid grid-cols-2 md:grid-cols-5 gap-4 text-sm">
-                  <div>
-                    <span className="text-kmrl-grey-400">Current Station:</span>
-                    <p className="text-white font-medium">{train.currentStation}</p>
-                  </div>
-                  <div>
-                    <span className="text-kmrl-grey-400">Next Station:</span>
-                    <p className="text-white font-medium">{train.nextStation}</p>
-                  </div>
-                  <div>
-                    <span className="text-kmrl-grey-400">Speed:</span>
-                    <p className="text-white font-medium">{train.speed} km/h</p>
-                  </div>
-                  <div>
-                    <span className="text-kmrl-grey-400">Direction:</span>
-                    <p className="text-white font-medium">{train.direction}</p>
-                  </div>
-                  <div>
-                    <span className="text-kmrl-grey-400">Status:</span>
-                    <p className={`font-medium ${
-                      train.status === 'RUNNING' ? 'text-kmrl-lime-400' :
-                      train.status === 'STOPPED' ? 'text-red-400' : 'text-yellow-400'
-                    }`}>
-                      {train.status}
-                    </p>
-                  </div>
-                </div>
-                <div className="mt-3 grid grid-cols-2 gap-4 text-sm">
-                  <div>
-                    <span className="text-kmrl-grey-400">Passenger Load:</span>
-                    <p className="text-white font-medium">{train.passengerLoad}%</p>
-                  </div>
-                  <div>
-                    <span className="text-kmrl-grey-400">Delay:</span>
-                    <p className={`font-medium ${train.delay > 0 ? 'text-red-400' : 'text-kmrl-lime-400'}`}>
-                      {train.delay > 0 ? `+${train.delay} min` : 'On Time'}
-                    </p>
-                  </div>
-                </div>
-              </div>
-            );
-          })()}
-        </motion.div>
-      )}
-    </div>
-  );
-};
-
-export default LiveTrackingDisplay;
+       {/* Selected Train Details */}
+       {selectedTrain && (
+         <motion.div
+           initial={{ opacity: 0, y: 20 }}
+           animate={{ opacity: 1, y: 0 }}
+           className="bg-kmrl-grey-800 border-t border-kmrl-grey-700 p-4"
+         >
+           {(() => {
+             const train = trains.find(t => t.id === selectedTrain);
+             if (!train) return null;
+             
+             return (
+               <div className="text-white">
+                 <h4 className="font-semibold text-kmrl-aquamarine-400 mb-2">Train {train.id} - {train.name}</h4>
+                 <div className="grid grid-cols-2 md:grid-cols-5 gap-4 text-sm">
+                   <div>
+                     <span className="text-kmrl-grey-400">Current Station:</span>
+                     <p className="text-white font-medium">{train.currentStation}</p>
+                   </div>
+                   <div>
+                     <span className="text-kmrl-grey-400">Next Station:</span>
+                     <p className="text-white font-medium">{train.nextStation}</p>
+                   </div>
+                   <div>
+                     <span className="text-kmrl-grey-400">Speed:</span>
+                     <p className="text-white font-medium">{train.speed} km/h</p>
+                   </div>
+                   <div>
+                     <span className="text-kmrl-grey-400">Direction:</span>
+                     <p className="text-white font-medium">{train.direction}</p>
+                   </div>
+                   <div>
+                     <span className="text-kmrl-grey-400">Status:</span>
+                     <p className={`font-medium ${
+                       train.status === 'RUNNING' ? 'text-kmrl-lime-400' :
+                       train.status === 'STOPPED' ? 'text-red-400' : 'text-yellow-400'
+                     }`}>
+                       {train.status}
+                     </p>
+                   </div>
+                 </div>
+                 <div className="mt-3 grid grid-cols-2 gap-4 text-sm">
+                   <div>
+                     <span className="text-kmrl-grey-400">Passenger Load:</span>
+                     <p className="text-white font-medium">{train.passengerLoad}%</p>
+                   </div>
+                   <div>
+                     <span className="text-kmrl-grey-400">Delay:</span>
+                     <p className={`font-medium ${train.delay > 0 ? 'text-red-400' : 'text-kmrl-lime-400'}`}>
+                       {train.delay > 0 ? `+${train.delay} min` : 'On Time'}
+                     </p>
+                   </div>
+                 </div>
+               </div>
+             );
+           })()}
+         </motion.div>
+       )}
+     </div>
+   );
+ };
+ 
+ export default LiveTrackingDisplay;
