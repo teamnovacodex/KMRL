@@ -508,9 +508,8 @@ const LiveTrackingDisplay: React.FC<LiveTrackingDisplayProps> = ({ height = 600 
         ))}
         </div>
 
-        {/* System Status Overlay */}
-        <div className="absolute top-4 left-4 bg-kmrl-grey-800/90 rounded-lg p-3 text-white text-xs font-mono">
-          <div className="grid grid-cols-3 gap-4">
+        {/* Selected Train Details */}
+        {selectedTrain && (
             <div>
               <div className="text-kmrl-lime-400">RUNNING</div>
               <div className="text-2xl font-bold">{trains.filter(t => t.status === 'RUNNING').length}</div>
@@ -604,7 +603,6 @@ const LiveTrackingDisplay: React.FC<LiveTrackingDisplayProps> = ({ height = 600 
           })()}
         </motion.div>
         )}
-      </>
     </div>
   );
 };
