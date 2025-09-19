@@ -320,36 +320,36 @@ const TrainInduction: React.FC = () => {
             <h4 className="font-medium text-green-900 mb-4">SBL Bays (Service Bays Light)</h4>
             <div className="space-y-2">
               {[
-                { bay: 'SBL1', openEnd: '05', bufferedEnd: '' },
-                { bay: 'SBL2', openEnd: '', bufferedEnd: '' },
-                { bay: 'SBL3', openEnd: '', bufferedEnd: '25' },
-                { bay: 'SBL4', openEnd: '', bufferedEnd: '' },
-                { bay: 'SBL5', openEnd: '', bufferedEnd: '' },
+                { bay: 'SBL1', openEnd: '05', bufferedEnd: '', crossed: false },
+                { bay: 'SBL2', openEnd: '', bufferedEnd: '', crossed: false },
+                { bay: 'SBL3', openEnd: '', bufferedEnd: '25', crossed: false },
+                { bay: 'SBL4', openEnd: '', bufferedEnd: '', crossed: false },
+                { bay: 'SBL5', openEnd: '', bufferedEnd: '', crossed: false },
                 { bay: 'SBL6', openEnd: '', bufferedEnd: '', crossed: true },
                 { bay: 'SBL7', openEnd: '', bufferedEnd: '2', crossed: true },
-                { bay: 'SBL8', openEnd: '', bufferedEnd: '' },
-                { bay: 'SBL9', openEnd: '', bufferedEnd: '' },
-                { bay: 'SBL10', openEnd: '18', bufferedEnd: '' },
-                { bay: 'SBL11', openEnd: '', bufferedEnd: '' },
-                { bay: 'SBL12', openEnd: '', bufferedEnd: '' }
+                { bay: 'SBL8', openEnd: '', bufferedEnd: '', crossed: false },
+                { bay: 'SBL9', openEnd: '', bufferedEnd: '', crossed: false },
+                { bay: 'SBL10', openEnd: '18', bufferedEnd: '', crossed: false },
+                { bay: 'SBL11', openEnd: '', bufferedEnd: '', crossed: false },
+                { bay: 'SBL12', openEnd: '', bufferedEnd: '', crossed: false }
               ].map((bay) => (
-                <div key={bay.bay} className={`flex items-center justify-between p-3 rounded-lg border ${
+                <div key={bay.bay} className={`flex items-center justify-between p-4 rounded-lg border ${
                   bay.crossed ? 'bg-red-50 border-red-200' : 'bg-green-50 border-green-200'
                 }`}>
-                  <div className={`font-medium ${bay.crossed ? 'text-red-900' : 'text-gray-900'}`}>
+                  <div className={`font-bold text-lg ${bay.crossed ? 'text-red-900' : 'text-gray-900'}`}>
                     {bay.bay}
                     {bay.crossed && <span className="ml-2 text-red-600">❌ NO STABLING</span>}
                   </div>
-                  <div className="flex space-x-6">
+                  <div className="flex space-x-8">
                     <div className="text-center">
-                      <div className="text-xs text-gray-600">OPEN END</div>
-                      <div className={`font-bold text-lg ${bay.openEnd ? 'text-blue-600' : 'text-gray-400'}`}>
+                      <div className="text-xs text-gray-600 font-medium">OPEN END</div>
+                      <div className={`font-bold text-2xl ${bay.openEnd ? 'text-blue-600' : 'text-gray-400'}`}>
                         {bay.openEnd || '-'}
                       </div>
                     </div>
                     <div className="text-center">
-                      <div className="text-xs text-gray-600">BUFFERED END</div>
-                      <div className={`font-bold text-lg ${bay.bufferedEnd ? 'text-blue-600' : 'text-gray-400'}`}>
+                      <div className="text-xs text-gray-600 font-medium">BUFFERED END</div>
+                      <div className={`font-bold text-2xl ${bay.bufferedEnd ? 'text-blue-600' : 'text-gray-400'}`}>
                         {bay.bufferedEnd || '-'}
                       </div>
                     </div>

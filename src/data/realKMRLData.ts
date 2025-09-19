@@ -37,29 +37,29 @@ export const realDepotData: RealDepotData = {
     '05': 1
   },
   depotBays: {
-    'SBL1': { openEnd: '05', bufferedEnd: '' },
-    'SBL2': { openEnd: '', bufferedEnd: '' },
-    'SBL3': { openEnd: '', bufferedEnd: '25' },
-    'SBL4': { openEnd: '', bufferedEnd: '' },
-    'SBL5': { openEnd: '', bufferedEnd: '' },
-    'SBL6': { openEnd: '', bufferedEnd: '' }, // X marked - no stabling
-    'SBL7': { openEnd: '', bufferedEnd: '2' }, // X marked - no stabling  
-    'SBL8': { openEnd: '', bufferedEnd: '' },
-    'SBL9': { openEnd: '', bufferedEnd: '' },
-    'SBL10': { openEnd: '18', bufferedEnd: '' },
-    'SBL11': { openEnd: '', bufferedEnd: '' },
-    'SBL12': { openEnd: '', bufferedEnd: '' },
-    'IBL1': { openEnd: '', bufferedEnd: '' },
-    'IBL2': { openEnd: '9', bufferedEnd: '' },
-    'IBL3': { openEnd: '25', bufferedEnd: '' },
-    'HICL': { openEnd: '23', bufferedEnd: '' },
-    'HIS1': { openEnd: '13', bufferedEnd: '' },
-    'HIS2': { openEnd: '05', bufferedEnd: '' },
-    'HIS3': { openEnd: '04', bufferedEnd: '' },
-    'FULL': { openEnd: '15', bufferedEnd: '' },
-    'ETU': { openEnd: '', bufferedEnd: '' },
-    'ERL': { openEnd: '', bufferedEnd: '' },
-    'UBL': { openEnd: '', bufferedEnd: '' }
+    'SBL1': { openEnd: '05', bufferedEnd: '', noStabling: false },
+    'SBL2': { openEnd: '', bufferedEnd: '', noStabling: false },
+    'SBL3': { openEnd: '', bufferedEnd: '25', noStabling: false },
+    'SBL4': { openEnd: '', bufferedEnd: '', noStabling: false },
+    'SBL5': { openEnd: '', bufferedEnd: '', noStabling: false },
+    'SBL6': { openEnd: '', bufferedEnd: '', noStabling: true }, // X marked - no stabling
+    'SBL7': { openEnd: '', bufferedEnd: '2', noStabling: true }, // X marked - no stabling  
+    'SBL8': { openEnd: '', bufferedEnd: '', noStabling: false },
+    'SBL9': { openEnd: '', bufferedEnd: '', noStabling: false },
+    'SBL10': { openEnd: '18', bufferedEnd: '', noStabling: false },
+    'SBL11': { openEnd: '', bufferedEnd: '', noStabling: false },
+    'SBL12': { openEnd: '', bufferedEnd: '', noStabling: false },
+    'IBL1': { openEnd: '', bufferedEnd: '', noStabling: false },
+    'IBL2': { openEnd: '9', bufferedEnd: '', noStabling: false },
+    'IBL3': { openEnd: '25', bufferedEnd: '', noStabling: false },
+    'HICL': { openEnd: '23', bufferedEnd: '', noStabling: false },
+    'HIS1': { openEnd: '13', bufferedEnd: '', noStabling: false },
+    'HIS2': { openEnd: '05', bufferedEnd: '', noStabling: false },
+    'HIS3': { openEnd: '04', bufferedEnd: '', noStabling: false },
+    'FULL': { openEnd: '15', bufferedEnd: '', noStabling: false },
+    'ETU': { openEnd: '', bufferedEnd: '', noStabling: false },
+    'ERL': { openEnd: '', bufferedEnd: '', noStabling: false },
+    'UBL': { openEnd: '', bufferedEnd: '', noStabling: false }
   },
   instructions: {
     shunting: [
