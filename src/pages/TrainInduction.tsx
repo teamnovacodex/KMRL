@@ -20,6 +20,15 @@ import { weekdaySchedule, weekendSchedule, getCurrentSchedule, realServicePatter
 import LiveTrackingDisplay from '../components/LiveTrackingDisplay';
 import AISchedulingBot from '../components/AISchedulingBot';
 
+// Helper function to get schedule status
+const getScheduleStatus = () => {
+  const currentHour = new Date().getHours();
+  if (currentHour >= 5 && currentHour < 12) return 'Morning Peak';
+  if (currentHour >= 12 && currentHour < 17) return 'Afternoon';
+  if (currentHour >= 17 && currentHour < 22) return 'Evening Peak';
+  return 'Night Service';
+};
+
 const TrainInduction: React.FC = () => {
   const [activeTab, setActiveTab] = useState('induction-plan');
   const [currentTime, setCurrentTime] = useState(new Date());
