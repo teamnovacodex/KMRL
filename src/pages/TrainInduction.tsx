@@ -15,7 +15,7 @@ import {
   Brain
 } from 'lucide-react';
 import { trainInductions, todayInductionSchedule, depotOperations, inductionTimeSlots, servicePatterns } from '../data/inductionData';
-import { tomorrowInductionPlan, controlCenterData } from '../data/controlCenterData';
+import { tomorrowInductionPlan, controlCenterData, aiSchedulingBot } from '../data/controlCenterData';
 import LiveTrackingDisplay from '../components/LiveTrackingDisplay';
 import AISchedulingBot from '../components/AISchedulingBot';
 
